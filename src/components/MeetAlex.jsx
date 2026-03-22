@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Player from '@vimeo/player'
 import { AnimatedSection } from './AnimatedSection'
+import { SectionGlow } from './SectionGlow'
 import { useCalendly } from './CalendlyModal'
 
 const capabilities = [
@@ -31,7 +32,8 @@ export function MeetAlex() {
 
   return (
     <section id="meet-alex" className="relative py-28 md:py-36 px-6">
-      <div className="max-w-5xl mx-auto">
+      <SectionGlow color="gold" intensity={0.08} position="center" />
+      <div className="max-w-5xl mx-auto relative z-10">
         {/* Header */}
         <AnimatedSection>
           <div className="text-center mb-20">

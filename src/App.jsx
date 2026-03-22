@@ -7,6 +7,7 @@ import { SpeedProof } from './components/SpeedProof'
 import { Problem } from './components/Problem'
 import { MeetAlex } from './components/MeetAlex'
 import { HowItWorks } from './components/HowItWorks'
+import { TryAlex } from './components/TryAlex'
 import { ComparisonTable } from './components/ComparisonTable'
 import { ROICalculator } from './components/ROICalculator'
 import { Pricing } from './components/Pricing'
@@ -30,6 +31,7 @@ function App() {
           <Problem />
           <MeetAlex />
           <HowItWorks />
+          <TryAlex />
           <ComparisonTable />
           <ROICalculator />
           <Pricing />

@@ -1,12 +1,26 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { InfiniteSlider } from './InfiniteSlider'
 import { useCalendly } from './CalendlyModal'
 
 export function Hero() {
   const calendly = useCalendly()
   const canvasRef = useRef(null)
+  const mouseRef = useRef({ x: 0.5, y: 0.5 }) // normalized 0-1
+  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 })
 
-  // Animated cosmic background
+  // Track mouse for parallax on orbs
+  useEffect(() => {
+    const onMove = (e) => {
+      const x = e.clientX / window.innerWidth
+      const y = e.clientY / window.innerHeight
+      mouseRef.current = { x, y }
+      setMousePos({ x, y })
+    }
+    window.addEventListener('mousemove', onMove, { passive: true })
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [])
+
+  // Canvas particle system — responds to cursor
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -21,44 +35,52 @@ export function Hero() {
     resize()
     window.addEventListener('resize', resize)
 
-    // Create floating light particles
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 45; i++) {
       particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        baseX: Math.random() * canvas.width,
+        baseY: Math.random() * canvas.height,
+        x: 0, y: 0,
         r: Math.random() * 1.5 + 0.3,
         dx: (Math.random() - 0.5) * 0.3,
         dy: (Math.random() - 0.5) * 0.2,
         opacity: Math.random() * 0.4 + 0.1,
         pulse: Math.random() * Math.PI * 2,
+        parallaxFactor: Math.random() * 30 + 10, // each particle responds differently
       })
     }
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+      const mx = mouseRef.current.x
+      const my = mouseRef.current.y
 
       particles.forEach((p) => {
-        p.x += p.dx
-        p.y += p.dy
+        p.baseX += p.dx
+        p.baseY += p.dy
         p.pulse += 0.01
+
+        if (p.baseX < 0) p.baseX = canvas.width
+        if (p.baseX > canvas.width) p.baseX = 0
+        if (p.baseY < 0) p.baseY = canvas.height
+        if (p.baseY > canvas.height) p.baseY = 0
+
+        // Cursor parallax — particles shift opposite to mouse
+        const px = p.baseX + (0.5 - mx) * p.parallaxFactor
+        const py = p.baseY + (0.5 - my) * p.parallaxFactor
+
         const o = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse))
 
-        if (p.x < 0) p.x = canvas.width
-        if (p.x > canvas.width) p.x = 0
-        if (p.y < 0) p.y = canvas.height
-        if (p.y > canvas.height) p.y = 0
-
-        // Warm glow particle
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 20)
+        // Glow
+        const grad = ctx.createRadialGradient(px, py, 0, px, py, p.r * 22)
         grad.addColorStop(0, `rgba(201, 169, 110, ${o * 0.8})`)
-        grad.addColorStop(0.4, `rgba(201, 169, 110, ${o * 0.2})`)
+        grad.addColorStop(0.4, `rgba(201, 169, 110, ${o * 0.15})`)
         grad.addColorStop(1, 'transparent')
         ctx.fillStyle = grad
-        ctx.fillRect(p.x - p.r * 20, p.y - p.r * 20, p.r * 40, p.r * 40)
+        ctx.fillRect(px - p.r * 22, py - p.r * 22, p.r * 44, p.r * 44)
 
-        // Core dot
+        // Core
         ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.arc(px, py, p.r, 0, Math.PI * 2)
         ctx.fillStyle = `rgba(255, 240, 220, ${o})`
         ctx.fill()
       })
@@ -73,31 +95,48 @@ export function Hero() {
     }
   }, [])
 
+  // Parallax offsets for the large orbs (respond to mouse)
+  const orbX = (0.5 - mousePos.x) * 40
+  const orbY = (0.5 - mousePos.y) * 25
+  const orbTransition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
+
   return (
     <section className="relative min-h-screen overflow-hidden flex flex-col">
       {/* Cosmic Background */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0c0a06] via-[#060503] to-black" />
 
-        {/* Animated canvas particles */}
+        {/* Cursor-responsive canvas particles */}
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full opacity-60"
           style={{ mixBlendMode: 'screen' }}
         />
 
-        {/* Large floating liquid orbs */}
+        {/* Large floating orbs — respond to cursor with parallax */}
         <div
           className="absolute top-[10%] left-[20%] w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse,rgba(201,169,110,0.08),transparent_60%)] pointer-events-none"
-          style={{ animation: 'cosmicFloat1 20s ease-in-out infinite' }}
+          style={{
+            animation: 'cosmicFloat1 20s ease-in-out infinite',
+            transform: `translate(${orbX * 1.2}px, ${orbY * 1.2}px)`,
+            transition: orbTransition,
+          }}
         />
         <div
           className="absolute top-[30%] right-[15%] w-[400px] h-[400px] rounded-full bg-[radial-gradient(ellipse,rgba(180,150,90,0.06),transparent_60%)] pointer-events-none"
-          style={{ animation: 'cosmicFloat2 25s ease-in-out infinite' }}
+          style={{
+            animation: 'cosmicFloat2 25s ease-in-out infinite',
+            transform: `translate(${orbX * -0.8}px, ${orbY * 0.9}px)`,
+            transition: orbTransition,
+          }}
         />
         <div
           className="absolute bottom-[20%] left-[40%] w-[600px] h-[300px] rounded-full bg-[radial-gradient(ellipse,rgba(201,169,110,0.05),transparent_65%)] pointer-events-none"
-          style={{ animation: 'cosmicFloat3 18s ease-in-out infinite' }}
+          style={{
+            animation: 'cosmicFloat3 18s ease-in-out infinite',
+            transform: `translate(${orbX * 0.6}px, ${orbY * -1.1}px)`,
+            transition: orbTransition,
+          }}
         />
 
         {/* Central warm glow */}

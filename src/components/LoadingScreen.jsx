@@ -1,20 +1,38 @@
 import { useState, useEffect } from 'react'
+import { playChime } from '../hooks/useChime'
 
 export function LoadingScreen() {
   const [phase, setPhase] = useState('black')
-  // black (0ms) → brand (400ms) → line (1000ms) → powered (1600ms) → hold → exit (3400ms) → gone (4600ms)
   const [removed, setRemoved] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
+
+  // Listen for first user interaction to enable audio
+  useEffect(() => {
+    const mark = () => setHasInteracted(true)
+    window.addEventListener('click', mark, { once: true })
+    window.addEventListener('touchstart', mark, { once: true })
+    window.addEventListener('keydown', mark, { once: true })
+    return () => {
+      window.removeEventListener('click', mark)
+      window.removeEventListener('touchstart', mark)
+      window.removeEventListener('keydown', mark)
+    }
+  }, [])
 
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase('brand'), 400),
-      setTimeout(() => setPhase('line'), 1000),
-      setTimeout(() => setPhase('powered'), 1600),
-      setTimeout(() => setPhase('exit'), 3600),
-      setTimeout(() => setRemoved(true), 4800),
+      setTimeout(() => {
+        setPhase('line')
+        // Play chime when the gold line appears (if user has interacted)
+        if (hasInteracted) playChime()
+      }, 900),
+      setTimeout(() => setPhase('powered'), 1400),
+      setTimeout(() => setPhase('exit'), 2400),
+      setTimeout(() => setRemoved(true), 3600),
     ]
     return () => timers.forEach(clearTimeout)
-  }, [])
+  }, [hasInteracted])
 
   if (removed) return null
 
@@ -34,11 +52,13 @@ export function LoadingScreen() {
         justifyContent: 'center',
         background: '#000',
         opacity: isExiting ? 0 : 1,
-        transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0, 1)',
-        willChange: 'opacity',
+        transform: isExiting ? 'scale(1.03)' : 'scale(1)',
+        filter: isExiting ? 'blur(8px)' : 'blur(0px)',
+        transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0, 1), transform 1.2s cubic-bezier(0.4, 0, 0, 1), filter 1.2s cubic-bezier(0.4, 0, 0, 1)',
+        willChange: 'opacity, transform, filter',
       }}
     >
-      {/* Warm ambient glow — breathes in slowly */}
+      {/* Warm ambient glow */}
       <div
         style={{
           position: 'absolute',
@@ -55,7 +75,7 @@ export function LoadingScreen() {
       />
 
       <div style={{ position: 'relative', textAlign: 'center' }}>
-        {/* Brand name — fades up with a gentle blur clear */}
+        {/* Brand name */}
         <p
           style={{
             fontSize: '1.8rem',
@@ -72,7 +92,7 @@ export function LoadingScreen() {
           <span style={{ color: 'rgba(255,255,255,0.45)' }}>Touch</span>
         </p>
 
-        {/* Gold sweep line — expands from center */}
+        {/* Gold sweep line */}
         <div
           style={{
             height: 1,
@@ -86,7 +106,7 @@ export function LoadingScreen() {
           }}
         />
 
-        {/* Powered by — last element, gentle fade */}
+        {/* Powered by */}
         <p
           style={{
             fontSize: '0.6rem',
