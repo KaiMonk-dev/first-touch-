@@ -4,7 +4,6 @@ import { ScrollProgress } from './components/ScrollProgress'
 import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
 import { SpeedProof } from './components/SpeedProof'
-import { Problem } from './components/Problem'
 import { MeetAlex } from './components/MeetAlex'
 import { HowItWorks } from './components/HowItWorks'
 import { TryAlex } from './components/TryAlex'
@@ -28,7 +27,6 @@ function App() {
         <main>
           <Hero />
           <SpeedProof />
-          <Problem />
           <MeetAlex />
           <HowItWorks />
           <TryAlex />

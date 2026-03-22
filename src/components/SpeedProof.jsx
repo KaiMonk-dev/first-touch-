@@ -91,7 +91,25 @@ export function SpeedProof() {
           </div>
         </AnimatedSection>
 
+        {/* Merged stat from Problem section */}
         <AnimatedSection delay={600}>
+          <div className="grid grid-cols-3 gap-6 mt-12 text-center">
+            <div>
+              <p className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-b from-white to-white/30 bg-clip-text text-transparent">62%</p>
+              <p className="text-[11px] text-white/40 font-light mt-2">won't call back</p>
+            </div>
+            <div>
+              <p className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-b from-white to-white/30 bg-clip-text text-transparent">85%</p>
+              <p className="text-[11px] text-white/40 font-light mt-2">call a competitor</p>
+            </div>
+            <div>
+              <p className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-b from-white to-white/30 bg-clip-text text-transparent">$52K+</p>
+              <p className="text-[11px] text-white/40 font-light mt-2">lost per year</p>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection delay={800}>
           <p className="text-center text-sm text-white/40 font-light mt-10 max-w-md mx-auto leading-relaxed">
             78% of customers buy from the company that responds first. Alex makes sure that's always you.
           </p>
