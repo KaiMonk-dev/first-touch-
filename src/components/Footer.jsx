@@ -7,14 +7,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="mb-4">
-              <p className="text-[15px] font-semibold">
-                <span className="text-white/80">Ascension First</span>
-                <span className="text-white/30"> AI</span>
+            <div className="mb-2">
+              <p className="text-[17px] font-semibold tracking-[-0.01em]">
+                <span className="text-white/90">First</span>
+                <span className="text-white/40">Touch</span>
               </p>
             </div>
-            <p className="text-[12px] text-white/20 font-light max-w-[240px]">
-              First Touch — Your business, always on.
+            <p className="text-[11px] text-white/20 font-light tracking-wide">
+              Powered by Ascension First AI
             </p>
           </div>
 
