@@ -31,7 +31,7 @@ export function InfiniteSlider() {
         {items.map((name, i) => (
           <span
             key={i}
-            className="text-[13px] text-white/20 font-medium whitespace-nowrap tracking-wide hover:text-white/40 transition-colors duration-500 flex-shrink-0"
+            className="text-[13px] text-white/35 font-medium whitespace-nowrap tracking-wide hover:text-white/60 transition-colors duration-500 flex-shrink-0"
           >
             {name}
           </span>

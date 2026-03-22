@@ -25,7 +25,7 @@ export function HowItWorks() {
         <AnimatedSection>
           <div className="text-center mb-24">
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9]">
-              <span className="bg-gradient-to-b from-white/90 to-white/30 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
                 Live in 72 Hours.
               </span>
             </h2>
@@ -35,12 +35,12 @@ export function HowItWorks() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {steps.map((step, i) => (
             <AnimatedSection key={i} delay={i * 200}>
-              <div className="relative p-10 rounded-2xl glass card-hover group hover:bg-white/[0.04] h-full">
-                <span className="text-6xl font-bold tracking-[-0.04em] bg-gradient-to-b from-white/15 to-white/[0.03] bg-clip-text text-transparent">
+              <div className="relative p-10 rounded-2xl liquid-glass card-hover group hover:bg-white/[0.05] h-full liquid-shimmer" style={{ animationDelay: `${i * 3}s` }}>
+                <span className="text-6xl font-bold tracking-[-0.04em] bg-gradient-to-b from-white/20 to-white/[0.04] bg-clip-text text-transparent">
                   {step.num}
                 </span>
-                <h3 className="text-xl font-semibold mt-6 mb-4 text-white/90">{step.title}</h3>
-                <p className="text-[13px] text-white/30 leading-relaxed font-light">{step.desc}</p>
+                <h3 className="text-xl font-semibold mt-6 mb-4 text-white">{step.title}</h3>
+                <p className="text-sm text-white/50 leading-relaxed font-light">{step.desc}</p>
               </div>
             </AnimatedSection>
           ))}

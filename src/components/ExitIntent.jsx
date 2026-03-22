@@ -24,25 +24,21 @@ export function ExitIntent() {
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center px-6">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in"
         onClick={close}
       />
 
-      {/* Modal */}
-      <div className="relative max-w-md w-full rounded-3xl glass-strong p-10 text-center animate-fade-up">
-        {/* Close */}
+      <div className="relative max-w-md w-full rounded-3xl liquid-glass-strong p-10 text-center animate-fade-up liquid-shimmer">
         <button
           onClick={close}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-white/30 hover:text-white/60 hover:bg-white/5 transition-all"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
 
-        {/* Phone icon */}
         <div className="flex items-center justify-center mb-6">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#B8965A] to-[#C9A96E] flex items-center justify-center shadow-[0_0_50px_rgba(201,169,110,0.3)]">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -51,10 +47,10 @@ export function ExitIntent() {
           </div>
         </div>
 
-        <h3 className="text-2xl font-bold mb-3 text-white/90">
+        <h3 className="text-2xl font-bold mb-3 text-white">
           Before you go —
         </h3>
-        <p className="text-[14px] text-white/40 font-light leading-relaxed mb-8">
+        <p className="text-[14px] text-white/55 font-light leading-relaxed mb-8">
           Hear Alex handle a real call. One conversation and you'll see why businesses never go back to voicemail.
         </p>
 
@@ -68,7 +64,7 @@ export function ExitIntent() {
           </svg>
         </a>
 
-        <p className="text-[11px] text-white/20 font-light">
+        <p className="text-[11px] text-white/30 font-light">
           +1 (858) 434-7041 &middot; Takes 30 seconds
         </p>
       </div>

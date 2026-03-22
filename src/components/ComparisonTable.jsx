@@ -23,23 +23,23 @@ export function ComparisonTable() {
         <AnimatedSection>
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[0.9]">
-              <span className="text-white/90">First Touch vs.</span>
+              <span className="text-white">First Touch vs.</span>
               <br />
-              <span className="bg-gradient-to-b from-white/80 to-white/30 bg-clip-text text-transparent">A Human Receptionist.</span>
+              <span className="bg-gradient-to-b from-white/90 to-white/50 bg-clip-text text-transparent">A Human Receptionist.</span>
             </h2>
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={200}>
-          <div className="rounded-2xl glass overflow-hidden">
+          <div className="rounded-2xl liquid-glass-strong overflow-hidden">
             {/* Header */}
-            <div className="grid grid-cols-[1fr_100px_100px] md:grid-cols-[1fr_140px_140px] border-b border-white/[0.04]">
+            <div className="grid grid-cols-[1fr_100px_100px] md:grid-cols-[1fr_140px_140px] border-b border-white/[0.06]">
               <div className="p-5" />
               <div className="p-5 text-center">
-                <p className="text-[12px] font-semibold text-white/70">First Touch</p>
+                <p className="text-[12px] font-semibold text-white/80">First Touch</p>
               </div>
               <div className="p-5 text-center">
-                <p className="text-[12px] font-medium text-white/25">Human</p>
+                <p className="text-[12px] font-medium text-white/35">Human</p>
               </div>
             </div>
 
@@ -48,15 +48,15 @@ export function ComparisonTable() {
               <div
                 key={i}
                 className={`grid grid-cols-[1fr_100px_100px] md:grid-cols-[1fr_140px_140px] ${
-                  i < rows.length - 1 ? 'border-b border-white/[0.03]' : ''
-                } hover:bg-white/[0.02] transition-colors`}
+                  i < rows.length - 1 ? 'border-b border-white/[0.04]' : ''
+                } hover:bg-white/[0.03] transition-colors`}
               >
                 <div className="p-4 md:p-5 flex items-center">
-                  <span className="text-[13px] text-white/40 font-light">{row.feature}</span>
+                  <span className="text-[13px] text-white/60 font-light">{row.feature}</span>
                 </div>
                 <div className="p-4 md:p-5 flex items-center justify-center">
                   {row.ai ? (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                   ) : (
@@ -65,7 +65,7 @@ export function ComparisonTable() {
                 </div>
                 <div className="p-4 md:p-5 flex items-center justify-center">
                   {row.human ? (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-40">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                   ) : (
@@ -85,7 +85,7 @@ export function ComparisonTable() {
             >
               Get First Touch Live in 72 Hours
             </button>
-            <p className="text-[11px] text-white/15 mt-4 font-light">No contracts. Cancel anytime.</p>
+            <p className="text-[12px] text-white/25 mt-4 font-light">No contracts. Cancel anytime.</p>
           </div>
         </AnimatedSection>
       </div>

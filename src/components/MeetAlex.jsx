@@ -38,34 +38,35 @@ export function MeetAlex() {
             <p className="label mb-6">The person behind every call</p>
             <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9] mb-8">
-              <span className="text-white/90">Meet Alex.</span>
+              <span className="text-white">Meet Alex.</span>
             </h2>
-            <p className="text-base md:text-lg text-white/30 max-w-xl mx-auto leading-relaxed font-light">
+            <p className="text-base md:text-lg text-white/55 max-w-xl mx-auto leading-relaxed font-light">
               A custom-trained AI agent that sounds human, thinks fast, and never
               misses a beat. Your customers won't know the difference.
             </p>
           </div>
         </AnimatedSection>
 
-        {/* Capabilities — horizontal row */}
+        {/* Capabilities */}
         <AnimatedSection>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-12">
             {capabilities.map((item, i) => (
               <div
                 key={i}
-                className="p-5 rounded-xl glass card-hover text-center"
+                className="p-5 rounded-xl liquid-glass card-hover text-center liquid-shimmer"
+                style={{ animationDelay: `${i * 2}s` }}
               >
-                <span className="inline-block text-[13px] font-semibold text-[#B8965A]/70 bg-[#C9A96E]/10 px-2.5 py-1 rounded-lg tabular-nums mb-3">
+                <span className="inline-block text-[13px] font-semibold text-[#C9A96E]/80 bg-[#C9A96E]/10 px-2.5 py-1 rounded-lg tabular-nums mb-3">
                   {item.metric}
                 </span>
-                <h4 className="text-[13px] font-semibold text-white/80 mb-1.5">{item.title}</h4>
-                <p className="text-[11px] text-white/25 font-light leading-relaxed">{item.desc}</p>
+                <h4 className="text-[13px] font-semibold text-white/85 mb-1.5">{item.title}</h4>
+                <p className="text-[11px] text-white/40 font-light leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </AnimatedSection>
 
-        {/* Video — full width, centered */}
+        {/* Video */}
         <AnimatedSection delay={200}>
           <div className="max-w-3xl mx-auto">
             <VimeoPlayer />
@@ -146,7 +147,7 @@ function VimeoPlayer() {
   }
 
   return (
-    <div className="rounded-2xl overflow-hidden glass-strong aspect-video relative bg-black">
+    <div className="rounded-2xl overflow-hidden liquid-glass-strong aspect-video relative bg-black">
       <div
         ref={containerRef}
         className="absolute inset-0 w-full h-full transition-opacity duration-500"
@@ -159,13 +160,13 @@ function VimeoPlayer() {
             onClick={replay}
             className="group flex flex-col items-center gap-4"
           >
-            <div className="w-14 h-14 rounded-full glass-strong flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50 group-hover:opacity-100 transition-opacity">
+            <div className="w-14 h-14 rounded-full liquid-glass-strong flex items-center justify-center group-hover:scale-105 transition-transform">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-60 group-hover:opacity-100 transition-opacity">
                 <path d="M1 4v6h6M23 20v-6h-6" />
                 <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
               </svg>
             </div>
-            <span className="text-[11px] text-white/25 font-light">Watch again</span>
+            <span className="text-[11px] text-white/35 font-light">Watch again</span>
           </button>
         </div>
       )}

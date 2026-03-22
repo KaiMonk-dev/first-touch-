@@ -38,7 +38,7 @@ export function FAQ() {
           <div className="text-center mb-20">
             <p className="label mb-6">FAQ</p>
             <h2 className="text-4xl md:text-5xl font-bold tracking-[-0.03em] leading-[0.9]">
-              <span className="bg-gradient-to-b from-white/90 to-white/30 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
                 Common Questions.
               </span>
             </h2>
@@ -48,14 +48,14 @@ export function FAQ() {
         <div className="space-y-2">
           {faqs.map((faq, i) => (
             <AnimatedSection key={i} delay={i * 80}>
-              <div className="rounded-xl glass overflow-hidden hover:bg-white/[0.04] transition-all duration-500">
+              <div className="rounded-xl liquid-glass overflow-hidden hover:bg-white/[0.05] transition-all duration-500">
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
                   className="w-full flex items-center justify-between p-6 text-left"
                 >
-                  <span className="text-[14px] font-medium text-white/70 pr-4">{faq.q}</span>
+                  <span className="text-[14px] font-medium text-white/80 pr-4">{faq.q}</span>
                   <svg
-                    className={`w-4 h-4 text-white/20 flex-shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    className={`w-4 h-4 text-white/30 flex-shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                       open === i ? 'rotate-45' : ''
                     }`}
                     viewBox="0 0 24 24"
@@ -73,7 +73,7 @@ export function FAQ() {
                     open === i ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
-                  <p className="px-6 pb-6 text-[13px] text-white/30 leading-relaxed font-light">
+                  <p className="px-6 pb-6 text-sm text-white/50 leading-relaxed font-light">
                     {faq.a}
                   </p>
                 </div>

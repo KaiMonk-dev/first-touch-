@@ -24,9 +24,9 @@ export function ROICalculator() {
         <AnimatedSection>
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[0.9]">
-              <span className="text-white/90">Revenue You're</span>
+              <span className="text-white">Revenue You're</span>
               <br />
-              <span className="bg-gradient-to-b from-white/80 to-white/30 bg-clip-text text-transparent">Leaving Behind.</span>
+              <span className="bg-gradient-to-b from-white/90 to-white/50 bg-clip-text text-transparent">Leaving Behind.</span>
             </h2>
           </div>
         </AnimatedSection>
@@ -34,7 +34,7 @@ export function ROICalculator() {
         <AnimatedSection delay={200}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Sliders */}
-            <div className="space-y-10 p-10 rounded-2xl glass">
+            <div className="space-y-10 p-10 rounded-2xl liquid-glass">
               <SliderInput label="Monthly inbound calls" value={calls} onChange={setCalls} min={50} max={500} step={10} />
               <SliderInput label="Percentage missed" value={missedPct} onChange={setMissedPct} min={10} max={60} step={5} suffix="%" />
               <SliderInput label="Average job value" value={jobValue} onChange={setJobValue} min={100} max={5000} step={50} prefix="$" />
@@ -42,14 +42,14 @@ export function ROICalculator() {
             </div>
 
             {/* Results */}
-            <div className="p-10 rounded-2xl glass-strong">
+            <div className="p-10 rounded-2xl liquid-glass-strong liquid-shimmer">
               <div className="space-y-6">
                 <ResultRow label="Missed calls / month" value={fmt(missedCalls)} />
                 <ResultRow label="Revenue lost / month" value={`$${fmt(lostRevenue)}`} />
                 <ResultRow label="Recovered with First Touch" value={`$${fmt(recovered)}`} highlight />
 
-                <div className="p-8 rounded-xl bg-white/[0.03] border border-white/[0.04] text-center mt-4">
-                  <p className="label mb-3">Annual recovery</p>
+                <div className="p-8 rounded-xl bg-white/[0.04] border border-white/[0.06] text-center mt-4">
+                  <p className="text-[12px] text-white/45 font-light mb-3 tracking-wide uppercase">Annual recovery</p>
                   <p className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-[#D4BA82] to-[#C9A96E] bg-clip-text text-transparent">
                     ${fmt(annual)}
                   </p>
@@ -66,7 +66,7 @@ export function ROICalculator() {
                 </svg>
               </button>
 
-              <p className="text-[11px] text-white/15 mt-4 text-center font-light">
+              <p className="text-[11px] text-white/25 mt-4 text-center font-light">
                 Based on industry averages. Actual results vary.
               </p>
             </div>
@@ -81,8 +81,8 @@ function SliderInput({ label, value, onChange, min, max, step, prefix = '', suff
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <label className="text-[13px] text-white/30 font-light">{label}</label>
-        <span className="text-[14px] font-semibold text-white/80 tabular-nums">
+        <label className="text-[13px] text-white/50 font-light">{label}</label>
+        <span className="text-[14px] font-semibold text-white/90 tabular-nums">
           {prefix}{value.toLocaleString('en-US')}{suffix}
         </span>
       </div>
@@ -101,8 +101,8 @@ function SliderInput({ label, value, onChange, min, max, step, prefix = '', suff
 function ResultRow({ label, value, highlight }) {
   return (
     <div className="flex justify-between items-center">
-      <span className="text-[13px] text-white/30 font-light">{label}</span>
-      <span className={`text-lg font-semibold tabular-nums ${highlight ? 'text-[#B8965A]' : 'text-white/80'}`}>
+      <span className="text-[13px] text-white/45 font-light">{label}</span>
+      <span className={`text-lg font-semibold tabular-nums ${highlight ? 'text-[#C9A96E]' : 'text-white/90'}`}>
         {value}
       </span>
     </div>

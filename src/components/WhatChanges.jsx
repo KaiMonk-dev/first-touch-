@@ -29,16 +29,16 @@ const outcomes = [
 
 export function WhatChanges() {
   return (
-    <section id="results" className="relative py-40 md:py-52 px-6">
+    <section id="results" className="relative py-28 md:py-36 px-6">
       <div className="max-w-5xl mx-auto">
         <AnimatedSection>
           <div className="text-center mb-24">
             <p className="label mb-6">The results</p>
             <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9]">
-              <span className="text-white/90">What Changes</span>
+              <span className="text-white">What Changes</span>
               <br />
-              <span className="bg-gradient-to-b from-white/80 to-white/30 bg-clip-text text-transparent">When First Touch Runs.</span>
+              <span className="bg-gradient-to-b from-white/90 to-white/50 bg-clip-text text-transparent">When First Touch Runs.</span>
             </h2>
           </div>
         </AnimatedSection>
@@ -46,9 +46,9 @@ export function WhatChanges() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {outcomes.map((item, i) => (
             <AnimatedSection key={i} delay={i * 120}>
-              <div className="p-8 rounded-2xl glass card-hover group hover:bg-white/[0.04] h-full">
-                <h3 className="text-base font-semibold mb-3 text-white/90">{item.title}</h3>
-                <p className="text-[13px] text-white/30 leading-relaxed font-light">{item.desc}</p>
+              <div className="p-8 rounded-2xl liquid-glass card-hover group hover:bg-white/[0.05] h-full">
+                <h3 className="text-base font-semibold mb-3 text-white">{item.title}</h3>
+                <p className="text-sm text-white/50 leading-relaxed font-light">{item.desc}</p>
               </div>
             </AnimatedSection>
           ))}

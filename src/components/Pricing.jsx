@@ -50,9 +50,9 @@ export function Pricing() {
             <p className="label mb-6">Pricing</p>
             <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[0.9]">
-              <span className="text-white/90">Simple Pricing.</span>
+              <span className="text-white">Simple Pricing.</span>
               <br />
-              <span className="bg-gradient-to-b from-white/80 to-white/30 bg-clip-text text-transparent">Real Results.</span>
+              <span className="bg-gradient-to-b from-white/90 to-white/50 bg-clip-text text-transparent">Real Results.</span>
             </h2>
           </div>
         </AnimatedSection>
@@ -61,29 +61,29 @@ export function Pricing() {
           {plans.map((plan, i) => (
             <AnimatedSection key={i} delay={i * 200}>
               <div className={`h-full p-10 rounded-2xl transition-all duration-500 ${
-                plan.featured ? 'glass-strong' : 'glass'
+                plan.featured ? 'liquid-glass-strong liquid-shimmer' : 'liquid-glass'
               }`}>
                 {plan.featured && (
-                  <span className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-[#B8965A]/20 to-[#C9A96E]/20 border border-[#C9A96E]/20 text-[10px] font-medium tracking-wider uppercase text-[#B8965A] mb-6">
+                  <span className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-[#B8965A]/20 to-[#C9A96E]/20 border border-[#C9A96E]/25 text-[10px] font-medium tracking-wider uppercase text-[#C9A96E] mb-6">
                     Most Popular
                   </span>
                 )}
-                <h3 className="text-lg font-semibold mb-1 text-white/80">{plan.name}</h3>
+                <h3 className="text-lg font-semibold mb-1 text-white/90">{plan.name}</h3>
                 {plan.tagline && (
-                  <p className="text-[11px] text-[#B8965A]/60 font-light tracking-wide mb-3">{plan.tagline}</p>
+                  <p className="text-[11px] text-[#C9A96E]/70 font-light tracking-wide mb-3">{plan.tagline}</p>
                 )}
                 <div className="flex items-baseline gap-1 mb-10">
-                  <span className="text-5xl font-bold tracking-tight text-white/90">{plan.price}</span>
-                  <span className="text-white/20 text-sm font-light">{plan.period}</span>
+                  <span className="text-5xl font-bold tracking-tight text-white">{plan.price}</span>
+                  <span className="text-white/35 text-sm font-light">{plan.period}</span>
                 </div>
 
                 <ul className="space-y-4 mb-10">
                   {plan.features.map((feature, j) => (
                     <li key={j} className="flex items-start gap-3">
-                      <svg className="w-4 h-4 text-[#B8965A]/40 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <svg className="w-4 h-4 text-[#C9A96E]/60 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M20 6L9 17l-5-5" />
                       </svg>
-                      <span className="text-[13px] text-white/40 leading-relaxed font-light">{feature}</span>
+                      <span className="text-[13px] text-white/60 leading-relaxed font-light">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -93,7 +93,7 @@ export function Pricing() {
                   className={`w-full inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold text-[14px] transition-all duration-300 ${
                     plan.featured
                       ? 'bg-white text-black hover:bg-white/90 hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]'
-                      : 'glass hover:bg-white/[0.06] text-white/70'
+                      : 'liquid-glass hover:bg-white/[0.08] text-white/80'
                   }`}
                 >
                   {plan.cta}
@@ -104,7 +104,7 @@ export function Pricing() {
         </div>
 
         <AnimatedSection delay={500}>
-          <p className="text-center text-[12px] text-white/15 mt-10 font-light tracking-wide">
+          <p className="text-center text-[12px] text-white/30 mt-10 font-light tracking-wide">
             No contracts. 30-day money-back guarantee. Cancel anytime.
           </p>
         </AnimatedSection>
