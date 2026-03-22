@@ -3,9 +3,11 @@ import { LoadingScreen } from './components/LoadingScreen'
 import { ScrollProgress } from './components/ScrollProgress'
 import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
+import { ProofTicker } from './components/ProofTicker'
 import { SpeedProof } from './components/SpeedProof'
 import { MeetAlex } from './components/MeetAlex'
 import { HowItWorks } from './components/HowItWorks'
+import { DashboardPreview } from './components/DashboardPreview'
 import { TryAlex } from './components/TryAlex'
 import { ComparisonTable } from './components/ComparisonTable'
 import { ROICalculator } from './components/ROICalculator'
@@ -16,6 +18,7 @@ import { Footer } from './components/Footer'
 import { StickyMobileCTA } from './components/StickyMobileCTA'
 import { ExitIntent } from './components/ExitIntent'
 import { BackToTop } from './components/BackToTop'
+import { ROIDrawer } from './components/ROIDrawer'
 
 function App() {
   return (
@@ -26,9 +29,11 @@ function App() {
         <Nav />
         <main>
           <Hero />
+          <ProofTicker />
           <SpeedProof />
           <MeetAlex />
           <HowItWorks />
+          <DashboardPreview />
           <TryAlex />
           <ComparisonTable />
           <ROICalculator />
@@ -40,6 +45,7 @@ function App() {
         <StickyMobileCTA />
         <ExitIntent />
         <BackToTop />
+        <ROIDrawer />
       </div>
     </CalendlyProvider>
   )
