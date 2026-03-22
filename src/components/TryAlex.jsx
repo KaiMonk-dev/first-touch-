@@ -1,26 +1,85 @@
 import { useState, useRef, useEffect } from 'react'
 import { AnimatedSection } from './AnimatedSection'
 
-// Replace this URL with your real Alex call recording
+// Set to true and provide URL when you have a real Alex call recording
+const HAS_DEMO = false
 const DEMO_AUDIO_URL = '/alex-demo.mp3'
 
 export function TryAlex() {
+  if (HAS_DEMO) return <AudioDemoVersion />
+  return <PhoneDemoVersion />
+}
+
+function PhoneDemoVersion() {
+  return (
+    <section className="relative py-28 md:py-36 px-6">
+      <div className="max-w-3xl mx-auto text-center">
+        <AnimatedSection>
+          <p className="label mb-6">Experience it</p>
+          <div className="divider-line mb-16" />
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9] mb-6">
+            <span className="text-white">Hear It</span>
+            <br />
+            <span className="bg-gradient-to-b from-white/90 to-white/50 bg-clip-text text-transparent">For Yourself.</span>
+          </h2>
+          <p className="text-base text-white/50 mb-16 font-light">
+            Real AI. Real conversation. Call and experience Alex firsthand.
+          </p>
+        </AnimatedSection>
+
+        <AnimatedSection delay={300}>
+          <a href="tel:+18584347041" className="inline-block group">
+            <div className="relative rounded-3xl liquid-glass-strong p-12 md:p-16 hover:bg-white/[0.06] transition-all duration-500 liquid-shimmer">
+              <div className="absolute inset-0 rounded-3xl bg-[radial-gradient(ellipse_at_center,rgba(201,169,110,0.04),transparent_70%)] pointer-events-none" />
+
+              <div className="relative">
+                {/* Animated waveform visual */}
+                <div className="flex items-center justify-center gap-[3px] h-16 mb-10">
+                  {Array.from({ length: 24 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-[2.5px] rounded-full bg-gradient-to-t from-[#C9A96E]/20 to-[#C9A96E]/40"
+                      style={{
+                        height: `${20 + Math.sin(i * 0.6) * 40 + Math.cos(i * 0.3) * 20}%`,
+                        animation: `waveIdle ${1.5 + i * 0.1}s ease-in-out infinite alternate`,
+                        animationDelay: `${i * 0.05}s`,
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Phone icon */}
+                <div className="flex items-center justify-center mb-6">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#B8965A] to-[#C9A96E] flex items-center justify-center shadow-[0_0_50px_rgba(201,169,110,0.25)] group-hover:shadow-[0_0_70px_rgba(201,169,110,0.4)] transition-shadow duration-500">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <p className="text-3xl md:text-4xl font-bold tracking-tight mb-3 text-white/90">
+                  +1 (858) 434-7041
+                </p>
+                <p className="text-[13px] text-white/35 font-light">
+                  Alex answers instantly — try it yourself
+                </p>
+              </div>
+            </div>
+          </a>
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
+function AudioDemoVersion() {
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
-  const [hasAudio, setHasAudio] = useState(false)
   const audioRef = useRef(null)
   const barsRef = useRef(new Array(28).fill(0))
   const animRef = useRef(null)
 
-  // Check if audio file exists
-  useEffect(() => {
-    fetch(DEMO_AUDIO_URL, { method: 'HEAD' })
-      .then(r => { if (r.ok) setHasAudio(true) })
-      .catch(() => {})
-  }, [])
-
-  // Simulated waveform animation when playing
   useEffect(() => {
     if (!playing) {
       barsRef.current = new Array(28).fill(0)
@@ -50,63 +109,12 @@ export function TryAlex() {
     }
   }
 
-  const onTimeUpdate = () => {
-    if (!audioRef.current) return
-    setProgress(audioRef.current.currentTime / audioRef.current.duration * 100)
-  }
-
   const formatTime = (s) => {
     const m = Math.floor(s / 60)
     const sec = Math.floor(s % 60)
     return `${m}:${sec.toString().padStart(2, '0')}`
   }
 
-  // If no audio file, show call-only version
-  if (!hasAudio) {
-    return (
-      <section className="relative py-28 md:py-36 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <AnimatedSection>
-            <p className="label mb-6">Experience it</p>
-            <div className="divider-line mb-16" />
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9] mb-6">
-              <span className="text-white">Hear It</span>
-              <br />
-              <span className="bg-gradient-to-b from-white/90 to-white/50 bg-clip-text text-transparent">For Yourself.</span>
-            </h2>
-            <p className="text-base text-white/50 mb-16 font-light">
-              Real AI. Real conversation. No scripts.
-            </p>
-          </AnimatedSection>
-
-          <AnimatedSection delay={300}>
-            <a href="tel:+18584347041" className="inline-block group">
-              <div className="relative rounded-3xl liquid-glass-strong p-14 md:p-20 hover:bg-white/[0.06] transition-all duration-500 liquid-shimmer">
-                <div className="absolute inset-0 rounded-3xl bg-[radial-gradient(ellipse_at_center,rgba(201,169,110,0.04),transparent_70%)] pointer-events-none" />
-                <div className="relative">
-                  <div className="flex items-center justify-center mb-8">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#B8965A] to-[#C9A96E] flex items-center justify-center shadow-[0_0_60px_rgba(201,169,110,0.25)] group-hover:shadow-[0_0_80px_rgba(201,169,110,0.4)] transition-shadow duration-500">
-                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <p className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white/90">
-                    +1 (858) 434-7041
-                  </p>
-                  <p className="text-[13px] text-white/35 font-light">
-                    Alex answers instantly — try it yourself
-                  </p>
-                </div>
-              </div>
-            </a>
-          </AnimatedSection>
-        </div>
-      </section>
-    )
-  }
-
-  // Full audio player version (when demo file exists)
   return (
     <section className="relative py-28 md:py-36 px-6">
       <div className="max-w-3xl mx-auto text-center">
@@ -130,13 +138,12 @@ export function TryAlex() {
             <audio
               ref={audioRef}
               src={DEMO_AUDIO_URL}
-              onTimeUpdate={onTimeUpdate}
+              onTimeUpdate={() => setProgress((audioRef.current?.currentTime / audioRef.current?.duration) * 100)}
               onLoadedMetadata={() => setDuration(audioRef.current.duration)}
               onEnded={() => { setPlaying(false); setProgress(0) }}
             />
 
             <div className="relative">
-              {/* Waveform */}
               <div className="flex items-center justify-center gap-[3px] h-20 mb-8">
                 {barsRef.current.map((level, i) => (
                   <div
@@ -152,7 +159,6 @@ export function TryAlex() {
                 ))}
               </div>
 
-              {/* Play button + progress */}
               <div className="flex items-center gap-5 mb-6">
                 <button
                   onClick={togglePlay}
@@ -188,15 +194,9 @@ export function TryAlex() {
                 </div>
               </div>
 
-              {/* Call CTA */}
               <div className="pt-6 border-t border-white/[0.04]">
-                <p className="text-[11px] text-white/30 font-light mb-3">
-                  Want to try it yourself?
-                </p>
-                <a
-                  href="tel:+18584347041"
-                  className="inline-flex items-center gap-2 text-lg font-bold tracking-tight text-white/80 hover:text-white transition-colors"
-                >
+                <p className="text-[11px] text-white/30 font-light mb-3">Want to try it yourself?</p>
+                <a href="tel:+18584347041" className="inline-flex items-center gap-2 text-lg font-bold tracking-tight text-white/80 hover:text-white transition-colors">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                   </svg>

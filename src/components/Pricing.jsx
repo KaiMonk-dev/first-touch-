@@ -143,33 +143,59 @@ export function Pricing() {
 
 function PricingCard({ plan, delay, onBook }) {
   const [priceRef, animatedPrice] = useCounter(plan.price || 0, 1200)
+  const cardRef = useRef(null)
+  const [tilt, setTilt] = useState({ x: 0, y: 0 })
+
+  // Interactive tilt for featured (Pro) card
+  const handleMouseMove = (e) => {
+    if (plan.tier !== 'featured') return
+    const rect = cardRef.current?.getBoundingClientRect()
+    if (!rect) return
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -8
+    setTilt({ x, y })
+  }
+
+  const handleMouseLeave = () => setTilt({ x: 0, y: 0 })
+
+  const badges = {
+    standard: { label: 'Starter', className: 'bg-white/5 border border-white/10 text-white/50' },
+    featured: { label: 'Most Popular', className: 'bg-gradient-to-r from-[#B8965A]/20 to-[#C9A96E]/20 border border-[#C9A96E]/25 text-[#C9A96E]' },
+    enterprise: { label: 'Enterprise', className: 'bg-white/5 border border-white/10 text-white/60' },
+  }
+
+  const badge = badges[plan.tier]
 
   return (
     <AnimatedSection delay={delay}>
       <div
-        ref={priceRef}
-        className={`h-full p-9 rounded-2xl transition-all duration-500 flex flex-col ${
+        ref={(el) => { cardRef.current = el; if (priceRef.current === null) priceRef.current = el }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className={`h-full p-9 rounded-2xl flex flex-col ${
           plan.tier === 'featured'
             ? 'liquid-glass-strong liquid-shimmer'
             : plan.tier === 'enterprise'
             ? 'liquid-glass-strong relative overflow-hidden'
             : 'liquid-glass'
         }`}
+        style={{
+          transform: plan.tier === 'featured'
+            ? `perspective(800px) rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`
+            : undefined,
+          transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease',
+          boxShadow: plan.tier === 'featured' && (tilt.x !== 0 || tilt.y !== 0)
+            ? '0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(201,169,110,0.08)'
+            : undefined,
+        }}
       >
         {plan.tier === 'enterprise' && (
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#C9A96E]/50 to-transparent" />
         )}
 
-        {plan.tier === 'featured' && (
-          <span className="inline-block self-start px-3 py-1 rounded-full bg-gradient-to-r from-[#B8965A]/20 to-[#C9A96E]/20 border border-[#C9A96E]/25 text-[10px] font-medium tracking-wider uppercase text-[#C9A96E] mb-5">
-            Most Popular
-          </span>
-        )}
-        {plan.tier === 'enterprise' && (
-          <span className="inline-block self-start px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-medium tracking-wider uppercase text-white/60 mb-5">
-            Enterprise
-          </span>
-        )}
+        <span className={`inline-block self-start px-3 py-1 rounded-full text-[10px] font-medium tracking-wider uppercase mb-5 ${badge.className}`}>
+          {badge.label}
+        </span>
 
         <h3 className="text-lg font-semibold mb-1 text-white/90">{plan.name}</h3>
         {plan.tagline && (

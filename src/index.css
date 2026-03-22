@@ -233,6 +233,12 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 15px rgba(201, 169, 110, 0.3);
 }
 
+/* Idle waveform animation */
+@keyframes waveIdle {
+  0% { transform: scaleY(0.6); }
+  100% { transform: scaleY(1.2); }
+}
+
 /* Smooth reveal animation */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px); filter: blur(4px); }

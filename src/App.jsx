@@ -18,7 +18,6 @@ import { Footer } from './components/Footer'
 import { StickyMobileCTA } from './components/StickyMobileCTA'
 import { ExitIntent } from './components/ExitIntent'
 import { BackToTop } from './components/BackToTop'
-import { ROIDrawer } from './components/ROIDrawer'
 
 function App() {
   return (
@@ -45,7 +44,6 @@ function App() {
         <StickyMobileCTA />
         <ExitIntent />
         <BackToTop />
-        <ROIDrawer />
       </div>
     </CalendlyProvider>
   )
