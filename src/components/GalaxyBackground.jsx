@@ -12,144 +12,138 @@ export function GalaxyBackground() {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     let animId
+
+    // Star layers — seeded randomly but deterministic per position
+    const STAR_SEED = 42
     let stars = []
+    let constellations = []
+    let gasClouds = []
     let shootingStars = []
-    let nebulae = []
-    let auroraWisps = []
+    let comets = []
+    let supernovae = []
     let stellarBirths = []
+
+    function seededRandom(seed) {
+      let s = seed
+      return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646 }
+    }
 
     const resize = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
-      if (stars.length === 0) initAll()
     }
 
-    // Draw a 4-point diffraction spike (cross) for bright stars
-    function drawDiffractionSpikes(x, y, size, opacity, color) {
-      ctx.save()
-      ctx.globalAlpha = opacity * 0.3
-      ctx.strokeStyle = `rgb(${color.r}, ${color.g}, ${color.b})`
-      ctx.lineWidth = 0.5
-      // Horizontal spike
-      ctx.beginPath()
-      ctx.moveTo(x - size, y)
-      ctx.lineTo(x + size, y)
-      ctx.stroke()
-      // Vertical spike
-      ctx.beginPath()
-      ctx.moveTo(x, y - size)
-      ctx.lineTo(x, y + size)
-      ctx.stroke()
-      ctx.restore()
-    }
+    function initGalaxy() {
+      const rng = seededRandom(STAR_SEED)
+      const W = canvas.width
+      const H = canvas.height
 
-    function initAll() {
-      const pageH = Math.max(document.documentElement.scrollHeight, 6000)
-      const count = Math.min(Math.floor((canvas.width * pageH) / 5500), 550)
-
+      // --- STARS: spread across a large virtual sky (4x viewport) ---
       stars = []
-      for (let i = 0; i < count; i++) {
-        const layer = Math.random()
+      const totalStars = 800
+      for (let i = 0; i < totalStars; i++) {
+        const depth = rng() // 0=far, 1=near
+        const layer = depth < 0.55 ? 0 : depth < 0.85 ? 1 : 2
+
+        // Spectral color based on temperature
+        const temp = rng()
+        let color
+        if (layer === 2) {
+          // Bright foreground — vivid colors
+          if (temp < 0.2) color = { r: 255, g: 180, b: 130 }      // orange giant
+          else if (temp < 0.35) color = { r: 160, g: 190, b: 255 } // blue giant
+          else if (temp < 0.45) color = { r: 255, g: 220, b: 235 } // pink
+          else if (temp < 0.55) color = { r: 200, g: 255, b: 230 } // green-white
+          else color = { r: 255, g: 250, b: 230 }                  // warm white
+        } else if (layer === 1) {
+          if (temp < 0.3) color = { r: 190, g: 210, b: 255 }
+          else if (temp < 0.5) color = { r: 255, g: 225, b: 200 }
+          else color = { r: 235, g: 240, b: 250 }
+        } else {
+          color = { r: 200 + rng() * 40, g: 205 + rng() * 40, b: 220 + rng() * 30 }
+        }
+
         stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * pageH,
-          r: layer < 0.6 ? Math.random() * 0.6 + 0.15 :
-              layer < 0.9 ? Math.random() * 1.0 + 0.3 :
-              Math.random() * 1.8 + 0.8,
-          baseOpacity: layer < 0.6 ? Math.random() * 0.35 + 0.08 :
-                       layer < 0.9 ? Math.random() * 0.5 + 0.2 :
-                       Math.random() * 0.7 + 0.35,
-          // Slower, gentler twinkle
-          twinkleSpeed: Math.random() * 0.008 + 0.002,
-          twinkleOffset: Math.random() * Math.PI * 2,
-          parallaxFactor: layer < 0.6 ? 4 : layer < 0.9 ? 12 : 25,
+          // Position in virtual sky (wraps with scroll)
+          vx: rng() * W,
+          vy: rng() * H * 4,
+          r: layer === 0 ? rng() * 0.7 + 0.15 :
+             layer === 1 ? rng() * 1.2 + 0.4 :
+             rng() * 2.0 + 0.8,
+          baseOpacity: layer === 0 ? rng() * 0.35 + 0.08 :
+                       layer === 1 ? rng() * 0.5 + 0.2 :
+                       rng() * 0.65 + 0.35,
+          twinkleSpeed: rng() * 0.006 + 0.001,
+          twinklePhase: rng() * Math.PI * 2,
           layer,
-          dx: (Math.random() - 0.5) * 0.03,
-          dy: (Math.random() - 0.5) * 0.015,
-          // Much rarer, gentler flicker
-          flickerChance: layer > 0.92 ? 0.0004 : 0,
-          flickerIntensity: 0,
-          color: (() => {
-            const colorType = Math.random()
-            if (layer > 0.88) {
-              // Bright stars — variety of spectral colors
-              if (colorType < 0.3) return { r: 255, g: 200, b: 150 } // warm orange
-              if (colorType < 0.5) return { r: 180, g: 200, b: 255 } // cool blue
-              if (colorType < 0.65) return { r: 255, g: 230, b: 240 } // soft pink
-              return { r: 255, g: 248, b: 220 } // warm white
-            }
-            if (layer > 0.6) {
-              if (colorType < 0.25) return { r: 200, g: 215, b: 255 } // blue-white
-              if (colorType < 0.4) return { r: 255, g: 220, b: 200 } // peach
-              return { r: 230 + Math.random() * 25, g: 235 + Math.random() * 20, b: 245 } // cool neutral
-            }
-            return { r: 200 + Math.random() * 40, g: 205 + Math.random() * 40, b: 220 + Math.random() * 35 }
-          })(),
-          // Diffraction spikes for the very brightest
-          hasSpikes: layer > 0.93,
-          hasTrail: layer > 0.95 && Math.random() > 0.6,
-          trail: [],
+          parallax: layer === 0 ? 0.02 : layer === 1 ? 0.08 : 0.18,
+          color,
+          hasSpikes: layer === 2 && rng() > 0.4,
+          drift: { x: (rng() - 0.5) * 0.02, y: (rng() - 0.5) * 0.01 },
         })
       }
 
-      const pageHCalc = pageH
-      nebulae = [
-        // Hero — warm gold cluster
-        { x: canvas.width * 0.35, y: pageHCalc * 0.03, w: 650, h: 450, color: [201, 169, 110], opacity: 0.035, phase: 0 },
-        { x: canvas.width * 0.7, y: pageHCalc * 0.05, w: 400, h: 350, color: [220, 170, 130], opacity: 0.02, phase: 1.5 },
-        // Blue-purple nebula mid-page
-        { x: canvas.width * 0.15, y: pageHCalc * 0.22, w: 550, h: 400, color: [80, 120, 210], opacity: 0.02, phase: 3 },
-        { x: canvas.width * 0.8, y: pageHCalc * 0.3, w: 500, h: 350, color: [160, 100, 200], opacity: 0.018, phase: 4.5 },
-        // Teal/emerald accent
-        { x: canvas.width * 0.4, y: pageHCalc * 0.42, w: 400, h: 300, color: [80, 180, 160], opacity: 0.012, phase: 5.5 },
-        // Warm gold pricing area
-        { x: canvas.width * 0.5, y: pageHCalc * 0.58, w: 750, h: 450, color: [201, 169, 110], opacity: 0.025, phase: 6 },
-        // Rose/pink accent
-        { x: canvas.width * 0.2, y: pageHCalc * 0.7, w: 450, h: 350, color: [200, 130, 160], opacity: 0.015, phase: 7 },
-        // Deep blue footer
-        { x: canvas.width * 0.65, y: pageHCalc * 0.85, w: 600, h: 350, color: [70, 100, 180], opacity: 0.018, phase: 8.5 },
-      ]
+      // --- CONSTELLATIONS: groups of connected stars ---
+      constellations = []
+      for (let c = 0; c < 12; c++) {
+        const cx = rng() * W
+        const cy = rng() * H * 4
+        const count = 3 + Math.floor(rng() * 4)
+        const points = []
+        for (let p = 0; p < count; p++) {
+          points.push({
+            x: cx + (rng() - 0.5) * 200,
+            y: cy + (rng() - 0.5) * 150,
+          })
+        }
+        // Connect sequentially
+        const lines = []
+        for (let l = 0; l < points.length - 1; l++) {
+          lines.push([l, l + 1])
+        }
+        // Occasional extra connection
+        if (rng() > 0.5 && points.length > 3) {
+          lines.push([0, Math.floor(rng() * (points.length - 2)) + 2])
+        }
+        constellations.push({ points, lines, parallax: 0.06 })
+      }
 
-      auroraWisps = []
-      const wispColors = [
-        [201, 169, 110], [130, 155, 210], [165, 135, 195],
-        [100, 170, 160], [190, 150, 120],
+      // --- GAS CLOUDS: large diffuse color regions ---
+      gasClouds = []
+      const cloudColors = [
+        [201, 169, 110], [80, 120, 210], [160, 100, 200],
+        [80, 180, 160], [200, 130, 160], [220, 170, 130],
+        [100, 150, 200], [180, 140, 200], [150, 200, 180],
+        [200, 160, 120], [120, 100, 180], [70, 140, 170],
       ]
-      for (let i = 0; i < 5; i++) {
-        auroraWisps.push({
-          x: Math.random() * canvas.width * 2 - canvas.width * 0.5,
-          y: Math.random() * pageH,
-          width: 250 + Math.random() * 400,
-          height: 30 + Math.random() * 50,
-          color: wispColors[i],
-          opacity: 0.005 + Math.random() * 0.005,
-          speed: 0.08 + Math.random() * 0.08,
-          angle: Math.random() * Math.PI * 0.2 - 0.1,
-          phase: Math.random() * Math.PI * 2,
+      for (let g = 0; g < 18; g++) {
+        gasClouds.push({
+          x: rng() * W,
+          y: rng() * H * 4,
+          w: 300 + rng() * 500,
+          h: 200 + rng() * 350,
+          color: cloudColors[g % cloudColors.length],
+          opacity: 0.012 + rng() * 0.025,
+          phase: rng() * Math.PI * 2,
+          parallax: 0.03 + rng() * 0.04,
+          rotation: (rng() - 0.5) * 0.3,
         })
       }
     }
 
     resize()
+    initGalaxy()
 
-    const onResize = () => resize()
+    const onResize = () => { resize(); initGalaxy() }
     const onMove = (e) => {
       mouseRef.current = { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight }
       lastMoveRef.current = Date.now()
     }
-    let scrollVelocity = 0
-    let lastScrollY = 0
-    const onScroll = () => {
-      const newY = window.scrollY
-      scrollVelocity = newY - lastScrollY
-      lastScrollY = newY
-      scrollRef.current = newY
-    }
+    const onScroll = () => { scrollRef.current = window.scrollY }
     const onClick = (e) => {
       clickRipples.current.push({
         x: e.clientX, y: e.clientY,
-        radius: 0, maxRadius: 250 + Math.random() * 150,
-        life: 1, decay: 0.015,
+        radius: 0, life: 1, decay: 0.012,
       })
     }
 
@@ -159,288 +153,290 @@ export function GalaxyBackground() {
     window.addEventListener('click', onClick, { passive: true })
 
     let lastShootingStar = 0
-    let lastStellarBirth = 0
+    let lastComet = 0
+    let lastSupernova = 0
+    let lastBirth = 0
 
+    // --- DIFFRACTION SPIKES ---
+    function drawSpikes(x, y, size, opacity, color) {
+      ctx.save()
+      ctx.globalAlpha = opacity * 0.25
+      ctx.strokeStyle = `rgb(${color.r}, ${color.g}, ${color.b})`
+      ctx.lineWidth = 0.5
+      ctx.beginPath(); ctx.moveTo(x - size, y); ctx.lineTo(x + size, y); ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(x, y - size); ctx.lineTo(x, y + size); ctx.stroke()
+      // Diagonal spikes (fainter)
+      ctx.globalAlpha = opacity * 0.1
+      const d = size * 0.6
+      ctx.beginPath(); ctx.moveTo(x - d, y - d); ctx.lineTo(x + d, y + d); ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(x + d, y - d); ctx.lineTo(x - d, y + d); ctx.stroke()
+      ctx.restore()
+    }
+
+    // --- MAIN LOOP ---
     const draw = (timestamp) => {
       const time = timestamp || 0
-      const viewTop = scrollRef.current
-      const viewBottom = viewTop + window.innerHeight
+      const scroll = scrollRef.current
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
       const mouseXpx = mx * canvas.width
       const mouseYpx = my * canvas.height
       const idleTime = (Date.now() - lastMoveRef.current) / 1000
       const isIdle = idleTime > 3
-      // Smooth scroll velocity decay
-      const sVel = scrollVelocity
-      scrollVelocity *= 0.92
+      const W = canvas.width
+      const H = canvas.height
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, W, H)
 
-      // --- Nebulae ---
-      nebulae.forEach((n) => {
-        if (n.y + n.h < viewTop - 300 || n.y - n.h > viewBottom + 300) return
-        const ny = n.y - viewTop
-        const pulse = 1 + Math.sin(time * 0.00025 + n.phase) * 0.15
-        const breathe = isIdle ? 1 + Math.sin(time * 0.0006) * 0.08 : 1
-        const grad = ctx.createRadialGradient(n.x, ny, 0, n.x, ny, n.w * pulse * breathe * 0.5)
-        grad.addColorStop(0, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${n.opacity * pulse})`)
-        grad.addColorStop(0.4, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${n.opacity * 0.2})`)
-        grad.addColorStop(1, 'transparent')
-        ctx.fillStyle = grad
-        ctx.fillRect(n.x - n.w, ny - n.h, n.w * 2, n.h * 2)
-      })
+      // --- GAS CLOUDS (behind everything) ---
+      gasClouds.forEach((g) => {
+        const gy = ((g.y - scroll * g.parallax) % (H * 4) + H * 4) % (H * 4)
+        const screenY = gy - H * 1.5
+        if (screenY < -g.h || screenY > H + g.h) return
 
-      // --- Aurora wisps ---
-      auroraWisps.forEach((w) => {
-        w.x += w.speed
-        w.phase += 0.002
-        if (w.x > canvas.width + w.width) w.x = -w.width * 1.5
-
-        const wy = w.y - viewTop
-        if (wy < -w.height * 3 || wy > canvas.height + w.height * 3) return
-
-        const waveY = wy + Math.sin(w.phase) * 25
-        const pulse = 0.6 + Math.sin(time * 0.0004 + w.phase) * 0.4
+        const pulse = 1 + Math.sin(time * 0.0002 + g.phase) * 0.15
+        const breathe = isIdle ? 1 + Math.sin(time * 0.0005) * 0.08 : 1
 
         ctx.save()
-        ctx.translate(w.x + w.width / 2, waveY)
-        ctx.rotate(w.angle + Math.sin(time * 0.0002) * 0.02)
-        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, w.width * 0.5)
-        grad.addColorStop(0, `rgba(${w.color[0]}, ${w.color[1]}, ${w.color[2]}, ${w.opacity * pulse})`)
+        ctx.translate(g.x, screenY)
+        ctx.rotate(g.rotation + Math.sin(time * 0.00008 + g.phase) * 0.02)
+        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, g.w * pulse * breathe * 0.5)
+        grad.addColorStop(0, `rgba(${g.color[0]}, ${g.color[1]}, ${g.color[2]}, ${g.opacity * pulse})`)
+        grad.addColorStop(0.35, `rgba(${g.color[0]}, ${g.color[1]}, ${g.color[2]}, ${g.opacity * 0.3})`)
+        grad.addColorStop(0.7, `rgba(${g.color[0]}, ${g.color[1]}, ${g.color[2]}, ${g.opacity * 0.05})`)
         grad.addColorStop(1, 'transparent')
         ctx.fillStyle = grad
-        ctx.scale(1, w.height / w.width)
-        ctx.fillRect(-w.width * 0.5, -w.width * 0.5, w.width, w.width)
+        ctx.scale(1, g.h / g.w)
+        ctx.fillRect(-g.w, -g.w, g.w * 2, g.w * 2)
         ctx.restore()
       })
 
-      // --- Stars ---
+      // --- STARS ---
       stars.forEach((s) => {
-        s.x += s.dx
-        s.y += s.dy
-        if (s.x < -30) s.x = canvas.width + 30
-        if (s.x > canvas.width + 30) s.x = -30
+        s.vx += s.drift.x
+        s.vy += s.drift.y
 
-        const pageY = s.y + (0.5 - my) * s.parallaxFactor
-        if (pageY < viewTop - 50 || pageY > viewBottom + 50) return
+        // Wrap position in virtual sky — scroll moves the view window
+        const sy = ((s.vy - scroll * s.parallax) % (H * 4) + H * 4) % (H * 4)
+        const screenY = sy - H * 1.5
+        if (screenY < -20 || screenY > H + 20) return
 
-        // Scroll velocity creates horizontal drift — far stars drift more
-        const scrollDrift = sVel * s.parallaxFactor * 0.008
-        const sx = s.x + (0.5 - mx) * s.parallaxFactor + scrollDrift
-        const sy = pageY - viewTop
+        const sx = ((s.vx + (0.5 - mx) * s.parallax * 200) % W + W) % W
 
-        // Smooth, slow twinkle (no harsh flashing)
-        const twinkle = Math.sin(time * s.twinkleSpeed + s.twinkleOffset)
-        const twinkle2 = Math.sin(time * s.twinkleSpeed * 0.7 + s.twinkleOffset * 1.3)
-        // Gentle flicker (very rare, soft)
-        if (s.flickerChance > 0 && Math.random() < s.flickerChance) {
-          s.flickerIntensity = 0.3 + Math.random() * 0.2
-        }
-        s.flickerIntensity *= 0.98
+        // Smooth twinkle
+        const t1 = Math.sin(time * s.twinkleSpeed + s.twinklePhase)
+        const t2 = Math.sin(time * s.twinkleSpeed * 0.6 + s.twinklePhase * 1.4)
+        let o = s.baseOpacity * (0.7 + 0.3 * (t1 * 0.6 + t2 * 0.4))
 
-        let baseO = s.baseOpacity * (0.75 + 0.25 * (twinkle * 0.6 + twinkle2 * 0.4)) + s.flickerIntensity * 0.3
-        if (isIdle) baseO *= 1 + Math.min(idleTime - 3, 5) * 0.04
+        if (isIdle) o *= 1 + Math.min(idleTime - 3, 4) * 0.05
 
-        // Cursor proximity
-        const dist = Math.sqrt((sx - mouseXpx) ** 2 + (sy - mouseYpx) ** 2)
-        const proxBoost = Math.max(0, 1 - dist / 250) * 0.4
-        const o = Math.min(0.95, baseO + proxBoost)
-        const rScale = 1 + proxBoost * 0.3
+        // Cursor illumination — STRONGER effect
+        const dist = Math.sqrt((sx - mouseXpx) ** 2 + (screenY - mouseYpx) ** 2)
+        const proxBoost = Math.max(0, 1 - dist / 300) * 0.6
+        o = Math.min(1, o + proxBoost)
+        const rScale = 1 + proxBoost * 0.4
 
         // Click ripple
-        let rippleBoost = 0
         clickRipples.current.forEach((rp) => {
-          const rd = Math.sqrt((sx - rp.x) ** 2 + (sy - rp.y) ** 2)
-          if (Math.abs(rd - rp.radius) < 50) rippleBoost += rp.life * 0.3
+          const rd = Math.sqrt((sx - rp.x) ** 2 + (screenY - rp.y) ** 2)
+          if (Math.abs(rd - rp.radius) < 50) o = Math.min(1, o + rp.life * 0.35)
         })
 
-        const finalO = Math.min(0.95, o + rippleBoost)
-
-        // Trail
-        if (s.hasTrail) {
-          s.trail.push({ x: sx, y: sy, o: finalO * 0.2 })
-          if (s.trail.length > 10) s.trail.shift()
-          for (let ti = 0; ti < s.trail.length; ti++) {
-            const t = s.trail[ti]
-            const trailO = t.o * (ti / s.trail.length) * 0.3
-            ctx.beginPath()
-            ctx.arc(t.x, t.y, s.r * 0.4, 0, Math.PI * 2)
-            ctx.fillStyle = `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, ${trailO})`
-            ctx.fill()
-          }
-        }
-
-        // Soft glow halo for brighter stars
-        if (s.layer > 0.7) {
-          const glowR = s.r * (10 + proxBoost * 10)
-          const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, glowR)
-          grad.addColorStop(0, `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, ${finalO * 0.35})`)
-          grad.addColorStop(0.3, `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, ${finalO * 0.08})`)
+        // Glow halo
+        if (s.layer >= 1 && o > 0.15) {
+          const glowR = s.r * (10 + proxBoost * 12)
+          const grad = ctx.createRadialGradient(sx, screenY, 0, sx, screenY, glowR)
+          grad.addColorStop(0, `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, ${o * 0.4})`)
+          grad.addColorStop(0.3, `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, ${o * 0.08})`)
           grad.addColorStop(1, 'transparent')
           ctx.fillStyle = grad
-          ctx.fillRect(sx - glowR, sy - glowR, glowR * 2, glowR * 2)
+          ctx.fillRect(sx - glowR, screenY - glowR, glowR * 2, glowR * 2)
         }
 
-        // Diffraction spikes for the brightest stars
-        if (s.hasSpikes && finalO > 0.3) {
-          const spikeLen = s.r * (6 + proxBoost * 8)
-          drawDiffractionSpikes(sx, sy, spikeLen, finalO, s.color)
+        // Diffraction spikes
+        if (s.hasSpikes && o > 0.3) {
+          drawSpikes(sx, screenY, s.r * (5 + proxBoost * 8), o, s.color)
         }
 
-        // Core dot
+        // Core
         ctx.beginPath()
-        ctx.arc(sx, sy, s.r * rScale, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, ${finalO})`
+        ctx.arc(sx, screenY, s.r * rScale, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, ${o})`
         ctx.fill()
       })
 
-      // --- Constellation lines ---
-      const brightStars = stars
-        .filter(s => s.layer > 0.82)
-        .map(s => ({
-          x: s.x + (0.5 - mx) * s.parallaxFactor,
-          y: (s.y + (0.5 - my) * s.parallaxFactor) - viewTop,
-          pageY: s.y + (0.5 - my) * s.parallaxFactor,
+      // --- CONSTELLATIONS ---
+      constellations.forEach((c) => {
+        const screenPoints = c.points.map(p => ({
+          x: ((p.x + (0.5 - mx) * c.parallax * 200) % W + W) % W,
+          y: ((p.y - scroll * c.parallax) % (H * 4) + H * 4) % (H * 4) - H * 1.5,
         }))
-        .filter(s => s.pageY > viewTop - 50 && s.pageY < viewBottom + 50)
 
-      for (let i = 0; i < brightStars.length; i++) {
-        for (let j = i + 1; j < brightStars.length; j++) {
-          const a = brightStars[i], b = brightStars[j]
-          const d = Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
-          if (d < 140) {
-            const aDist = Math.sqrt((a.x - mouseXpx) ** 2 + (a.y - mouseYpx) ** 2)
-            const bDist = Math.sqrt((b.x - mouseXpx) ** 2 + (b.y - mouseYpx) ** 2)
-            if (aDist < 280 || bDist < 280) {
-              ctx.beginPath()
-              ctx.moveTo(a.x, a.y)
-              ctx.lineTo(b.x, b.y)
-              ctx.strokeStyle = `rgba(201, 169, 110, ${(1 - d / 140) * 0.06})`
-              ctx.lineWidth = 0.4
-              ctx.stroke()
-            }
-          }
+        // Check if any point is on screen
+        const anyVisible = screenPoints.some(p => p.y > -50 && p.y < H + 50)
+        if (!anyVisible) return
+
+        // Only show lines near cursor
+        const nearCursor = screenPoints.some(p => {
+          const d = Math.sqrt((p.x - mouseXpx) ** 2 + (p.y - mouseYpx) ** 2)
+          return d < 350
+        })
+
+        if (nearCursor) {
+          c.lines.forEach(([a, b]) => {
+            const pa = screenPoints[a], pb = screenPoints[b]
+            if (!pa || !pb) return
+            ctx.beginPath()
+            ctx.moveTo(pa.x, pa.y)
+            ctx.lineTo(pb.x, pb.y)
+            ctx.strokeStyle = 'rgba(201, 169, 110, 0.06)'
+            ctx.lineWidth = 0.4
+            ctx.stroke()
+          })
         }
-      }
+      })
 
-      // --- Click ripples ---
+      // --- CLICK RIPPLES ---
       clickRipples.current = clickRipples.current.filter(r => r.life > 0)
       clickRipples.current.forEach((r) => {
-        r.radius += 3.5
+        r.radius += 3
         r.life -= r.decay
         ctx.beginPath()
         ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2)
-        ctx.strokeStyle = `rgba(201, 169, 110, ${r.life * 0.12})`
+        ctx.strokeStyle = `rgba(201, 169, 110, ${r.life * 0.1})`
         ctx.lineWidth = 1 * r.life
         ctx.stroke()
       })
 
-      // --- Shooting stars (longer trails, more dramatic) ---
-      // Fast scroll triggers extra shooting stars
-      if (Math.abs(sVel) > 30 && time - lastShootingStar > 800) {
-        lastShootingStar = time
-        const startX = Math.random() * canvas.width
-        const startY = Math.random() * canvas.height * 0.3
-        const angle = sVel > 0 ? Math.PI * 0.15 + Math.random() * 0.2 : Math.PI * 0.65 + Math.random() * 0.2
-        shootingStars.push({
-          x: startX, y: startY,
-          vx: Math.cos(angle) * 10, vy: Math.sin(angle) * 8,
-          life: 1, decay: 0.008, length: 180, brightness: 0.5,
-        })
-      }
-      const shootingInterval = isIdle ? 2000 + Math.random() * 3000 : 4000 + Math.random() * 9000
-      if (time - lastShootingStar > shootingInterval) {
+      // --- SHOOTING STARS ---
+      const shootInterval = isIdle ? 2500 + Math.random() * 3000 : 5000 + Math.random() * 8000
+      if (time - lastShootingStar > shootInterval) {
         lastShootingStar = time
         const fromRight = Math.random() > 0.5
-        const startX = fromRight ? canvas.width * (0.6 + Math.random() * 0.4) : Math.random() * canvas.width * 0.5
-        const startY = Math.random() * canvas.height * 0.4
-        const angle = fromRight ? Math.PI * 0.6 + Math.random() * 0.3 : Math.PI * 0.1 + Math.random() * 0.25
-        const speed = 5 + Math.random() * 7
         shootingStars.push({
-          x: startX, y: startY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          life: 1,
-          decay: 0.006 + Math.random() * 0.006, // slower decay = longer trail
-          length: 120 + Math.random() * 150, // much longer
+          x: fromRight ? W * 0.7 + Math.random() * W * 0.3 : Math.random() * W * 0.4,
+          y: Math.random() * H * 0.35,
+          vx: (fromRight ? -1 : 1) * (4 + Math.random() * 5),
+          vy: 2 + Math.random() * 4,
+          life: 1, decay: 0.005 + Math.random() * 0.005,
           brightness: 0.3 + Math.random() * 0.4,
         })
       }
 
       shootingStars = shootingStars.filter(s => s.life > 0)
       shootingStars.forEach((s) => {
-        s.x += s.vx
-        s.y += s.vy
-        s.life -= s.decay
-
-        const tailX = s.x - s.vx * (s.length / 8)
-        const tailY = s.y - s.vy * (s.length / 8)
-
-        const grad = ctx.createLinearGradient(s.x, s.y, tailX, tailY)
+        s.x += s.vx; s.y += s.vy; s.life -= s.decay
+        const len = 25
+        const tx = s.x - s.vx * len, ty = s.y - s.vy * len
+        const grad = ctx.createLinearGradient(s.x, s.y, tx, ty)
         grad.addColorStop(0, `rgba(255, 252, 240, ${s.life * s.brightness})`)
-        grad.addColorStop(0.15, `rgba(220, 200, 160, ${s.life * s.brightness * 0.6})`)
-        grad.addColorStop(0.4, `rgba(201, 169, 110, ${s.life * s.brightness * 0.2})`)
+        grad.addColorStop(0.2, `rgba(220, 200, 160, ${s.life * s.brightness * 0.5})`)
         grad.addColorStop(1, 'transparent')
-
-        ctx.beginPath()
-        ctx.moveTo(s.x, s.y)
-        ctx.lineTo(tailX, tailY)
-        ctx.strokeStyle = grad
-        ctx.lineWidth = 1.2 * s.life
-        ctx.lineCap = 'round'
-        ctx.stroke()
-
-        // Head glow
-        const headR = 3 * s.life
-        const headGrad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, headR)
-        headGrad.addColorStop(0, `rgba(255, 252, 240, ${s.life * s.brightness * 0.8})`)
-        headGrad.addColorStop(1, 'transparent')
-        ctx.fillStyle = headGrad
-        ctx.fillRect(s.x - headR, s.y - headR, headR * 2, headR * 2)
+        ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(tx, ty)
+        ctx.strokeStyle = grad; ctx.lineWidth = 1.2 * s.life; ctx.lineCap = 'round'; ctx.stroke()
+        // Head
+        ctx.beginPath(); ctx.arc(s.x, s.y, 1.5 * s.life, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255, 252, 240, ${s.life * s.brightness})`; ctx.fill()
       })
 
-      // --- Stellar births ---
-      if (time - lastStellarBirth > 12000 + Math.random() * 10000) {
-        lastStellarBirth = time
-        const birthColors = [
-          [201, 169, 110], [180, 200, 240], [200, 170, 210],
-          [160, 200, 190], [220, 190, 150],
-        ]
+      // --- COMETS (rare, long curved trail) ---
+      if (time - lastComet > 30000 + Math.random() * 40000) {
+        lastComet = time
+        comets.push({
+          x: -50, y: H * 0.1 + Math.random() * H * 0.3,
+          vx: 1.5 + Math.random(), vy: 0.3 + Math.random() * 0.5,
+          life: 1, trail: [],
+          color: Math.random() > 0.5 ? [180, 220, 255] : [200, 255, 220],
+        })
+      }
+
+      comets = comets.filter(c => c.x < W + 100 && c.life > 0)
+      comets.forEach((c) => {
+        c.x += c.vx; c.y += c.vy
+        c.vy += Math.sin(time * 0.001) * 0.01 // slight curve
+        c.trail.push({ x: c.x, y: c.y })
+        if (c.trail.length > 60) c.trail.shift()
+
+        // Draw trail
+        for (let t = 1; t < c.trail.length; t++) {
+          const o = (t / c.trail.length) * 0.12
+          ctx.beginPath()
+          ctx.moveTo(c.trail[t - 1].x, c.trail[t - 1].y)
+          ctx.lineTo(c.trail[t].x, c.trail[t].y)
+          ctx.strokeStyle = `rgba(${c.color[0]}, ${c.color[1]}, ${c.color[2]}, ${o})`
+          ctx.lineWidth = (t / c.trail.length) * 2
+          ctx.stroke()
+        }
+
+        // Comet head with coma
+        const headR = 4
+        const coma = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, headR * 3)
+        coma.addColorStop(0, `rgba(${c.color[0]}, ${c.color[1]}, ${c.color[2]}, 0.5)`)
+        coma.addColorStop(0.3, `rgba(${c.color[0]}, ${c.color[1]}, ${c.color[2]}, 0.15)`)
+        coma.addColorStop(1, 'transparent')
+        ctx.fillStyle = coma
+        ctx.fillRect(c.x - headR * 3, c.y - headR * 3, headR * 6, headR * 6)
+
+        ctx.beginPath(); ctx.arc(c.x, c.y, 2, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255, 255, 255, 0.7)`; ctx.fill()
+      })
+
+      // --- SUPERNOVAE (very rare, dramatic flash) ---
+      if (time - lastSupernova > 45000 + Math.random() * 60000) {
+        lastSupernova = time
+        const snColors = [[255, 200, 100], [200, 150, 255], [100, 200, 255]]
+        supernovae.push({
+          x: Math.random() * W, y: Math.random() * H,
+          life: 0, growing: true, maxR: 40 + Math.random() * 30,
+          color: snColors[Math.floor(Math.random() * snColors.length)],
+        })
+      }
+
+      supernovae = supernovae.filter(s => s.life >= 0)
+      supernovae.forEach((s) => {
+        if (s.growing) { s.life += 0.012; if (s.life >= 1) s.growing = false }
+        else s.life -= 0.003
+
+        const r = s.maxR * s.life
+        // Expanding shell
+        const grad = ctx.createRadialGradient(s.x, s.y, r * 0.3, s.x, s.y, r)
+        grad.addColorStop(0, `rgba(${s.color[0]}, ${s.color[1]}, ${s.color[2]}, ${s.life * 0.08})`)
+        grad.addColorStop(0.5, `rgba(${s.color[0]}, ${s.color[1]}, ${s.color[2]}, ${s.life * 0.15})`)
+        grad.addColorStop(0.8, `rgba(${s.color[0]}, ${s.color[1]}, ${s.color[2]}, ${s.life * 0.04})`)
+        grad.addColorStop(1, 'transparent')
+        ctx.fillStyle = grad
+        ctx.fillRect(s.x - r, s.y - r, r * 2, r * 2)
+
+        // Bright core
+        ctx.beginPath(); ctx.arc(s.x, s.y, 2 * s.life, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255, 255, 255, ${s.life * 0.7})`; ctx.fill()
+      })
+
+      // --- STELLAR BIRTHS ---
+      if (time - lastBirth > 12000 + Math.random() * 10000) {
+        lastBirth = time
+        const bColors = [[201, 169, 110], [180, 210, 255], [200, 170, 220], [160, 220, 200], [255, 200, 170]]
         stellarBirths.push({
-          x: Math.random() * canvas.width,
-          y: viewTop + Math.random() * canvas.height,
-          life: 0, growing: true,
-          maxR: 12 + Math.random() * 18,
-          color: birthColors[Math.floor(Math.random() * birthColors.length)],
+          x: Math.random() * W, y: Math.random() * H,
+          life: 0, growing: true, maxR: 10 + Math.random() * 15,
+          color: bColors[Math.floor(Math.random() * bColors.length)],
         })
       }
 
       stellarBirths = stellarBirths.filter(b => b.life >= 0)
       stellarBirths.forEach((b) => {
-        if (b.growing) {
-          b.life += 0.006
-          if (b.life >= 1) b.growing = false
-        } else {
-          b.life -= 0.004
-        }
-
-        const by = b.y - viewTop
-        if (by < -50 || by > canvas.height + 50) return
+        if (b.growing) { b.life += 0.005; if (b.life >= 1) b.growing = false }
+        else b.life -= 0.003
 
         const r = b.maxR * b.life
-        const grad = ctx.createRadialGradient(b.x, by, 0, b.x, by, r)
+        const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, r)
         grad.addColorStop(0, `rgba(${b.color[0]}, ${b.color[1]}, ${b.color[2]}, ${b.life * 0.12})`)
-        grad.addColorStop(0.3, `rgba(${b.color[0]}, ${b.color[1]}, ${b.color[2]}, ${b.life * 0.04})`)
+        grad.addColorStop(0.4, `rgba(${b.color[0]}, ${b.color[1]}, ${b.color[2]}, ${b.life * 0.03})`)
         grad.addColorStop(1, 'transparent')
         ctx.fillStyle = grad
-        ctx.fillRect(b.x - r, by - r, r * 2, r * 2)
-
-        // Core point
-        ctx.beginPath()
-        ctx.arc(b.x, by, 1 * b.life, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255, 250, 240, ${b.life * 0.6})`
-        ctx.fill()
+        ctx.fillRect(b.x - r, b.y - r, r * 2, r * 2)
+        ctx.beginPath(); ctx.arc(b.x, b.y, 1 * b.life, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255, 250, 240, ${b.life * 0.5})`; ctx.fill()
       })
 
       animId = requestAnimationFrame(draw)
