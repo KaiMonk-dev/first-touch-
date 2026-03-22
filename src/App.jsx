@@ -18,12 +18,14 @@ import { StickyMobileCTA } from './components/StickyMobileCTA'
 import { ExitIntent } from './components/ExitIntent'
 import { BackToTop } from './components/BackToTop'
 import { AmbientCursor } from './components/AmbientCursor'
+import { GalaxyBackground } from './components/GalaxyBackground'
 
 function App() {
   return (
     <CalendlyProvider>
       <div className="min-h-screen bg-black text-white overflow-x-hidden grain">
         <LoadingScreen />
+        <GalaxyBackground />
         <ScrollProgress />
         <Nav />
         <main>
