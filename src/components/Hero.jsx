@@ -35,17 +35,18 @@ export function Hero() {
     resize()
     window.addEventListener('resize', resize)
 
-    for (let i = 0; i < 45; i++) {
+    for (let i = 0; i < 55; i++) {
       particles.push({
         baseX: Math.random() * canvas.width,
         baseY: Math.random() * canvas.height,
         x: 0, y: 0,
-        r: Math.random() * 1.5 + 0.3,
-        dx: (Math.random() - 0.5) * 0.3,
-        dy: (Math.random() - 0.5) * 0.2,
-        opacity: Math.random() * 0.4 + 0.1,
+        r: Math.random() * 2 + 0.3,
+        dx: (Math.random() - 0.5) * 0.25,
+        dy: (Math.random() - 0.5) * 0.15,
+        opacity: Math.random() * 0.5 + 0.15,
         pulse: Math.random() * Math.PI * 2,
-        parallaxFactor: Math.random() * 30 + 10, // each particle responds differently
+        parallaxFactor: Math.random() * 40 + 10,
+        hue: Math.random() * 20 - 10, // slight color variation
       })
     }
 
@@ -53,35 +54,62 @@ export function Hero() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
+      const mouseXpx = mx * canvas.width
+      const mouseYpx = my * canvas.height
 
-      particles.forEach((p) => {
+      // Calculate positions first for connection lines
+      const positions = particles.map((p) => {
         p.baseX += p.dx
         p.baseY += p.dy
-        p.pulse += 0.01
+        p.pulse += 0.008
 
         if (p.baseX < 0) p.baseX = canvas.width
         if (p.baseX > canvas.width) p.baseX = 0
         if (p.baseY < 0) p.baseY = canvas.height
         if (p.baseY > canvas.height) p.baseY = 0
 
-        // Cursor parallax — particles shift opposite to mouse
         const px = p.baseX + (0.5 - mx) * p.parallaxFactor
         const py = p.baseY + (0.5 - my) * p.parallaxFactor
-
         const o = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse))
 
+        return { px, py, o, r: p.r, hue: p.hue }
+      })
+
+      // Draw connection lines between nearby particles
+      for (let i = 0; i < positions.length; i++) {
+        for (let j = i + 1; j < positions.length; j++) {
+          const a = positions[i], b = positions[j]
+          const dist = Math.sqrt((a.px - b.px) ** 2 + (a.py - b.py) ** 2)
+          if (dist < 120) {
+            const lineOpacity = (1 - dist / 120) * 0.06 * Math.min(a.o, b.o)
+            ctx.beginPath()
+            ctx.moveTo(a.px, a.py)
+            ctx.lineTo(b.px, b.py)
+            ctx.strokeStyle = `rgba(201, 169, 110, ${lineOpacity})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
+      }
+
+      // Draw particles with cursor proximity brightening
+      positions.forEach((p) => {
+        const distToCursor = Math.sqrt((p.px - mouseXpx) ** 2 + (p.py - mouseYpx) ** 2)
+        const proximityBoost = Math.max(0, 1 - distToCursor / 300) * 0.4
+        const finalO = Math.min(1, p.o + proximityBoost)
+
         // Glow
-        const grad = ctx.createRadialGradient(px, py, 0, px, py, p.r * 22)
-        grad.addColorStop(0, `rgba(201, 169, 110, ${o * 0.8})`)
-        grad.addColorStop(0.4, `rgba(201, 169, 110, ${o * 0.15})`)
+        const grad = ctx.createRadialGradient(p.px, p.py, 0, p.px, p.py, p.r * 25)
+        grad.addColorStop(0, `rgba(${201 + p.hue}, ${169 + p.hue}, ${110 + p.hue}, ${finalO * 0.9})`)
+        grad.addColorStop(0.3, `rgba(201, 169, 110, ${finalO * 0.2})`)
         grad.addColorStop(1, 'transparent')
         ctx.fillStyle = grad
-        ctx.fillRect(px - p.r * 22, py - p.r * 22, p.r * 44, p.r * 44)
+        ctx.fillRect(p.px - p.r * 25, p.py - p.r * 25, p.r * 50, p.r * 50)
 
-        // Core
+        // Core dot — brighter near cursor
         ctx.beginPath()
-        ctx.arc(px, py, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255, 240, 220, ${o})`
+        ctx.arc(p.px, p.py, p.r * (1 + proximityBoost * 0.5), 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255, 245, 225, ${finalO})`
         ctx.fill()
       })
 
