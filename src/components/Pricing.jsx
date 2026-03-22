@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { AnimatedSection } from './AnimatedSection'
 import { useCalendly } from './CalendlyModal'
+import { useTilt } from '../hooks/useTilt'
 
 const plans = [
   {
@@ -143,20 +144,7 @@ export function Pricing() {
 
 function PricingCard({ plan, delay, onBook }) {
   const [priceRef, animatedPrice] = useCounter(plan.price || 0, 1200)
-  const cardRef = useRef(null)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
-
-  // Interactive tilt for featured (Pro) card
-  const handleMouseMove = (e) => {
-    if (plan.tier !== 'featured') return
-    const rect = cardRef.current?.getBoundingClientRect()
-    if (!rect) return
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -8
-    setTilt({ x, y })
-  }
-
-  const handleMouseLeave = () => setTilt({ x: 0, y: 0 })
+  const tilt = useTilt(plan.tier === 'featured' ? 8 : 5)
 
   const badges = {
     standard: { label: 'Starter', className: 'bg-white/5 border border-white/10 text-white/50' },
@@ -169,9 +157,9 @@ function PricingCard({ plan, delay, onBook }) {
   return (
     <AnimatedSection delay={delay}>
       <div
-        ref={(el) => { cardRef.current = el; if (priceRef.current === null) priceRef.current = el }}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        ref={priceRef}
+        onMouseMove={tilt.onMouseMove}
+        onMouseLeave={tilt.onMouseLeave}
         className={`h-full p-9 rounded-2xl flex flex-col ${
           plan.tier === 'featured'
             ? 'liquid-glass-strong liquid-shimmer'
@@ -179,15 +167,7 @@ function PricingCard({ plan, delay, onBook }) {
             ? 'liquid-glass-strong relative overflow-hidden'
             : 'liquid-glass'
         }`}
-        style={{
-          transform: plan.tier === 'featured'
-            ? `perspective(800px) rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`
-            : undefined,
-          transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease',
-          boxShadow: plan.tier === 'featured' && (tilt.x !== 0 || tilt.y !== 0)
-            ? '0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(201,169,110,0.08)'
-            : undefined,
-        }}
+        style={tilt.style}
       >
         {plan.tier === 'enterprise' && (
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#C9A96E]/50 to-transparent" />

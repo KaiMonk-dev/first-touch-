@@ -10,7 +10,6 @@ import { HowItWorks } from './components/HowItWorks'
 import { DashboardPreview } from './components/DashboardPreview'
 import { TryAlex } from './components/TryAlex'
 import { ComparisonTable } from './components/ComparisonTable'
-import { ROICalculator } from './components/ROICalculator'
 import { Pricing } from './components/Pricing'
 import { FAQ } from './components/FAQ'
 import { FinalCTA } from './components/FinalCTA'
@@ -35,7 +34,6 @@ function App() {
           <DashboardPreview />
           <TryAlex />
           <ComparisonTable />
-          <ROICalculator />
           <Pricing />
           <FAQ />
           <FinalCTA />

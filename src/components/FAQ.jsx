@@ -26,6 +26,14 @@ const faqs = [
     q: 'What\'s the ROI?',
     a: 'Clients typically see the service pay for itself within the first week. If Alex books just one extra job per month at $500+, that\'s a 10x return on your $597 investment.',
   },
+  {
+    q: 'How much does it cost?',
+    a: 'Core starts at $597/mo, Pro at $997/mo, and Enterprise is custom-priced based on your operation. No contracts, no setup fees, and a 30-day money-back guarantee. You can see the full breakdown in our pricing section above.',
+  },
+  {
+    q: 'Can Alex handle multiple languages?',
+    a: 'Yes. Alex can be trained to handle calls in English and Spanish out of the box. Additional languages are available on Enterprise plans — we\'ll configure the right setup during your strategy call.',
+  },
 ]
 
 export function FAQ() {

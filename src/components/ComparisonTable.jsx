@@ -49,14 +49,14 @@ export function ComparisonTable() {
                 key={i}
                 className={`grid grid-cols-[1fr_100px_100px] md:grid-cols-[1fr_140px_140px] ${
                   i < rows.length - 1 ? 'border-b border-white/[0.04]' : ''
-                } hover:bg-white/[0.03] transition-colors`}
+                } hover:bg-white/[0.03] transition-all group/row hover:border-l-2 hover:border-l-[#C9A96E]/30 hover:pl-1`}
               >
                 <div className="p-4 md:p-5 flex items-center">
                   <span className="text-[13px] text-white/60 font-light">{row.feature}</span>
                 </div>
                 <div className="p-4 md:p-5 flex items-center justify-center">
                   {row.ai ? (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 group-hover/row:scale-110 transition-transform">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                   ) : (
