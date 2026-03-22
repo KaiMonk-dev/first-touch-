@@ -34,13 +34,15 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen overflow-hidden flex flex-col">
-      {/* Background — full bleed cinematic image placeholder */}
+      {/* Background */}
       <div className="absolute inset-0 z-0">
-        {/* HERO BACKGROUND IMAGE HERE — replace with 4K cinematic image */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0014] via-[#06000f] to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0c0a06] via-[#080604] to-black" />
 
-        {/* Ambient glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(201,169,110,0.08),transparent_70%)] pointer-events-none" />
+        {/* Warm ambient glow — top center */}
+        <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-[radial-gradient(ellipse,rgba(201,169,110,0.06),transparent_65%)] pointer-events-none" />
+
+        {/* Secondary warm glow — lower right */}
+        <div className="absolute top-[40%] right-[10%] w-[500px] h-[500px] bg-[radial-gradient(ellipse,rgba(201,169,110,0.03),transparent_70%)] pointer-events-none" />
 
         {/* Video background */}
         <video
