@@ -1,82 +1,103 @@
 import { useState, useEffect } from 'react'
 
 export function LoadingScreen() {
-  const [phase, setPhase] = useState('enter') // enter → hold → exit → gone
+  const [phase, setPhase] = useState('black')
+  // black (0ms) → brand (400ms) → line (1000ms) → powered (1600ms) → hold → exit (3400ms) → gone (4600ms)
   const [removed, setRemoved] = useState(false)
 
   useEffect(() => {
-    // Phase timings for a luxury feel
-    const holdTimer = setTimeout(() => setPhase('hold'), 600)
-    const exitTimer = setTimeout(() => setPhase('exit'), 2200)
-    const removeTimer = setTimeout(() => setRemoved(true), 3200)
-    return () => {
-      clearTimeout(holdTimer)
-      clearTimeout(exitTimer)
-      clearTimeout(removeTimer)
-    }
+    const timers = [
+      setTimeout(() => setPhase('brand'), 400),
+      setTimeout(() => setPhase('line'), 1000),
+      setTimeout(() => setPhase('powered'), 1600),
+      setTimeout(() => setPhase('exit'), 3600),
+      setTimeout(() => setRemoved(true), 4800),
+    ]
+    return () => timers.forEach(clearTimeout)
   }, [])
 
   if (removed) return null
 
+  const isExiting = phase === 'exit'
+  const showBrand = phase !== 'black'
+  const showLine = phase === 'line' || phase === 'powered' || phase === 'exit'
+  const showPowered = phase === 'powered' || phase === 'exit'
+
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black"
       style={{
-        opacity: phase === 'exit' ? 0 : 1,
-        transform: phase === 'exit' ? 'scale(1.02)' : 'scale(1)',
-        transition: 'opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1)',
-        willChange: 'opacity, transform',
+        position: 'fixed',
+        inset: 0,
+        zIndex: 100,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#000',
+        opacity: isExiting ? 0 : 1,
+        transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0, 1)',
+        willChange: 'opacity',
       }}
     >
-      {/* Ambient background glow */}
+      {/* Warm ambient glow — breathes in slowly */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[300px] bg-[radial-gradient(ellipse,rgba(201,169,110,0.06),transparent_70%)] pointer-events-none"
         style={{
-          opacity: phase === 'enter' ? 0 : 1,
-          transition: 'opacity 1.5s ease',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 500,
+          height: 350,
+          background: 'radial-gradient(ellipse, rgba(201,169,110,0.07), transparent 70%)',
+          opacity: showBrand ? 1 : 0,
+          transition: 'opacity 2s ease',
+          pointerEvents: 'none',
         }}
       />
 
-      <div className="relative text-center">
-        {/* Brand name */}
+      <div style={{ position: 'relative', textAlign: 'center' }}>
+        {/* Brand name — fades up with a gentle blur clear */}
         <p
           style={{
-            fontSize: '1.6rem',
+            fontSize: '1.8rem',
             fontWeight: 600,
-            letterSpacing: '-0.02em',
-            opacity: phase === 'enter' ? 0 : 1,
-            transform: phase === 'enter' ? 'translateY(12px)' : 'translateY(0)',
-            transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+            letterSpacing: '-0.03em',
+            opacity: showBrand ? 1 : 0,
+            transform: showBrand ? 'translateY(0)' : 'translateY(16px)',
+            filter: showBrand ? 'blur(0px)' : 'blur(6px)',
+            transition: 'all 1s cubic-bezier(0.16, 1, 0.3, 1)',
+            margin: 0,
           }}
         >
           <span style={{ color: 'white' }}>First</span>
-          <span style={{ color: 'rgba(255,255,255,0.5)' }}>Touch</span>
+          <span style={{ color: 'rgba(255,255,255,0.45)' }}>Touch</span>
         </p>
 
-        {/* Gold sweep line */}
+        {/* Gold sweep line — expands from center */}
         <div
           style={{
             height: 1,
-            marginTop: 20,
+            marginTop: 22,
             marginLeft: 'auto',
             marginRight: 'auto',
-            width: phase === 'enter' ? 0 : 120,
-            opacity: phase === 'enter' ? 0 : 0.6,
-            background: 'linear-gradient(90deg, transparent, rgba(201,169,110,0.5), transparent)',
-            transition: 'all 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s',
+            width: showLine ? 140 : 0,
+            opacity: showLine ? 0.5 : 0,
+            background: 'linear-gradient(90deg, transparent, rgba(201,169,110,0.6), transparent)',
+            transition: 'width 1.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s ease',
           }}
         />
 
-        {/* Powered by */}
+        {/* Powered by — last element, gentle fade */}
         <p
           style={{
             fontSize: '0.6rem',
-            letterSpacing: '0.15em',
+            fontWeight: 400,
+            letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            marginTop: 14,
-            color: 'rgba(255,255,255,0.25)',
-            opacity: phase === 'enter' ? 0 : 1,
-            transition: 'opacity 0.8s ease 0.6s',
+            marginTop: 16,
+            color: 'rgba(255,255,255,0.3)',
+            opacity: showPowered ? 1 : 0,
+            transform: showPowered ? 'translateY(0)' : 'translateY(6px)',
+            transition: 'all 0.9s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
           Powered by Ascension First AI
