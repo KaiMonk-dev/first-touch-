@@ -281,19 +281,19 @@ section::before {
 }
 
 #meet-alex::before {
-  background: radial-gradient(ellipse, rgba(90, 60, 150, 0.025), transparent 70%);
+  background: radial-gradient(ellipse, rgba(100, 60, 170, 0.045), rgba(60, 40, 120, 0.015) 50%, transparent 75%);
 }
 
 #how-it-works::before {
-  background: radial-gradient(ellipse, rgba(60, 130, 170, 0.02), transparent 70%);
+  background: radial-gradient(ellipse, rgba(50, 140, 180, 0.04), rgba(40, 100, 150, 0.012) 50%, transparent 75%);
 }
 
 #pricing::before {
-  background: radial-gradient(ellipse, rgba(201, 169, 110, 0.025), transparent 70%);
+  background: radial-gradient(ellipse, rgba(201, 169, 110, 0.045), rgba(180, 140, 80, 0.015) 50%, transparent 75%);
 }
 
 #faq::before {
-  background: radial-gradient(ellipse, rgba(100, 80, 160, 0.018), transparent 70%);
+  background: radial-gradient(ellipse, rgba(110, 80, 180, 0.035), rgba(80, 60, 140, 0.01) 50%, transparent 75%);
 }
 
 /* Idle waveform animation */

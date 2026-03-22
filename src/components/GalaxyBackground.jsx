@@ -20,12 +20,15 @@ export function GalaxyBackground() {
     }
 
     function syncCanvasHeight() {
-      const newH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, 3000)
-      if (Math.abs(newH - pageH) > 100) {
+      // Use a generous minimum — better to have extra canvas than missing stars
+      const measuredH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
+      const newH = Math.max(measuredH, 8000) // minimum 8000px ensures full coverage
+      if (Math.abs(newH - pageH) > 200 || !galaxyRef.current) {
         pageH = newH
         canvas.width = window.innerWidth
         canvas.height = pageH
-        if (!galaxyRef.current) initGalaxy()
+        galaxyRef.current = null // force reinit
+        initGalaxy()
       }
     }
 
@@ -60,7 +63,7 @@ export function GalaxyBackground() {
         stars.push({
           x: rng() * W, y: rng() * pageH,
           r: layer === 0 ? rng() * 0.6 + 0.12 : layer === 1 ? rng() * 1.0 + 0.3 : rng() * 1.6 + 0.7,
-          opacity: layer === 0 ? rng() * 0.3 + 0.06 : layer === 1 ? rng() * 0.45 + 0.18 : rng() * 0.55 + 0.3,
+          opacity: layer === 0 ? rng() * 0.35 + 0.1 : layer === 1 ? rng() * 0.5 + 0.25 : rng() * 0.6 + 0.4,
           // Multiple twinkle harmonics for organic shimmer
           tw1: rng() * 0.004 + 0.001,
           tw2: rng() * 0.007 + 0.002,
@@ -108,7 +111,7 @@ export function GalaxyBackground() {
           x: rng() * W, y: rng() * pageH,
           w: 400 + rng() * 600, h: 150 + rng() * 250,
           color: nebPalette[Math.floor(rng() * nebPalette.length)],
-          opacity: 0.006 + rng() * 0.012, // very subtle
+          opacity: 0.003 + rng() * 0.006, // extremely subtle — barely there
           phase: rng() * Math.PI * 2,
           rotation: (rng() - 0.5) * 0.5,
           stretch: 0.3 + rng() * 0.4, // elongation ratio
@@ -173,11 +176,14 @@ export function GalaxyBackground() {
       syncCanvasHeight()
     })
 
-    // Initial sync + delayed re-sync (for dynamic content)
+    // Aggressive sync: poll every 500ms for first 8 seconds, then settle
     syncCanvasHeight()
-    setTimeout(() => syncCanvasHeight(), 1000)
-    setTimeout(() => syncCanvasHeight(), 3000)
-    setTimeout(() => syncCanvasHeight(), 6000)
+    const syncTimers = []
+    for (let t = 500; t <= 8000; t += 500) {
+      syncTimers.push(setTimeout(() => syncCanvasHeight(), t))
+    }
+    // Also sync after fonts/images load
+    window.addEventListener('load', () => syncCanvasHeight())
 
     // --- DRAW ---
     const draw = (timestamp) => {
@@ -205,9 +211,9 @@ export function GalaxyBackground() {
         ctx.rotate(n.rotation + Math.sin(time * 0.00005 + n.phase) * 0.01)
         const r = n.w * pulse * 0.5
         const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r)
-        grad.addColorStop(0, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${n.opacity * pulse})`)
-        grad.addColorStop(0.25, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${n.opacity * 0.4})`)
-        grad.addColorStop(0.6, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${n.opacity * 0.06})`)
+        grad.addColorStop(0, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${n.opacity * pulse * 0.6})`)
+        grad.addColorStop(0.2, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${n.opacity * 0.25})`)
+        grad.addColorStop(0.5, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${n.opacity * 0.04})`)
         grad.addColorStop(1, 'transparent')
         ctx.fillStyle = grad
         ctx.scale(1, n.stretch)
@@ -393,6 +399,7 @@ export function GalaxyBackground() {
 
     return () => {
       cancelAnimationFrame(animId)
+      syncTimers.forEach(clearTimeout)
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('click', onClick)
       ro.disconnect()
