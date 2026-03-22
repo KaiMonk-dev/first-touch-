@@ -1,38 +1,19 @@
 import { useState, useEffect } from 'react'
-import { playChime } from '../hooks/useChime'
 
 export function LoadingScreen() {
   const [phase, setPhase] = useState('black')
   const [removed, setRemoved] = useState(false)
-  const [hasInteracted, setHasInteracted] = useState(false)
-
-  // Listen for first user interaction to enable audio
-  useEffect(() => {
-    const mark = () => setHasInteracted(true)
-    window.addEventListener('click', mark, { once: true })
-    window.addEventListener('touchstart', mark, { once: true })
-    window.addEventListener('keydown', mark, { once: true })
-    return () => {
-      window.removeEventListener('click', mark)
-      window.removeEventListener('touchstart', mark)
-      window.removeEventListener('keydown', mark)
-    }
-  }, [])
 
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase('brand'), 400),
-      setTimeout(() => {
-        setPhase('line')
-        // Play chime when the gold line appears (if user has interacted)
-        if (hasInteracted) playChime()
-      }, 900),
+      setTimeout(() => setPhase('line'), 900),
       setTimeout(() => setPhase('powered'), 1400),
       setTimeout(() => setPhase('exit'), 2400),
       setTimeout(() => setRemoved(true), 3600),
     ]
     return () => timers.forEach(clearTimeout)
-  }, [hasInteracted])
+  }, [])
 
   if (removed) return null
 

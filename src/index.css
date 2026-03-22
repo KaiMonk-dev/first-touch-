@@ -275,19 +275,78 @@ input[type="range"]::-moz-range-thumb {
   font-variant-numeric: tabular-nums;
 }
 
-/* Tone down GHL chat widget */
-#lc_chat_widget .lc_chat_widget_header,
-#lc_chat_widget .lc-chat-widget-header {
-  font-size: 12px !important;
+/* ═══════════════════════════════════════
+   GHL CHAT WIDGET — Dark premium overrides
+   ═══════════════════════════════════════ */
+
+/* Force widget button dark */
+[class*="chat-widget"] button,
+[class*="chat-widget"] [class*="launcher"],
+[class*="ChatWidget"] button,
+.lc_text_widget_open,
+iframe[title*="chat"] + div,
+#lc_chat_layout [class*="launcher"],
+#lc_chat_layout [class*="open-btn"] {
+  background: rgba(20, 20, 20, 0.9) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
 }
 
+/* Greeting bubble — smaller, darker, premium */
 .lc_text_bubble,
 [class*="chat-bubble"],
 [class*="ChatBubble"],
-[class*="greeting"] {
+[class*="greeting"],
+[class*="proactive"],
+[class*="Proactive"] {
   font-size: 11px !important;
   max-width: 200px !important;
-  padding: 8px 12px !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+  padding: 10px 14px !important;
+  background: rgba(20, 20, 20, 0.95) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
   border-radius: 16px !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+/* Chat window itself — dark theme */
+[class*="chat-widget"] [class*="container"],
+[class*="ChatWidget"] [class*="container"],
+#lc_chat_layout,
+#lc_chat_layout [class*="chat-container"] {
+  background: rgba(10, 10, 10, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Header */
+#lc_chat_layout [class*="header"],
+[class*="chat-widget"] [class*="header"] {
+  background: rgba(15, 15, 15, 0.95) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  font-size: 12px !important;
+}
+
+/* Input area */
+#lc_chat_layout [class*="input"],
+#lc_chat_layout textarea,
+#lc_chat_layout input[type="text"] {
+  background: rgba(20, 20, 20, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: white !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 13px !important;
+}
+
+/* Send button */
+#lc_chat_layout [class*="send"],
+#lc_chat_layout button[type="submit"] {
+  background: rgba(201, 169, 110, 0.8) !important;
+  border: none !important;
 }
