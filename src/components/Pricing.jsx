@@ -4,14 +4,17 @@ import { useCalendly } from './CalendlyModal'
 const plans = [
   {
     name: 'Core',
+    tagline: 'Never Miss a Call Again',
     price: '$597',
     period: '/mo',
     features: [
-      'Dedicated AI agent (Alex), custom-trained',
-      'Answers every inbound call, 24/7',
-      'Real-time calendar booking',
-      'SMS follow-ups to every caller',
-      'Monthly performance dashboard',
+      'AI agent Alex — answers every call, 24/7',
+      'Missed call text-back — instant SMS recovery',
+      'Real-time calendar booking via voice + SMS',
+      'Automated SMS follow-ups to every lead',
+      'Appointment reminders via SMS',
+      'Automated Google review requests',
+      'Lead Connector app — see leads in real-time',
       'Live in 72 hours',
     ],
     cta: 'Get Started',
@@ -19,16 +22,18 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '$897',
+    tagline: 'Fill Your Calendar on Autopilot',
+    price: '$997',
     period: '/mo',
     features: [
       'Everything in Core, plus:',
       '60-second speed-to-lead callbacks',
-      'Dead lead reactivation campaigns',
-      'No-show reduction calls',
-      'Google review generation',
-      'Advanced analytics & reporting',
-      'Priority support',
+      'No-show prevention system — reminders + call',
+      'Dead lead reactivation campaigns (monthly)',
+      'Smart review generation — sentiment-filtered',
+      'Custom website built + maintained',
+      'Website chat widget with lead capture',
+      'Priority support — 2hr response',
     ],
     cta: 'Go Pro',
     featured: true,
@@ -38,11 +43,12 @@ const plans = [
 export function Pricing() {
   const calendly = useCalendly()
   return (
-    <section id="pricing" className="relative py-28 md:py-36 px-6">
+    <section id="pricing" className="relative py-40 md:py-52 px-6">
       <div className="max-w-4xl mx-auto">
         <AnimatedSection>
           <div className="text-center mb-24">
             <p className="label mb-6">Pricing</p>
+            <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[0.9]">
               <span className="text-white/90">Simple Pricing.</span>
               <br />
@@ -62,7 +68,10 @@ export function Pricing() {
                     Most Popular
                   </span>
                 )}
-                <h3 className="text-lg font-semibold mb-2 text-white/80">{plan.name}</h3>
+                <h3 className="text-lg font-semibold mb-1 text-white/80">{plan.name}</h3>
+                {plan.tagline && (
+                  <p className="text-[11px] text-[#B8965A]/60 font-light tracking-wide mb-3">{plan.tagline}</p>
+                )}
                 <div className="flex items-baseline gap-1 mb-10">
                   <span className="text-5xl font-bold tracking-tight text-white/90">{plan.price}</span>
                   <span className="text-white/20 text-sm font-light">{plan.period}</span>
