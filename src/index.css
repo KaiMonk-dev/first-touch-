@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #010101;
+  --color-accent: #983AD6;
+  --color-accent-mid: #C967E8;
+  --color-accent-light: #FA93FA;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: #000;
+  color: white;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(201, 103, 232, 0.3);
+}
+
+/* Premium glassmorphic styles */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.glass-nav {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Smooth gradient overlays */
+.fade-bottom {
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+.fade-edges {
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+}
+
+/* Label style (Atlas-inspired small caps) */
+.label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Subtle line divider */
+.divider-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  margin: 0 auto;
+}
+
+/* Range sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 20px rgba(152, 58, 214, 0.4);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 20px rgba(152, 58, 214, 0.4);
+}
+
+/* Smooth reveal animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-up {
+  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1.2s ease forwards;
+}
+
+/* Micro-interactions */
+.card-hover {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.5s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(152, 58, 214, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-press {
+  transition: transform 0.15s ease, box-shadow 0.3s ease;
+}
+
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Animated counter */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Preconnect hints in head handled via HTML */
+/* Lazy load images via IntersectionObserver in components */
+
+/* Smooth number transitions */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
