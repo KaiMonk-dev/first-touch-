@@ -19,12 +19,10 @@ export function ROICalculator() {
   const fmt = (n) => n.toLocaleString('en-US')
 
   return (
-    <section id="roi" className="relative py-40 md:py-52 px-6">
+    <section id="roi" className="relative py-28 md:py-36 px-6">
       <div className="max-w-5xl mx-auto">
         <AnimatedSection>
           <div className="text-center mb-20">
-            <p className="label mb-6">Your numbers</p>
-            <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[0.9]">
               <span className="text-white/90">Revenue You're</span>
               <br />
@@ -48,7 +46,6 @@ export function ROICalculator() {
               <div className="space-y-6">
                 <ResultRow label="Missed calls / month" value={fmt(missedCalls)} />
                 <ResultRow label="Revenue lost / month" value={`$${fmt(lostRevenue)}`} />
-                <div className="divider-line !w-full !bg-white/[0.06] my-4" style={{ background: 'rgba(255,255,255,0.06)' }} />
                 <ResultRow label="Recovered with First Touch" value={`$${fmt(recovered)}`} highlight />
 
                 <div className="p-8 rounded-xl bg-white/[0.03] border border-white/[0.04] text-center mt-4">

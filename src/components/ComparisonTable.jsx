@@ -18,12 +18,10 @@ export function ComparisonTable() {
   const calendly = useCalendly()
 
   return (
-    <section className="relative py-40 md:py-52 px-6">
+    <section className="relative py-28 md:py-36 px-6">
       <div className="max-w-3xl mx-auto">
         <AnimatedSection>
           <div className="text-center mb-20">
-            <p className="label mb-6">Why switch</p>
-            <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[0.9]">
               <span className="text-white/90">First Touch vs.</span>
               <br />

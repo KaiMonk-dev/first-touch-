@@ -4,7 +4,7 @@ import { useCalendly } from './CalendlyModal'
 export function FinalCTA() {
   const calendly = useCalendly()
   return (
-    <section className="relative py-40 md:py-52 px-6">
+    <section className="relative py-28 md:py-36 px-6">
       {/* Ambient glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse,rgba(201,169,110,0.06),transparent_70%)] pointer-events-none" />
 

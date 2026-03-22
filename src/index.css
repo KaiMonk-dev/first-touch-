@@ -145,3 +145,21 @@ input[type="range"]::-moz-range-thumb {
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+/* Tone down GHL chat widget */
+#lc_chat_widget .lc_chat_widget_header,
+#lc_chat_widget .lc-chat-widget-header {
+  font-size: 12px !important;
+}
+
+/* Make the chat greeting bubble smaller and less intrusive */
+.lc_text_bubble,
+[class*="chat-bubble"],
+[class*="ChatBubble"],
+[class*="greeting"] {
+  font-size: 12px !important;
+  max-width: 220px !important;
+  padding: 10px 14px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+  border-radius: 16px !important;
+}

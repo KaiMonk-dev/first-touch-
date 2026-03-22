@@ -38,12 +38,11 @@ const plans = [
 export function Pricing() {
   const calendly = useCalendly()
   return (
-    <section id="pricing" className="relative py-40 md:py-52 px-6">
+    <section id="pricing" className="relative py-28 md:py-36 px-6">
       <div className="max-w-4xl mx-auto">
         <AnimatedSection>
           <div className="text-center mb-24">
             <p className="label mb-6">Pricing</p>
-            <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[0.9]">
               <span className="text-white/90">Simple Pricing.</span>
               <br />

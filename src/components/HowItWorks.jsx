@@ -20,12 +20,10 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative py-40 md:py-52 px-6">
+    <section id="how-it-works" className="relative py-28 md:py-36 px-6">
       <div className="max-w-5xl mx-auto">
         <AnimatedSection>
           <div className="text-center mb-24">
-            <p className="label mb-6">Getting started</p>
-            <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9]">
               <span className="bg-gradient-to-b from-white/90 to-white/30 bg-clip-text text-transparent">
                 Live in 72 Hours.

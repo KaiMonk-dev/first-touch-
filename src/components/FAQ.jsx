@@ -32,12 +32,11 @@ export function FAQ() {
   const [open, setOpen] = useState(null)
 
   return (
-    <section id="faq" className="relative py-40 md:py-52 px-6">
+    <section id="faq" className="relative py-28 md:py-36 px-6">
       <div className="max-w-2xl mx-auto">
         <AnimatedSection>
           <div className="text-center mb-20">
             <p className="label mb-6">FAQ</p>
-            <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-5xl font-bold tracking-[-0.03em] leading-[0.9]">
               <span className="bg-gradient-to-b from-white/90 to-white/30 bg-clip-text text-transparent">
                 Common Questions.

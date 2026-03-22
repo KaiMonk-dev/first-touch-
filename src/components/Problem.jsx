@@ -8,11 +8,10 @@ const stats = [
 
 export function Problem() {
   return (
-    <section className="relative py-40 md:py-52 px-6">
+    <section className="relative py-28 md:py-36 px-6">
       <div className="max-w-5xl mx-auto text-center">
         <AnimatedSection>
           <p className="label mb-6">The reality</p>
-          <div className="divider-line mb-16" />
         </AnimatedSection>
 
         <AnimatedSection delay={200}>
@@ -39,7 +38,6 @@ export function Problem() {
         </div>
 
         <AnimatedSection delay={1000}>
-          <div className="divider-line mb-8" />
           <p className="text-lg md:text-xl text-white/30 max-w-md mx-auto font-light leading-relaxed">
             Every unanswered call is a customer choosing someone else.
           </p>

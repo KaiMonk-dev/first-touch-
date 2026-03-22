@@ -30,7 +30,7 @@ export function MeetAlex() {
   const calendly = useCalendly()
 
   return (
-    <section id="meet-alex" className="relative py-40 md:py-52 px-6">
+    <section id="meet-alex" className="relative py-28 md:py-36 px-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <AnimatedSection>
