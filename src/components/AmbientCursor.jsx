@@ -17,19 +17,18 @@ export function AmbientCursor() {
       const dx = target.current.x - pos.current.x
       const dy = target.current.y - pos.current.y
 
-      pos.current.x += dx * 0.06
-      pos.current.y += dy * 0.06
-
-      const speed = Math.sqrt(dx * dx + dy * dy)
-      const scale = 1 + Math.min(speed * 0.002, 0.25)
+      // Much faster follow — 0.18 lerp for near-instant tracking
+      pos.current.x += dx * 0.18
+      pos.current.y += dy * 0.18
 
       if (glowRef.current) {
-        glowRef.current.style.transform = `translate(${pos.current.x - 175}px, ${pos.current.y - 175}px) scale(${scale})`
+        glowRef.current.style.transform = `translate(${pos.current.x - 175}px, ${pos.current.y - 175}px)`
       }
       if (innerRef.current) {
-        const ix = pos.current.x + dx * 0.03
-        const iy = pos.current.y + dy * 0.03
-        innerRef.current.style.transform = `translate(${ix - 110}px, ${iy - 110}px)`
+        // Inner core follows even faster — nearly 1:1 with cursor
+        const ix = target.current.x
+        const iy = target.current.y
+        innerRef.current.style.transform = `translate(${ix - 100}px, ${iy - 100}px)`
       }
 
       animId = requestAnimationFrame(animate)
@@ -44,21 +43,21 @@ export function AmbientCursor() {
 
   return (
     <>
-      {/* Outer glow — warm, softer, smaller */}
+      {/* Outer glow — warm ambient */}
       <div
         ref={glowRef}
         className="fixed top-0 left-0 w-[350px] h-[350px] rounded-full pointer-events-none z-[2] hidden md:block"
         style={{
-          background: 'radial-gradient(circle, rgba(201,169,110,0.07) 0%, rgba(201,169,110,0.02) 45%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(201,169,110,0.09) 0%, rgba(201,169,110,0.03) 40%, transparent 70%)',
           willChange: 'transform',
         }}
       />
-      {/* Inner core — brighter, bigger */}
+      {/* Inner core — bright center, directly on cursor */}
       <div
         ref={innerRef}
-        className="fixed top-0 left-0 w-[220px] h-[220px] rounded-full pointer-events-none z-[2] hidden md:block"
+        className="fixed top-0 left-0 w-[200px] h-[200px] rounded-full pointer-events-none z-[2] hidden md:block"
         style={{
-          background: 'radial-gradient(circle, rgba(255,245,225,0.06) 0%, rgba(201,169,110,0.04) 40%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(255,248,230,0.08) 0%, rgba(201,169,110,0.04) 35%, transparent 65%)',
           willChange: 'transform',
         }}
       />

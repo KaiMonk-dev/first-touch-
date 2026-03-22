@@ -56,9 +56,9 @@ export function GalaxyBackground() {
           r: layer < 0.6 ? Math.random() * 0.6 + 0.15 :
               layer < 0.9 ? Math.random() * 1.0 + 0.3 :
               Math.random() * 1.8 + 0.8,
-          baseOpacity: layer < 0.6 ? Math.random() * 0.25 + 0.03 :
-                       layer < 0.9 ? Math.random() * 0.4 + 0.1 :
-                       Math.random() * 0.6 + 0.2,
+          baseOpacity: layer < 0.6 ? Math.random() * 0.35 + 0.08 :
+                       layer < 0.9 ? Math.random() * 0.5 + 0.2 :
+                       Math.random() * 0.7 + 0.35,
           // Slower, gentler twinkle
           twinkleSpeed: Math.random() * 0.008 + 0.002,
           twinkleOffset: Math.random() * Math.PI * 2,
@@ -69,11 +69,22 @@ export function GalaxyBackground() {
           // Much rarer, gentler flicker
           flickerChance: layer > 0.92 ? 0.0004 : 0,
           flickerIntensity: 0,
-          color: layer > 0.88
-            ? { r: 255, g: 245 + Math.random() * 10, b: 210 + Math.random() * 20 }
-            : layer > 0.6
-            ? { r: 210 + Math.random() * 40, g: 220 + Math.random() * 30, b: 235 + Math.random() * 20 }
-            : { r: 190 + Math.random() * 50, g: 195 + Math.random() * 50, b: 210 + Math.random() * 40 },
+          color: (() => {
+            const colorType = Math.random()
+            if (layer > 0.88) {
+              // Bright stars — variety of spectral colors
+              if (colorType < 0.3) return { r: 255, g: 200, b: 150 } // warm orange
+              if (colorType < 0.5) return { r: 180, g: 200, b: 255 } // cool blue
+              if (colorType < 0.65) return { r: 255, g: 230, b: 240 } // soft pink
+              return { r: 255, g: 248, b: 220 } // warm white
+            }
+            if (layer > 0.6) {
+              if (colorType < 0.25) return { r: 200, g: 215, b: 255 } // blue-white
+              if (colorType < 0.4) return { r: 255, g: 220, b: 200 } // peach
+              return { r: 230 + Math.random() * 25, g: 235 + Math.random() * 20, b: 245 } // cool neutral
+            }
+            return { r: 200 + Math.random() * 40, g: 205 + Math.random() * 40, b: 220 + Math.random() * 35 }
+          })(),
           // Diffraction spikes for the very brightest
           hasSpikes: layer > 0.93,
           hasTrail: layer > 0.95 && Math.random() > 0.6,
@@ -83,13 +94,20 @@ export function GalaxyBackground() {
 
       const pageHCalc = pageH
       nebulae = [
-        { x: canvas.width * 0.3, y: pageHCalc * 0.03, w: 600, h: 400, color: [201, 169, 110], opacity: 0.022, phase: 0 },
-        { x: canvas.width * 0.75, y: pageHCalc * 0.06, w: 400, h: 300, color: [180, 150, 100], opacity: 0.012, phase: 1.5 },
-        { x: canvas.width * 0.15, y: pageHCalc * 0.25, w: 500, h: 350, color: [100, 130, 200], opacity: 0.012, phase: 3 },
-        { x: canvas.width * 0.85, y: pageHCalc * 0.35, w: 450, h: 300, color: [150, 120, 190], opacity: 0.01, phase: 4.5 },
-        { x: canvas.width * 0.5, y: pageHCalc * 0.55, w: 700, h: 400, color: [201, 169, 110], opacity: 0.018, phase: 6 },
-        { x: canvas.width * 0.3, y: pageHCalc * 0.75, w: 500, h: 350, color: [130, 110, 170], opacity: 0.01, phase: 7.5 },
-        { x: canvas.width * 0.6, y: pageHCalc * 0.9, w: 500, h: 300, color: [90, 110, 170], opacity: 0.01, phase: 9 },
+        // Hero — warm gold cluster
+        { x: canvas.width * 0.35, y: pageHCalc * 0.03, w: 650, h: 450, color: [201, 169, 110], opacity: 0.035, phase: 0 },
+        { x: canvas.width * 0.7, y: pageHCalc * 0.05, w: 400, h: 350, color: [220, 170, 130], opacity: 0.02, phase: 1.5 },
+        // Blue-purple nebula mid-page
+        { x: canvas.width * 0.15, y: pageHCalc * 0.22, w: 550, h: 400, color: [80, 120, 210], opacity: 0.02, phase: 3 },
+        { x: canvas.width * 0.8, y: pageHCalc * 0.3, w: 500, h: 350, color: [160, 100, 200], opacity: 0.018, phase: 4.5 },
+        // Teal/emerald accent
+        { x: canvas.width * 0.4, y: pageHCalc * 0.42, w: 400, h: 300, color: [80, 180, 160], opacity: 0.012, phase: 5.5 },
+        // Warm gold pricing area
+        { x: canvas.width * 0.5, y: pageHCalc * 0.58, w: 750, h: 450, color: [201, 169, 110], opacity: 0.025, phase: 6 },
+        // Rose/pink accent
+        { x: canvas.width * 0.2, y: pageHCalc * 0.7, w: 450, h: 350, color: [200, 130, 160], opacity: 0.015, phase: 7 },
+        // Deep blue footer
+        { x: canvas.width * 0.65, y: pageHCalc * 0.85, w: 600, h: 350, color: [70, 100, 180], opacity: 0.018, phase: 8.5 },
       ]
 
       auroraWisps = []
@@ -119,7 +137,14 @@ export function GalaxyBackground() {
       mouseRef.current = { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight }
       lastMoveRef.current = Date.now()
     }
-    const onScroll = () => { scrollRef.current = window.scrollY }
+    let scrollVelocity = 0
+    let lastScrollY = 0
+    const onScroll = () => {
+      const newY = window.scrollY
+      scrollVelocity = newY - lastScrollY
+      lastScrollY = newY
+      scrollRef.current = newY
+    }
     const onClick = (e) => {
       clickRipples.current.push({
         x: e.clientX, y: e.clientY,
@@ -146,6 +171,9 @@ export function GalaxyBackground() {
       const mouseYpx = my * canvas.height
       const idleTime = (Date.now() - lastMoveRef.current) / 1000
       const isIdle = idleTime > 3
+      // Smooth scroll velocity decay
+      const sVel = scrollVelocity
+      scrollVelocity *= 0.92
 
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -197,7 +225,9 @@ export function GalaxyBackground() {
         const pageY = s.y + (0.5 - my) * s.parallaxFactor
         if (pageY < viewTop - 50 || pageY > viewBottom + 50) return
 
-        const sx = s.x + (0.5 - mx) * s.parallaxFactor
+        // Scroll velocity creates horizontal drift — far stars drift more
+        const scrollDrift = sVel * s.parallaxFactor * 0.008
+        const sx = s.x + (0.5 - mx) * s.parallaxFactor + scrollDrift
         const sy = pageY - viewTop
 
         // Smooth, slow twinkle (no harsh flashing)
@@ -307,6 +337,18 @@ export function GalaxyBackground() {
       })
 
       // --- Shooting stars (longer trails, more dramatic) ---
+      // Fast scroll triggers extra shooting stars
+      if (Math.abs(sVel) > 30 && time - lastShootingStar > 800) {
+        lastShootingStar = time
+        const startX = Math.random() * canvas.width
+        const startY = Math.random() * canvas.height * 0.3
+        const angle = sVel > 0 ? Math.PI * 0.15 + Math.random() * 0.2 : Math.PI * 0.65 + Math.random() * 0.2
+        shootingStars.push({
+          x: startX, y: startY,
+          vx: Math.cos(angle) * 10, vy: Math.sin(angle) * 8,
+          life: 1, decay: 0.008, length: 180, brightness: 0.5,
+        })
+      }
       const shootingInterval = isIdle ? 2000 + Math.random() * 3000 : 4000 + Math.random() * 9000
       if (time - lastShootingStar > shootingInterval) {
         lastShootingStar = time
