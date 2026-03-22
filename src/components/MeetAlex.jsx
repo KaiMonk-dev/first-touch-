@@ -55,7 +55,7 @@ export function MeetAlex() {
                 key={i}
                 className="p-5 rounded-xl glass card-hover text-center"
               >
-                <span className="inline-block text-[13px] font-semibold text-[#C967E8]/70 bg-[#983AD6]/10 px-2.5 py-1 rounded-lg tabular-nums mb-3">
+                <span className="inline-block text-[13px] font-semibold text-[#B8965A]/70 bg-[#C9A96E]/10 px-2.5 py-1 rounded-lg tabular-nums mb-3">
                   {item.metric}
                 </span>
                 <h4 className="text-[13px] font-semibold text-white/80 mb-1.5">{item.title}</h4>

@@ -54,15 +54,15 @@ export function BeforeAfter() {
           {/* After */}
           <AnimatedSection delay={200}>
             <div className="h-full p-10 rounded-2xl glass-strong">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#983AD6]/5 border border-[#983AD6]/10 text-[11px] font-medium tracking-wider uppercase text-[#C967E8]/60 mb-8">
-                <span className="w-1 h-1 rounded-full bg-[#C967E8]/60" />
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C9A96E]/5 border border-[#C9A96E]/10 text-[11px] font-medium tracking-wider uppercase text-[#B8965A]/60 mb-8">
+                <span className="w-1 h-1 rounded-full bg-[#B8965A]/60" />
                 After
               </div>
 
               {/* CALM DESK IMAGE HERE — replace div with <img> */}
               <div className="w-full aspect-[16/9] rounded-xl overflow-hidden border border-white/[0.03] mb-8 relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#983AD6]/10 via-[#0a0014] to-black" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_60%,rgba(152,58,214,0.08),transparent_60%)]" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#C9A96E]/10 via-[#0a0014] to-black" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_60%,rgba(201,169,110,0.08),transparent_60%)]" />
                 <div className="absolute bottom-3 left-3 text-[9px] text-white/10 font-light tracking-wider uppercase">Replace with image</div>
               </div>
 
@@ -75,7 +75,7 @@ export function BeforeAfter() {
                   'Customer never thought about calling someone else',
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <svg className="w-4 h-4 text-[#C967E8]/50 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-4 h-4 text-[#B8965A]/50 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                     <span className="text-[13px] text-white/50 leading-relaxed font-light">{item}</span>

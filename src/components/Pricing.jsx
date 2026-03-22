@@ -59,7 +59,7 @@ export function Pricing() {
                 plan.featured ? 'glass-strong' : 'glass'
               }`}>
                 {plan.featured && (
-                  <span className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-[#C967E8]/20 to-[#983AD6]/20 border border-[#983AD6]/20 text-[10px] font-medium tracking-wider uppercase text-[#C967E8] mb-6">
+                  <span className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-[#B8965A]/20 to-[#C9A96E]/20 border border-[#C9A96E]/20 text-[10px] font-medium tracking-wider uppercase text-[#B8965A] mb-6">
                     Most Popular
                   </span>
                 )}
@@ -72,7 +72,7 @@ export function Pricing() {
                 <ul className="space-y-4 mb-10">
                   {plan.features.map((feature, j) => (
                     <li key={j} className="flex items-start gap-3">
-                      <svg className="w-4 h-4 text-[#C967E8]/40 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <svg className="w-4 h-4 text-[#B8965A]/40 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M20 6L9 17l-5-5" />
                       </svg>
                       <span className="text-[13px] text-white/40 leading-relaxed font-light">{feature}</span>

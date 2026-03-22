@@ -17,7 +17,7 @@ export function SMSCapture() {
       <div className="max-w-2xl mx-auto">
         <AnimatedSection>
           <div className="rounded-2xl glass-strong p-8 md:p-12 text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(152,58,214,0.04),transparent_60%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(201,169,110,0.04),transparent_60%)] pointer-events-none" />
 
             <div className="relative z-10">
               {!submitted ? (
@@ -37,7 +37,7 @@ export function SMSCapture() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="(555) 123-4567"
-                        className="w-full px-5 py-4 rounded-full bg-white/[0.04] border border-white/[0.06] text-white text-[14px] placeholder:text-white/20 focus:outline-none focus:border-[#983AD6]/30 focus:bg-white/[0.06] transition-all"
+                        className="w-full px-5 py-4 rounded-full bg-white/[0.04] border border-white/[0.06] text-white text-[14px] placeholder:text-white/20 focus:outline-none focus:border-[#C9A96E]/30 focus:bg-white/[0.06] transition-all"
                       />
                     </div>
                     <button

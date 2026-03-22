@@ -40,7 +40,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0014] via-[#06000f] to-black" />
 
         {/* Ambient glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(152,58,214,0.08),transparent_70%)] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(201,169,110,0.08),transparent_70%)] pointer-events-none" />
 
         {/* Video background */}
         <video
@@ -135,7 +135,7 @@ export function Hero() {
         <div className="border-t border-white/[0.04] py-8 px-6">
           <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8">
             <p className="label flex-shrink-0 whitespace-nowrap">
-              Powering the best teams
+              Integrates with
             </p>
             <div className="hidden md:block w-px h-6 bg-white/[0.06] flex-shrink-0" />
             <InfiniteSlider />

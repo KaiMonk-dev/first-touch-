@@ -38,7 +38,7 @@ export function VideoWalkthrough() {
               <>
                 {/* VIDEO THUMBNAIL HERE — replace with actual thumbnail image */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#0a0014] via-[#06000f] to-black">
-                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(152,58,214,0.06),transparent_60%)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,169,110,0.06),transparent_60%)]" />
                 </div>
 
                 {/* Play button */}

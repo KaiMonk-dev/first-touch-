@@ -6,7 +6,7 @@ export function FinalCTA() {
   return (
     <section className="relative py-40 md:py-52 px-6">
       {/* Ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse,rgba(152,58,214,0.06),transparent_70%)] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse,rgba(201,169,110,0.06),transparent_70%)] pointer-events-none" />
 
       <div className="max-w-3xl mx-auto text-center relative z-10">
         <AnimatedSection>

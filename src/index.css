@@ -3,9 +3,9 @@
 
 @theme {
   --color-bg: #010101;
-  --color-accent: #983AD6;
-  --color-accent-mid: #C967E8;
-  --color-accent-light: #FA93FA;
+  --color-accent: #C9A96E;
+  --color-accent-mid: #B8965A;
+  --color-accent-light: #D4BA82;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -24,7 +24,7 @@ body {
 }
 
 ::selection {
-  background: rgba(201, 103, 232, 0.3);
+  background: rgba(201, 169, 110, 0.25);
 }
 
 /* Premium glassmorphic styles */
@@ -52,18 +52,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Smooth gradient overlays */
-.fade-bottom {
-  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-}
-
-.fade-edges {
-  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-}
-
-/* Label style (Atlas-inspired small caps) */
+/* Label style */
 .label {
   font-size: 0.7rem;
   font-weight: 500;
@@ -76,7 +65,7 @@ body {
 .divider-line {
   width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(201,169,110,0.3), transparent);
   margin: 0 auto;
 }
 
@@ -97,32 +86,26 @@ input[type="range"]::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: white;
+  background: #C9A96E;
   cursor: pointer;
   border: none;
-  box-shadow: 0 0 20px rgba(152, 58, 214, 0.4);
+  box-shadow: 0 0 15px rgba(201, 169, 110, 0.3);
 }
 
 input[type="range"]::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: white;
+  background: #C9A96E;
   cursor: pointer;
   border: none;
-  box-shadow: 0 0 20px rgba(152, 58, 214, 0.4);
+  box-shadow: 0 0 15px rgba(201, 169, 110, 0.3);
 }
 
 /* Smooth reveal animation */
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
@@ -147,7 +130,7 @@ input[type="range"]::-moz-range-thumb {
 
 .card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(152, 58, 214, 0.06);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   border-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -159,16 +142,6 @@ input[type="range"]::-moz-range-thumb {
   transform: scale(0.97);
 }
 
-/* Animated counter */
-@keyframes countUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Preconnect hints in head handled via HTML */
-/* Lazy load images via IntersectionObserver in components */
-
-/* Smooth number transitions */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }

@@ -46,7 +46,7 @@ export function SpeedProof() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Alex */}
             <div className="p-10 rounded-2xl glass-strong card-hover text-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(152,58,214,0.06),transparent_70%)] pointer-events-none" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(201,169,110,0.06),transparent_70%)] pointer-events-none" />
               <div className="relative z-10">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/5 border border-green-500/10 text-[10px] font-medium tracking-wider uppercase text-green-400/70 mb-8">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />

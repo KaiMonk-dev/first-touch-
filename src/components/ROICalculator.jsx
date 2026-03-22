@@ -53,7 +53,7 @@ export function ROICalculator() {
 
                 <div className="p-8 rounded-xl bg-white/[0.03] border border-white/[0.04] text-center mt-4">
                   <p className="label mb-3">Annual recovery</p>
-                  <p className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-[#FA93FA] to-[#983AD6] bg-clip-text text-transparent">
+                  <p className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-[#D4BA82] to-[#C9A96E] bg-clip-text text-transparent">
                     ${fmt(annual)}
                   </p>
                 </div>
@@ -105,7 +105,7 @@ function ResultRow({ label, value, highlight }) {
   return (
     <div className="flex justify-between items-center">
       <span className="text-[13px] text-white/30 font-light">{label}</span>
-      <span className={`text-lg font-semibold tabular-nums ${highlight ? 'text-[#C967E8]' : 'text-white/80'}`}>
+      <span className={`text-lg font-semibold tabular-nums ${highlight ? 'text-[#B8965A]' : 'text-white/80'}`}>
         {value}
       </span>
     </div>
