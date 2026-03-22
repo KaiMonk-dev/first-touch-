@@ -17,11 +17,12 @@ import { Footer } from './components/Footer'
 import { StickyMobileCTA } from './components/StickyMobileCTA'
 import { ExitIntent } from './components/ExitIntent'
 import { BackToTop } from './components/BackToTop'
+import { AmbientCursor } from './components/AmbientCursor'
 
 function App() {
   return (
     <CalendlyProvider>
-      <div className="min-h-screen bg-black text-white overflow-x-hidden">
+      <div className="min-h-screen bg-black text-white overflow-x-hidden grain">
         <LoadingScreen />
         <ScrollProgress />
         <Nav />
@@ -42,6 +43,7 @@ function App() {
         <StickyMobileCTA />
         <ExitIntent />
         <BackToTop />
+        <AmbientCursor />
       </div>
     </CalendlyProvider>
   )
