@@ -23,6 +23,8 @@ import { MobileRipple } from './components/MobileRipple'
 import { PortalEcho } from './components/PortalEcho'
 import { StarRain } from './components/StarRain'
 import { useParallaxCards } from './hooks/useParallaxCards'
+import { CTAOrbit } from './components/CTAOrbit'
+import { DebugOverlay } from './components/DebugOverlay'
 import { GalaxyBackground } from './components/GalaxyBackground'
 import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
 import { EasterEggs } from './components/EasterEggs'
@@ -64,6 +66,8 @@ function App() {
           <MobileRipple />
           <PortalEcho />
           <StarRain targetId="pricing" />
+          <CTAOrbit />
+          <DebugOverlay />
           <EasterEggs />
           <ScrollReward />
         </div>

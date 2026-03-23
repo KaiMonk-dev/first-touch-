@@ -166,7 +166,9 @@ export function AmbientCursor() {
       }
 
       // --- THE WANDERING STAR ---
-      const pulse = 1 + Math.sin(coronaPulse.current) * 0.12
+      // Sync with galaxy heartbeat (same 0.0017 frequency converted to frame-based)
+      const galaxySync = 1 + Math.sin(Date.now() * 0.001 * Math.PI * 2 / 6) * 0.025
+      const pulse = (1 + Math.sin(coronaPulse.current) * 0.12) * galaxySync
       const motionScale = Math.min(1, speed * 0.03)
 
       // Outer corona — follows with lag for depth
