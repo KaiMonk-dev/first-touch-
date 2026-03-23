@@ -199,48 +199,54 @@ export function AmbientCursor() {
 
       // Outer corona — follows with lag for depth
       const coronaX = pos.current.x, coronaY = pos.current.y
-      const g0 = ctx.createRadialGradient(coronaX, coronaY, 0, coronaX, coronaY, Math.max(1, 80 * pulse))
-      g0.addColorStop(0, `rgba(${trailR}, ${trailG}, ${trailB}, 0.09)`)
-      g0.addColorStop(0.35, `rgba(${trailR}, ${trailG}, ${trailB}, 0.03)`)
+      const g0 = ctx.createRadialGradient(coronaX, coronaY, 0, coronaX, coronaY, Math.max(1, 90 * pulse))
+      g0.addColorStop(0, `rgba(${trailR}, ${trailG}, ${trailB}, 0.14)`)
+      g0.addColorStop(0.35, `rgba(${trailR}, ${trailG}, ${trailB}, 0.05)`)
       g0.addColorStop(1, 'transparent')
       ctx.fillStyle = g0
-      ctx.fillRect(coronaX - 80, coronaY - 80, 160, 160)
+      ctx.fillRect(coronaX - 90, coronaY - 90, 180, 180)
 
       // Inner corona — tighter, brighter
-      const g1 = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(1, 35 * pulse))
-      g1.addColorStop(0, 'rgba(255, 248, 230, 0.18)')
-      g1.addColorStop(0.3, `rgba(${trailR}, ${trailG}, ${trailB}, 0.08)`)
+      const g1 = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(1, 40 * pulse))
+      g1.addColorStop(0, 'rgba(255, 248, 230, 0.25)')
+      g1.addColorStop(0.3, `rgba(${trailR}, ${trailG}, ${trailB}, 0.12)`)
       g1.addColorStop(1, 'transparent')
       ctx.fillStyle = g1
-      ctx.fillRect(sx - 35, sy - 35, 70, 70)
+      ctx.fillRect(sx - 40, sy - 40, 80, 80)
 
       // Star core — bright, clearly visible, exactly at cursor
-      const g2 = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(1, 12 * pulse))
-      g2.addColorStop(0, 'rgba(255, 252, 245, 0.55)')
-      g2.addColorStop(0.35, 'rgba(255, 240, 210, 0.25)')
+      const g2 = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(1, 14 * pulse))
+      g2.addColorStop(0, 'rgba(255, 252, 245, 0.7)')
+      g2.addColorStop(0.35, 'rgba(255, 240, 210, 0.35)')
       g2.addColorStop(1, 'transparent')
       ctx.fillStyle = g2
-      ctx.fillRect(sx - 12, sy - 12, 24, 24)
+      ctx.fillRect(sx - 14, sy - 14, 28, 28)
 
       // Dark outline ring — ensures visibility on white buttons/surfaces
       ctx.beginPath()
-      ctx.arc(sx, sy, 4.5 * pulse, 0, Math.PI * 2)
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'
-      ctx.lineWidth = 1
+      ctx.arc(sx, sy, 5 * pulse, 0, Math.PI * 2)
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)'
+      ctx.lineWidth = 1.5
       ctx.stroke()
+
+      // Dark shadow behind core for white-surface visibility
+      ctx.beginPath()
+      ctx.arc(sx, sy, 4 * pulse, 0, Math.PI * 2)
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.12)'
+      ctx.fill()
 
       // Core dot — bright white-gold point, the click anchor
       ctx.beginPath()
-      ctx.arc(sx, sy, 3 * pulse, 0, Math.PI * 2)
-      ctx.fillStyle = 'rgba(255, 252, 245, 0.75)'
+      ctx.arc(sx, sy, 3.5 * pulse, 0, Math.PI * 2)
+      ctx.fillStyle = 'rgba(255, 252, 245, 0.85)'
       ctx.fill()
 
       // Diffraction cross
       ctx.save()
-      ctx.globalAlpha = 0.2 + Math.sin(coronaPulse.current * 0.7) * 0.06
+      ctx.globalAlpha = 0.25 + Math.sin(coronaPulse.current * 0.7) * 0.08
       ctx.strokeStyle = 'rgba(255, 248, 235, 1)'
-      ctx.lineWidth = 0.6
-      const spikeLen = 18 * pulse + motionScale * 7
+      ctx.lineWidth = 0.7
+      const spikeLen = 20 * pulse + motionScale * 8
       ctx.beginPath(); ctx.moveTo(sx - spikeLen, sy); ctx.lineTo(sx + spikeLen, sy); ctx.stroke()
       ctx.beginPath(); ctx.moveTo(sx, sy - spikeLen); ctx.lineTo(sx, sy + spikeLen); ctx.stroke()
       ctx.globalAlpha = 0.08
@@ -255,7 +261,7 @@ export function AmbientCursor() {
       nearbyStars.forEach((gs) => {
         const dist = Math.sqrt((sx - gs.x) ** 2 + (sy - gs.y) ** 2)
         if (dist < 120 && dist > 8) {
-          const tO = Math.max(0, (1 - dist / 120)) * 0.12
+          const tO = Math.max(0, (1 - dist / 120)) * 0.18
           ctx.beginPath()
           ctx.moveTo(sx, sy)
           ctx.lineTo(gs.x, gs.y)

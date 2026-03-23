@@ -86,8 +86,8 @@ export function GalaxyBackground() {
           x: rng() * W,
           y: biasedY,
           warmth: 0, // memory — retains brightness after cursor leaves
-          r: layer === 0 ? rng() * 0.7 + 0.15 : layer === 1 ? rng() * 1.1 + 0.35 : rng() * 1.8 + 0.8,
-          opacity: layer === 0 ? rng() * 0.45 + 0.18 : layer === 1 ? rng() * 0.55 + 0.32 : rng() * 0.55 + 0.45,
+          r: layer === 0 ? rng() * 0.8 + 0.2 : layer === 1 ? rng() * 1.2 + 0.4 : rng() * 2.0 + 0.9,
+          opacity: layer === 0 ? rng() * 0.5 + 0.25 : layer === 1 ? rng() * 0.55 + 0.4 : rng() * 0.5 + 0.55,
           tw1: rng() * 0.004 + 0.001,
           tw2: rng() * 0.007 + 0.002,
           tw3: rng() * 0.002 + 0.0005,
@@ -126,7 +126,7 @@ export function GalaxyBackground() {
           x: rng() * W, y: rng() * VIRTUAL_H,
           w: 300 + rng() * 500, h: 150 + rng() * 250,
           color: nebPalette[Math.floor(rng() * nebPalette.length)],
-          opacity: 0.003 + rng() * 0.006,
+          opacity: 0.005 + rng() * 0.009,
           phase: rng() * Math.PI * 2,
           rotation: (rng() - 0.5) * 0.4,
           stretch: 0.3 + rng() * 0.4,
@@ -443,11 +443,11 @@ export function GalaxyBackground() {
 
       // --- Shooting stars (skip if reduced motion) ---
       if (!prefersReducedMotion) {
-      const sInt = isIdle ? 1500 + Math.random()*2500 : 4000 + Math.random()*6000
+      const sInt = isIdle ? 1200 + Math.random()*2000 : 3000 + Math.random()*5000
       if (time - lastShoot > sInt) {
         lastShoot = time
         const dir = Math.random() > 0.5 ? 1 : -1
-        shootingStars.push({ x: dir>0?-20:W+20, y: Math.random()*H*0.5, vx: dir*(3+Math.random()*4), vy: 0.8+Math.random()*2, life: 1, decay: 0.004+Math.random()*0.003, brightness: 0.3+Math.random()*0.3 })
+        shootingStars.push({ x: dir>0?-20:W+20, y: Math.random()*H*0.5, vx: dir*(3+Math.random()*4), vy: 0.8+Math.random()*2, life: 1, decay: 0.004+Math.random()*0.003, brightness: 0.4+Math.random()*0.35 })
       }
       shootingStars = shootingStars.filter(s => s.life > 0)
       shootingStars.forEach((s) => {

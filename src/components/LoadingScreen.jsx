@@ -103,7 +103,7 @@ export function LoadingScreen() {
     for (let i = 0; i < dustCount; i++) {
       dust.push({
         x: Math.random() * W, y: Math.random() * H,
-        r: 0.15 + Math.random() * 0.7, o: 0.04 + Math.random() * 0.18,
+        r: 0.2 + Math.random() * 0.9, o: 0.08 + Math.random() * 0.28,
         speed: 0.08 + Math.random() * 0.25,
         angle: Math.random() * Math.PI * 2,
         drift: (Math.random() - 0.5) * 0.002,
@@ -120,7 +120,7 @@ export function LoadingScreen() {
         baseDist: 30 + Math.random() * Math.max(W, H) * 0.42,
         speed: 0.002 + Math.random() * 0.005,
         size: layer > 0.8 ? 1 + Math.random() * 1.8 : 0.3 + Math.random() * 0.8,
-        opacity: layer > 0.8 ? 0.25 + Math.random() * 0.35 : 0.04 + Math.random() * 0.12,
+        opacity: layer > 0.8 ? 0.35 + Math.random() * 0.4 : 0.08 + Math.random() * 0.2,
         color: layer > 0.85 ? [255, 215, 150] : layer > 0.7 ? [150, 175, 255] : layer > 0.5 ? [195, 145, 225] : layer > 0.3 ? [130, 210, 195] : [175, 175, 195],
         z: 0.3 + Math.random() * 0.7,
         wobble: Math.random() * Math.PI * 2,
@@ -257,7 +257,7 @@ export function LoadingScreen() {
         if (isEntering) r += ep * ep * (180 + i * 70)
         if (r <= 0) continue
 
-        const opacity = isEntering ? Math.max(0, (1 - ep) * (0.02 + depth * 0.04)) : 0.015 + depth * 0.035
+        const opacity = isEntering ? Math.max(0, (1 - ep) * (0.04 + depth * 0.06)) : 0.03 + depth * 0.055
         if (opacity <= 0) continue
 
         const hue = i / ringCount
@@ -283,20 +283,20 @@ export function LoadingScreen() {
         const ep2 = 1 + Math.sin(time * 0.02) * 0.12
 
         const g0 = ctx.createRadialGradient(cx + mx * 2, cy + my * 2, 0, cx, cy, Math.max(1, er * 3.5 * ep2))
-        g0.addColorStop(0, `rgba(100, 65, 160, ${eo * 0.06})`)
-        g0.addColorStop(0.6, `rgba(70, 50, 130, ${eo * 0.02})`)
+        g0.addColorStop(0, `rgba(100, 65, 160, ${eo * 0.1})`)
+        g0.addColorStop(0.6, `rgba(70, 50, 130, ${eo * 0.04})`)
         g0.addColorStop(1, 'transparent')
         ctx.fillStyle = g0; ctx.fillRect(cx - er * 4, cy - er * 4, er * 8, er * 8)
 
         const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, er * 1.8 * ep2))
-        g1.addColorStop(0, `rgba(210, 185, 125, ${eo * 0.12})`)
-        g1.addColorStop(0.6, `rgba(201, 169, 110, ${eo * 0.04})`)
+        g1.addColorStop(0, `rgba(210, 185, 125, ${eo * 0.2})`)
+        g1.addColorStop(0.6, `rgba(201, 169, 110, ${eo * 0.07})`)
         g1.addColorStop(1, 'transparent')
         ctx.fillStyle = g1; ctx.fillRect(cx - er * 2, cy - er * 2, er * 4, er * 4)
 
         const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, er * ep2))
-        g2.addColorStop(0, `rgba(255, 252, 242, ${eo * 0.18})`)
-        g2.addColorStop(0.5, `rgba(255, 240, 210, ${eo * 0.06})`)
+        g2.addColorStop(0, `rgba(255, 252, 242, ${eo * 0.3})`)
+        g2.addColorStop(0.5, `rgba(255, 240, 210, ${eo * 0.1})`)
         g2.addColorStop(1, 'transparent')
         ctx.fillStyle = g2; ctx.fillRect(cx - er, cy - er, er * 2, er * 2)
       }
@@ -391,20 +391,21 @@ export function LoadingScreen() {
           transition: 'all 1.6s cubic-bezier(0.16, 1, 0.3, 1)',
         }}>
           <p style={{
-            fontSize: 'clamp(1.5rem, 3.5vw, 2.2rem)',
+            fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
             fontWeight: 700,
             letterSpacing: '-0.04em',
             margin: 0, lineHeight: 1,
-            textShadow: '0 0 40px rgba(201,169,110,0.15)',
+            textShadow: '0 0 60px rgba(201,169,110,0.25), 0 0 120px rgba(201,169,110,0.08)',
           }}>
-            <span style={{ color: 'rgba(255,255,255,0.95)' }}>First</span>
-            <span style={{ color: 'rgba(255,255,255,0.3)' }}>Touch</span>
+            <span style={{ color: 'rgba(255,255,255,1)' }}>First</span>
+            <span style={{ color: 'rgba(255,255,255,0.55)' }}>Touch</span>
           </p>
 
           <p style={{
-            fontSize: '0.45rem', fontWeight: 300, letterSpacing: '0.3em',
-            textTransform: 'uppercase', color: 'rgba(201,169,110,0.3)',
-            marginTop: 14, margin: '14px 0 0',
+            fontSize: '0.55rem', fontWeight: 400, letterSpacing: '0.35em',
+            textTransform: 'uppercase', color: 'rgba(201,169,110,0.55)',
+            marginTop: 16, margin: '16px 0 0',
+            textShadow: '0 0 20px rgba(201,169,110,0.15)',
           }}>
             Ascension First AI
           </p>
@@ -420,7 +421,7 @@ export function LoadingScreen() {
             fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
             fontWeight: 300,
             letterSpacing: '0.15em',
-            color: 'rgba(255, 255, 255, 0.35)',
+            color: 'rgba(255, 255, 255, 0.55)',
             fontStyle: 'italic',
             animation: show ? 'breathe 4s ease-in-out infinite' : 'none',
           }}>
@@ -431,8 +432,8 @@ export function LoadingScreen() {
 
       <style>{`
         @keyframes breathe {
-          0%, 100% { opacity: 0.35; }
-          50% { opacity: 0.7; }
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 0.85; }
         }
       `}</style>
     </div>
