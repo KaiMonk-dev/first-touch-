@@ -249,9 +249,10 @@ export function AmbientCursor() {
       ctx.beginPath(); ctx.moveTo(sx + dLen, sy - dLen); ctx.lineTo(sx - dLen, sy + dLen); ctx.stroke()
       ctx.restore()
 
-      // --- Star-to-star gravitational tethers ---
+      // --- Star-to-star gravitational tethers (only check nearby stars) ---
       const galaxyStars = getVisibleStars()
-      galaxyStars.forEach((gs) => {
+      const nearbyStars = galaxyStars.filter(gs => Math.abs(sx - gs.x) < 130 && Math.abs(sy - gs.y) < 130)
+      nearbyStars.forEach((gs) => {
         const dist = Math.sqrt((sx - gs.x) ** 2 + (sy - gs.y) ** 2)
         if (dist < 120 && dist > 8) {
           const tO = Math.max(0, (1 - dist / 120)) * 0.12
@@ -269,14 +270,12 @@ export function AmbientCursor() {
         }
       })
 
-      // --- Text glow (headings near cursor brighten) ---
-      if (Math.random() < 0.15) {
+      // --- Text glow (headings near cursor brighten) — heavily throttled ---
+      if (Math.random() < 0.05) { // ~3fps for DOM queries
         const headings = document.querySelectorAll('h1, h2, h3')
         headings.forEach((h) => {
           const rect = h.getBoundingClientRect()
-          const hcx = rect.left + rect.width / 2
-          const hcy = rect.top + rect.height / 2
-          const dist = Math.sqrt((target.current.x - hcx) ** 2 + (target.current.y - hcy) ** 2)
+          const dist = Math.sqrt((target.current.x - rect.left - rect.width/2) ** 2 + (target.current.y - rect.top - rect.height/2) ** 2)
           h.style.setProperty('--cursor-glow', Math.max(0, 1 - dist / 300).toFixed(2))
         })
       }

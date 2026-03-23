@@ -84,12 +84,14 @@ export function Footer() {
         ctx.fill()
       })
 
-      animId = requestAnimationFrame(draw)
     }
-    draw()
+    draw() // initial draw
+
+    // Only redraw on mouse events, not every frame
+    const redraw = () => requestAnimationFrame(draw)
+    parent.addEventListener('mousemove', (e) => { onMove(e); redraw() }, { passive: true })
 
     return () => {
-      cancelAnimationFrame(animId)
       parent.removeEventListener('mousemove', onMove)
       parent.removeEventListener('mouseleave', onLeave)
     }
