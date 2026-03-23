@@ -72,7 +72,7 @@ export function Nav() {
                 href={link.href}
                 className={`relative px-4 py-2 text-[13px] transition-all duration-300 rounded-xl group/nav ${
                   activeSection === link.href.slice(1)
-                    ? 'text-white font-medium bg-white/[0.06]'
+                    ? 'text-white font-medium bg-white/[0.06] border-b border-[#C9A96E]/30'
                     : 'text-white/50 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >

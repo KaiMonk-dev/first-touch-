@@ -60,7 +60,9 @@ export function FAQ() {
         <div className="space-y-2">
           {faqs.map((faq, i) => (
             <AnimatedSection key={i} delay={i * 80}>
-              <div className="rounded-xl liquid-glass overflow-hidden hover:bg-white/[0.05] transition-all duration-500">
+              <div className={`rounded-xl overflow-hidden transition-all duration-500 ${
+                open === i ? 'liquid-glass-strong' : 'liquid-glass hover:bg-white/[0.05]'
+              }`}>
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
                   className="w-full flex items-center justify-between p-6 text-left"

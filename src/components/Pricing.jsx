@@ -162,7 +162,7 @@ function PricingCard({ plan, delay, onBook }) {
         onMouseMove={tilt.onMouseMove}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={(e) => { tilt.onMouseLeave(e); setHovered(false) }}
-        className={`h-full p-9 rounded-2xl flex flex-col transition-all duration-500 ${
+        className={`h-full p-9 rounded-2xl flex flex-col card-hover transition-all duration-500 ${
           plan.tier === 'featured'
             ? 'liquid-glass-strong liquid-shimmer'
             : plan.tier === 'enterprise'
