@@ -362,6 +362,15 @@ section::before {
   font-variant-numeric: tabular-nums;
 }
 
+/* Hide scrollbar for mobile pricing slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* ═══════════════════════════════════════
    PRINT STYLESHEET — clean white version
    ═══════════════════════════════════════ */

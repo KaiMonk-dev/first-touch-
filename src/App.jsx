@@ -22,6 +22,7 @@ import { AmbientCursor } from './components/AmbientCursor'
 import { GalaxyBackground } from './components/GalaxyBackground'
 import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
 import { EasterEggs } from './components/EasterEggs'
+import { SectionBurst } from './components/SectionBurst'
 
 function App() {
   return (
@@ -36,10 +37,13 @@ function App() {
             <Hero />
             <ProofTicker />
             <SpeedProof />
+            <SectionBurst />
             <MeetAlex />
             <HowItWorks />
+            <SectionBurst />
             <DashboardPreview />
             <TryAlex />
+            <SectionBurst />
             <ComparisonTable />
             <TestimonialPlaceholder />
             <Pricing />
@@ -51,7 +55,7 @@ function App() {
           <ExitIntent />
           <BackToTop />
           <AmbientCursor />
-        <EasterEggs />
+          <EasterEggs />
         </div>
       </CalendlyProvider>
     </ErrorBoundary>
