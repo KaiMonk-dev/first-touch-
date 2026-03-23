@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { getSeasonalTheme } from '../hooks/useSeasonalTheme'
 
 export function GalaxyBackground() {
   const canvasRef = useRef(null)
@@ -44,6 +45,7 @@ export function GalaxyBackground() {
     function initGalaxy() {
       const rng = seededRng(42)
       const W = canvas.width
+      const theme = getSeasonalTheme()
 
       // --- STARS ---
       const stars = []
@@ -55,7 +57,10 @@ export function GalaxyBackground() {
         const layer = depth < 0.55 ? 0 : depth < 0.85 ? 1 : 2
         const temp = rng()
         let color
-        if (layer === 2) {
+        if (theme.starAccent && layer >= 1) {
+          // Seasonal theme — pick from accent palette
+          color = theme.starAccent[Math.floor(rng() * theme.starAccent.length)]
+        } else if (layer === 2) {
           if (temp < 0.15) color = { r: 255, g: 170, b: 120 }
           else if (temp < 0.3) color = { r: 145, g: 180, b: 255 }
           else if (temp < 0.4) color = { r: 255, g: 210, b: 230 }
@@ -110,12 +115,15 @@ export function GalaxyBackground() {
 
       // --- SUBTLE NEBULA WASHES (not blobby circles — elongated, very faint) ---
       const nebulae = []
-      const nebPalette = [
+      const defaultNebPalette = [
         [90, 60, 150], [60, 100, 180], [150, 80, 130],
         [70, 140, 140], [180, 130, 80], [100, 80, 160],
         [60, 130, 170], [140, 100, 160], [80, 150, 130],
         [160, 120, 90], [100, 120, 180], [130, 80, 140],
       ]
+      const nebPalette = theme.nebulaOverride
+        ? [...theme.nebulaOverride, ...theme.nebulaOverride, ...defaultNebPalette.slice(0, 6)]
+        : defaultNebPalette
       const nebCount = Math.floor(pageH / 500)
       for (let n = 0; n < nebCount; n++) {
         nebulae.push({

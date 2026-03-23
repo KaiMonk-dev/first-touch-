@@ -23,6 +23,7 @@ import { GalaxyBackground } from './components/GalaxyBackground'
 import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
 import { EasterEggs } from './components/EasterEggs'
 import { SectionBurst } from './components/SectionBurst'
+import { ScrollReward } from './components/ScrollReward'
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
           <BackToTop />
           <AmbientCursor />
           <EasterEggs />
+          <ScrollReward />
         </div>
       </CalendlyProvider>
     </ErrorBoundary>
