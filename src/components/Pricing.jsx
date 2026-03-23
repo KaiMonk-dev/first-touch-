@@ -126,27 +126,9 @@ export function Pricing() {
           </div>
         </AnimatedSection>
 
-        {/* Mobile: horizontal scroll snap slider | Desktop: 3-column grid with focus effect */}
-        <div className="
-          flex md:grid md:grid-cols-3 gap-5
-          overflow-x-auto md:overflow-visible
-          snap-x snap-mandatory md:snap-none
-          -mx-6 px-6 md:mx-0 md:px-0
-          pb-4 md:pb-0
-          scrollbar-hide
-          group/pricing
-        ">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {plans.map((plan, i) => (
-            <div key={i} className="min-w-[85vw] md:min-w-0 snap-center">
-              <PricingCard plan={plan} delay={i * 150} onBook={() => calendly.open()} />
-            </div>
-          ))}
-        </div>
-
-        {/* Mobile scroll indicator dots */}
-        <div className="flex md:hidden justify-center gap-2 mt-4">
-          {plans.map((_, i) => (
-            <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/15" />
+            <PricingCard key={i} plan={plan} delay={i * 150} onBook={() => calendly.open()} />
           ))}
         </div>
 

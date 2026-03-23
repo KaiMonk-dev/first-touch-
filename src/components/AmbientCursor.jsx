@@ -71,7 +71,13 @@ export function AmbientCursor() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       const now = Date.now()
 
-      // Trail constellation
+      // Trail constellation with section-aware color
+      const scrollPct = Math.min(1, window.scrollY / 8000)
+      // Warm gold → purple → cool blue as you scroll
+      const trailR = Math.round(201 - scrollPct * 100)
+      const trailG = Math.round(169 - scrollPct * 50)
+      const trailB = Math.round(110 + scrollPct * 140)
+
       const points = trailPoints.current
       for (let i = points.length - 1; i >= 0; i--) {
         if (now - points[i].time > 2500) { points.splice(i, 1); continue }
@@ -82,7 +88,7 @@ export function AmbientCursor() {
         ctx.beginPath()
         ctx.moveTo(points[i - 1].x, points[i - 1].y)
         ctx.lineTo(points[i].x, points[i].y)
-        ctx.strokeStyle = `rgba(201, 169, 110, ${(1 - age) * 0.07})`
+        ctx.strokeStyle = `rgba(${trailR}, ${trailG}, ${trailB}, ${(1 - age) * 0.07})`
         ctx.lineWidth = 0.5
         ctx.stroke()
       }
@@ -92,7 +98,7 @@ export function AmbientCursor() {
         const o = (1 - age) * 0.15
         ctx.beginPath()
         ctx.arc(points[i].x, points[i].y, (1 - age) * 1.5, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(201, 169, 110, ${o})`
+        ctx.fillStyle = `rgba(${trailR}, ${trailG}, ${trailB}, ${o})`
         ctx.fill()
       }
 

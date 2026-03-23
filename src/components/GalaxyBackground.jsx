@@ -31,7 +31,8 @@ export function GalaxyBackground() {
 
     // Virtual page height — stars spread across this range
     // Using a very large value so stars always exist no matter how tall the page gets
-    const VIRTUAL_H = 20000
+    const isMobileCheck = window.innerWidth < 768
+    const VIRTUAL_H = isMobileCheck ? 8000 : 20000
     const theme = getSeasonalTheme()
     let stars, clusters, nebulae, constellations
 
@@ -229,7 +230,13 @@ export function GalaxyBackground() {
         const t2 = Math.sin(time * s.tw2 + s.phase * 1.3)
         const t3 = Math.sin(time * s.tw3 + s.phase * 0.7)
         let o = s.opacity * (0.65 + 0.35 * (t1*0.45 + t2*0.35 + t3*0.2))
-        if (isIdle) o *= 1 + Math.min(idle - 3, 4) * 0.04
+        // Idle boost — stars get noticeably brighter and twinkle more when screen is still
+        if (isIdle) {
+          const idleBoost = Math.min(idle - 3, 6) * 0.06
+          o *= 1 + idleBoost
+          // Extra twinkle amplitude when idle
+          o += Math.sin(time * s.tw1 * 3 + s.phase) * 0.05 * Math.min(idle - 3, 3)
+        }
 
         const dist = Math.sqrt((s.x - mx)**2 + (sy - my)**2)
         const prox = Math.max(0, 1 - dist/280) * 0.5
@@ -253,8 +260,16 @@ export function GalaxyBackground() {
 
         if (s.hasSpikes && o > 0.3) drawSpikes(s.x, sy, s.r * (3.5 + prox*6), o, s.color)
 
+        // Color temperature shift: warm at top → cool at bottom
+        const scrollPct = Math.min(1, scrollY / 8000)
+        const warmShift = (1 - scrollPct) * 15
+        const coolShift = scrollPct * 20
+        const cr = Math.min(255, s.color.r + warmShift - coolShift * 0.5)
+        const cg = s.color.g
+        const cb = Math.min(255, s.color.b + coolShift - warmShift * 0.3)
+
         ctx.beginPath(); ctx.arc(s.x, sy, s.r * rs, 0, Math.PI*2)
-        ctx.fillStyle = `rgba(${s.color.r},${s.color.g},${s.color.b},${o})`
+        ctx.fillStyle = `rgba(${cr},${cg},${cb},${o})`
         ctx.fill()
       })
 
@@ -290,7 +305,7 @@ export function GalaxyBackground() {
       scrollTrail.forEach((p) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.015; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fillStyle=`rgba(201,169,110,${p.life*0.1})`; ctx.fill() })
 
       // --- Shooting stars ---
-      const sInt = isIdle ? 1000 + Math.random()*1500 : 2000 + Math.random()*4000
+      const sInt = isIdle ? 600 + Math.random()*1000 : 2000 + Math.random()*4000
       if (time - lastShoot > sInt) {
         lastShoot = time
         const dir = Math.random() > 0.5 ? 1 : -1
@@ -334,7 +349,8 @@ export function GalaxyBackground() {
       })
 
       // --- Stellar births ---
-      if (time - lastBirth > 15000+Math.random()*12000) {
+      const birthInt = isIdle ? 5000+Math.random()*5000 : 15000+Math.random()*12000
+      if (time - lastBirth > birthInt) {
         lastBirth=time;const bc=[[201,169,110],[170,200,255],[200,160,215],[150,215,195]]
         stellarBirths.push({x:Math.random()*W,y:Math.random()*H,life:0,growing:true,maxR:8+Math.random()*10,color:bc[Math.floor(Math.random()*bc.length)]})
       }
