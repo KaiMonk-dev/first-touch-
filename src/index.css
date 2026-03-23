@@ -310,6 +310,11 @@ h1, h2, h3 {
   transition: text-shadow 0.3s ease;
 }
 
+/* Heading parallax depth — different sections at different speeds */
+section h2 {
+  will-change: transform;
+}
+
 /* Section focus fade — content brightens as it enters viewport center */
 section > div {
   opacity: 0.92;

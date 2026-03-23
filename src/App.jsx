@@ -19,6 +19,7 @@ import { StickyMobileCTA } from './components/StickyMobileCTA'
 import { ExitIntent } from './components/ExitIntent'
 import { BackToTop } from './components/BackToTop'
 import { AmbientCursor } from './components/AmbientCursor'
+import { MobileRipple } from './components/MobileRipple'
 import { GalaxyBackground } from './components/GalaxyBackground'
 import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
 import { EasterEggs } from './components/EasterEggs'
@@ -56,6 +57,7 @@ function App() {
           <ExitIntent />
           <BackToTop />
           <AmbientCursor />
+          <MobileRipple />
           <EasterEggs />
           <ScrollReward />
         </div>
