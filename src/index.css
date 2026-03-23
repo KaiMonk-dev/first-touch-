@@ -362,6 +362,11 @@ nav {
   --nav-warmth: 1;
 }
 
+/* 3D perspective for liquid glass tilt effect */
+.liquid-glass, .liquid-glass-strong {
+  transform-style: preserve-3d;
+}
+
 /* Section focus fade — content brightens as it enters viewport center */
 section > div {
   opacity: 0.92;
