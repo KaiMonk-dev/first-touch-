@@ -320,6 +320,12 @@ section h2 {
   will-change: transform;
 }
 
+/* Parallax depth tilt on cards — subtle 3D based on viewport position */
+.liquid-glass, .liquid-glass-strong {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
 /* Section focus fade — content brightens as it enters viewport center */
 section > div {
   opacity: 0.92;

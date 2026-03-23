@@ -10,6 +10,7 @@ export function AmbientCursor() {
   const pos = useRef({ x: -300, y: -300 })
   const trailPoints = useRef([])
   const sparks = useRef([])
+  const clickBursts = useRef([])
   const coronaPulse = useRef(0)
 
   useEffect(() => {
@@ -60,6 +61,22 @@ export function AmbientCursor() {
         }
       }
     }
+    const onClick = (e) => {
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2 + Math.random() * 0.4
+        const speed = 1.5 + Math.random() * 2
+        clickBursts.current.push({
+          x: e.clientX, y: e.clientY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          r: 0.4 + Math.random() * 0.8,
+          color: Math.random() > 0.5 ? [255, 240, 200] : [200, 180, 255],
+        })
+      }
+      if (clickBursts.current.length > 40) clickBursts.current.splice(0, 10)
+    }
+    window.addEventListener('click', onClick, { passive: true })
     window.addEventListener('mousemove', onMove, { passive: true })
 
     let animId
@@ -124,6 +141,27 @@ export function AmbientCursor() {
         ctx.beginPath()
         ctx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2)
         ctx.fillStyle = `rgba(${s.color[0]}, ${s.color[1]}, ${s.color[2]}, ${s.life * 0.3})`
+        ctx.fill()
+      }
+
+      // --- Click burst particles ---
+      for (let i = clickBursts.current.length - 1; i >= 0; i--) {
+        const b = clickBursts.current[i]
+        b.x += b.vx; b.y += b.vy
+        b.vx *= 0.96; b.vy *= 0.96 // decelerate
+        b.life -= 0.025
+        if (b.life <= 0) { clickBursts.current.splice(i, 1); continue }
+        // Glow
+        const gr = Math.max(0.5, b.r * 3 * b.life)
+        const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, gr)
+        grad.addColorStop(0, `rgba(${b.color[0]},${b.color[1]},${b.color[2]},${b.life * 0.3})`)
+        grad.addColorStop(1, 'transparent')
+        ctx.fillStyle = grad
+        ctx.fillRect(b.x - gr, b.y - gr, gr * 2, gr * 2)
+        // Core
+        ctx.beginPath()
+        ctx.arc(b.x, b.y, b.r * b.life, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(${b.color[0]},${b.color[1]},${b.color[2]},${b.life * 0.5})`
         ctx.fill()
       }
 
@@ -221,6 +259,7 @@ export function AmbientCursor() {
 
     return () => {
       window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('click', onClick)
       window.removeEventListener('resize', onResize)
       cancelAnimationFrame(animId)
       document.body.style.cursor = ''

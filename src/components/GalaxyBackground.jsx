@@ -140,8 +140,16 @@ export function GalaxyBackground() {
 
     // Ephemeral effects
     let shootingStars = [], comets = [], supernovae = [], stellarBirths = [], scrollTrail = []
-    let arrivalBoost = 1.25 // post-portal arrival brightness boost, decays to 1 slowly
+    let arrivalBoost = 1.25
     let lastShoot = 0, lastComet = 0, lastSupernova = 0, lastBirth = 0, lastScrollY = 0
+
+    // Galaxy weather — drifting brightness regions
+    let weatherX = Math.random() * canvas.width
+    let weatherY = Math.random() * canvas.height
+    let weatherRadius = 200 + Math.random() * 200
+    let weatherIntensity = 0
+    let weatherTarget = 0.15
+    let weatherTimer = 0
 
     // Track cursor velocity — galaxy is "idle" when velocity is near zero
     let mouseVelocity = 0
@@ -214,6 +222,25 @@ export function GalaxyBackground() {
       // Post-portal arrival settling — stars briefly brighter
       if (arrivalBoost > 1.005) arrivalBoost *= 0.9995 // very slow decay over ~4 seconds
       else arrivalBoost = 1
+
+      // --- Galaxy weather (drifting brightness cloud) ---
+      weatherTimer++
+      if (weatherTimer > 600 + Math.random() * 600) { // shift every 10-20 seconds
+        weatherTimer = 0
+        weatherX = Math.random() * W
+        weatherY = Math.random() * H
+        weatherRadius = 150 + Math.random() * 250
+        weatherTarget = 0.08 + Math.random() * 0.12
+      }
+      weatherIntensity += (weatherTarget - weatherIntensity) * 0.01 // slow ramp
+      if (weatherIntensity > 0.02) {
+        const wGrad = ctx.createRadialGradient(weatherX, weatherY, 0, weatherX, weatherY, Math.max(1, weatherRadius))
+        wGrad.addColorStop(0, `rgba(201, 169, 110, ${weatherIntensity * 0.5})`)
+        wGrad.addColorStop(0.4, `rgba(160, 150, 200, ${weatherIntensity * 0.2})`)
+        wGrad.addColorStop(1, 'transparent')
+        ctx.fillStyle = wGrad
+        ctx.fillRect(weatherX - weatherRadius, weatherY - weatherRadius, weatherRadius * 2, weatherRadius * 2)
+      }
 
       // --- Nebulae ---
       nebulae.forEach((n) => {

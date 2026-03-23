@@ -22,6 +22,7 @@ import { AmbientCursor } from './components/AmbientCursor'
 import { MobileRipple } from './components/MobileRipple'
 import { PortalEcho } from './components/PortalEcho'
 import { StarRain } from './components/StarRain'
+import { useParallaxCards } from './hooks/useParallaxCards'
 import { GalaxyBackground } from './components/GalaxyBackground'
 import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
 import { EasterEggs } from './components/EasterEggs'
@@ -29,6 +30,7 @@ import { SectionBurst } from './components/SectionBurst'
 import { ScrollReward } from './components/ScrollReward'
 
 function App() {
+  useParallaxCards()
   return (
     <ErrorBoundary>
       <CalendlyProvider>
