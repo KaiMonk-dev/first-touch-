@@ -11,7 +11,14 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
+  const [materialized, setMaterialized] = useState(false)
   const calendly = useCalendly()
+
+  // Nav materializes after portal — delayed entrance
+  useEffect(() => {
+    const t = setTimeout(() => setMaterialized(true), 3500) // after portal closes
+    return () => clearTimeout(t)
+  }, [])
 
   useEffect(() => {
     const onScroll = () => {
@@ -31,10 +38,13 @@ export function Nav() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        scrolled
-          ? 'py-2 px-4'
-          : 'py-4 px-4'
+        scrolled ? 'py-2 px-4' : 'py-4 px-4'
       }`}
+      style={{
+        opacity: materialized ? 1 : 0,
+        transform: materialized ? 'translateY(0)' : 'translateY(-20px)',
+        transition: 'opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1), padding 0.7s ease',
+      }}
     >
       <div
         className={`max-w-6xl mx-auto rounded-2xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${

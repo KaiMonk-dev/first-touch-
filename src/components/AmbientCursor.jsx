@@ -101,16 +101,16 @@ export function AmbientCursor() {
         ctx.beginPath()
         ctx.moveTo(points[i - 1].x, points[i - 1].y)
         ctx.lineTo(points[i].x, points[i].y)
-        ctx.strokeStyle = `rgba(${trailR}, ${trailG}, ${trailB}, ${(1 - age) * 0.14})`
-        ctx.lineWidth = 0.5
+        ctx.strokeStyle = `rgba(${trailR}, ${trailG}, ${trailB}, ${(1 - age) * 0.2})`
+        ctx.lineWidth = 0.6
         ctx.stroke()
       }
 
       for (let i = 0; i < points.length; i++) {
         const age = (now - points[i].time) / 2500
-        const o = (1 - age) * 0.3
+        const o = (1 - age) * 0.4
         ctx.beginPath()
-        ctx.arc(points[i].x, points[i].y, (1 - age) * 2, 0, Math.PI * 2)
+        ctx.arc(points[i].x, points[i].y, (1 - age) * 2.5, 0, Math.PI * 2)
         ctx.fillStyle = `rgba(${trailR}, ${trailG}, ${trailB}, ${o})`
         ctx.fill()
       }

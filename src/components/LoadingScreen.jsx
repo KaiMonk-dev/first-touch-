@@ -23,40 +23,61 @@ export function LoadingScreen() {
     return () => clearTimeout(t)
   }, [])
 
-  // Sound design — low resonance hum
-  const audioCtxRef = useRef(null)
+  // Sound design — layered cosmic audio
   const playHum = () => {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)()
-      audioCtxRef.current = ctx
-      // Deep bass drone
-      const osc = ctx.createOscillator()
-      const gain = ctx.createGain()
-      osc.type = 'sine'
-      osc.frequency.value = 55 // low A
-      gain.gain.setValueAtTime(0, ctx.currentTime)
-      gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.5)
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.5)
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.start()
-      osc.stop(ctx.currentTime + 3)
 
-      // Whoosh on enter
+      // Deep bass drone — the portal's heartbeat
+      const osc1 = ctx.createOscillator()
+      const g1 = ctx.createGain()
+      osc1.type = 'sine'
+      osc1.frequency.value = 55
+      g1.gain.setValueAtTime(0, ctx.currentTime)
+      g1.gain.linearRampToValueAtTime(0.025, ctx.currentTime + 0.6)
+      g1.gain.linearRampToValueAtTime(0, ctx.currentTime + 3)
+      osc1.connect(g1); g1.connect(ctx.destination)
+      osc1.start(); osc1.stop(ctx.currentTime + 3.5)
+
+      // Harmonic shimmer — the portal sings
+      const osc2 = ctx.createOscillator()
+      const g2 = ctx.createGain()
+      osc2.type = 'sine'
+      osc2.frequency.value = 220 // A3
+      g2.gain.setValueAtTime(0, ctx.currentTime)
+      g2.gain.linearRampToValueAtTime(0.008, ctx.currentTime + 0.8)
+      g2.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.5)
+      osc2.connect(g2); g2.connect(ctx.destination)
+      osc2.start(); osc2.stop(ctx.currentTime + 3)
+
+      // Third — ethereal fifth
+      const osc3 = ctx.createOscillator()
+      const g3 = ctx.createGain()
+      osc3.type = 'sine'
+      osc3.frequency.value = 330 // E4
+      g3.gain.setValueAtTime(0, ctx.currentTime)
+      g3.gain.linearRampToValueAtTime(0.005, ctx.currentTime + 1)
+      g3.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.5)
+      osc3.connect(g3); g3.connect(ctx.destination)
+      osc3.start(); osc3.stop(ctx.currentTime + 3)
+
+      // Whoosh — filtered noise burst
       setTimeout(() => {
         const noise = ctx.createBufferSource()
-        const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.8, ctx.sampleRate)
-        const data = buffer.getChannelData(0)
-        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2)
-        noise.buffer = buffer
-        const nGain = ctx.createGain()
-        nGain.gain.value = 0.02
-        noise.connect(nGain)
-        nGain.connect(ctx.destination)
+        const buf = ctx.createBuffer(1, ctx.sampleRate * 1, ctx.sampleRate)
+        const d = buf.getChannelData(0)
+        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3)
+        noise.buffer = buf
+        const ng = ctx.createGain()
+        ng.gain.value = 0.015
+        const filter = ctx.createBiquadFilter()
+        filter.type = 'lowpass'
+        filter.frequency.value = 800
+        noise.connect(filter); filter.connect(ng); ng.connect(ctx.destination)
         noise.start()
-      }, 200)
+      }, 300)
 
-      setTimeout(() => ctx.close(), 4000)
+      setTimeout(() => ctx.close(), 5000)
     } catch {}
   }
 
@@ -70,9 +91,14 @@ export function LoadingScreen() {
     const cx = W / 2, cy = H / 2
     let time = 0, enterTime = 0
 
+    // Adaptive quality — reduce on slower devices
+    const isHighEnd = W > 1200 && window.devicePixelRatio >= 1
+    const dustCount = isHighEnd ? 180 : 80
+    const vortexCount = isHighEnd ? 100 : 50
+
     // Dust
     const dust = []
-    for (let i = 0; i < 180; i++) {
+    for (let i = 0; i < dustCount; i++) {
       dust.push({
         x: Math.random() * W, y: Math.random() * H,
         r: 0.15 + Math.random() * 0.7, o: 0.04 + Math.random() * 0.18,
@@ -84,7 +110,7 @@ export function LoadingScreen() {
 
     // Vortex
     const vortex = []
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < vortexCount; i++) {
       const layer = Math.random()
       vortex.push({
         angle: Math.random() * Math.PI * 2,
@@ -202,11 +228,30 @@ export function LoadingScreen() {
         ctx.fill()
       })
 
+      // --- Portal cursor trail ---
+      if (p === 'ready') {
+        const tcx = (0.5 + rawMx) * W
+        const tcy = (0.5 + rawMy) * H
+        ctx.beginPath()
+        ctx.arc(tcx, tcy, 2, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(201, 169, 110, 0.2)'
+        ctx.fill()
+        const tGrad = ctx.createRadialGradient(tcx, tcy, 0, tcx, tcy, 15)
+        tGrad.addColorStop(0, 'rgba(201, 169, 110, 0.08)')
+        tGrad.addColorStop(1, 'transparent')
+        ctx.fillStyle = tGrad
+        ctx.fillRect(tcx - 15, tcy - 15, 30, 30)
+      }
+
+      // --- Vortex depth zoom (cursor proximity to center = zoom in) ---
+      const cursorDistToCenter = Math.sqrt(rawMx * rawMx + rawMy * rawMy) * 2
+      const depthZoom = 1 + Math.max(0, 0.15 - cursorDistToCenter * 0.15)
+
       // --- Rings ---
       const ringCount = 10
       for (let i = 0; i < ringCount; i++) {
         const depth = (ringCount - i) / ringCount
-        let r = 12 + i * 17 * (1 + depth * 0.25) + Math.sin(time * 0.018 + i * 0.5) * (3 + i * 0.5)
+        let r = (12 + i * 17 * (1 + depth * 0.25) + Math.sin(time * 0.018 + i * 0.5) * (3 + i * 0.5)) * depthZoom
         if (isEntering) r += ep * ep * (180 + i * 70)
         if (r <= 0) continue
 
@@ -289,14 +334,39 @@ export function LoadingScreen() {
     setPhase('entering')
     try { localStorage.setItem('ft_visited', '1') } catch {}
     setTimeout(() => setPhase('traveling'), 700)
-    setTimeout(() => setPhase('arrived'), 2200)
-    setTimeout(() => setRemoved(true), 3000)
+    setTimeout(() => setPhase('approaching'), 1800) // galaxy approaching
+    setTimeout(() => setPhase('arrived'), 2800)
+    setTimeout(() => setRemoved(true), 3600)
   }
 
   if (removed) return null
   const isLeaving = phase === 'arrived'
+  const isApproaching = phase === 'approaching'
   const show = phase === 'ready'
   const returning = isReturn.current
+
+  // Cinematic exit: galaxy approaches from distance
+  // Stages: entering → traveling → approaching (galaxy resolves from blur) → arrived (fade)
+  const getExitStyle = () => {
+    if (isApproaching) return {
+      opacity: 0.6,
+      filter: 'blur(2px)',
+      transform: 'scale(1.02)',
+      transition: 'all 1s cubic-bezier(0.16, 1, 0.3, 1)',
+    }
+    if (isLeaving) return {
+      opacity: 0,
+      filter: 'blur(0px)',
+      transform: 'scale(1)',
+      transition: 'all 0.8s ease',
+    }
+    return {
+      opacity: 1,
+      filter: 'blur(0px)',
+      transform: 'scale(1)',
+      transition: 'all 0.5s ease',
+    }
+  }
 
   return (
     <div
@@ -304,10 +374,7 @@ export function LoadingScreen() {
         position: 'fixed', inset: 0, zIndex: 100, background: '#000',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         cursor: show ? 'pointer' : 'default',
-        opacity: isLeaving ? 0 : 1,
-        filter: isLeaving ? 'blur(4px)' : 'blur(0)',
-        transform: isLeaving ? 'scale(1.05)' : 'scale(1)',
-        transition: 'opacity 0.8s ease, filter 0.8s ease, transform 0.8s ease',
+        ...getExitStyle(),
       }}
       onClick={enterPortal}
     >
