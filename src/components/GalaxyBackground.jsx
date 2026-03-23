@@ -21,10 +21,16 @@ export function GalaxyBackground() {
 
     let canvasW = 0
     function syncCanvas() {
-      const measuredH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
-      const newH = Math.max(measuredH, 8000)
+      const measuredH = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight,
+        document.documentElement.offsetHeight
+      )
+      // Generous minimum — page with all sections is typically 10000-14000px
+      const newH = Math.max(measuredH, 12000)
       const newW = window.innerWidth
-      const needsResize = Math.abs(newH - pageH) > 200 || Math.abs(newW - canvasW) > 50 || !galaxyRef.current
+      // Only reinit if height grew (never shrink — avoids losing stars)
+      const needsResize = newH > pageH + 200 || Math.abs(newW - canvasW) > 50 || !galaxyRef.current
       if (needsResize) {
         pageH = newH
         canvasW = newW
@@ -181,14 +187,17 @@ export function GalaxyBackground() {
     const onResize = () => syncCanvas()
     window.addEventListener('resize', onResize)
 
-    // Aggressive sync: poll every 500ms for first 8 seconds, then settle
+    // Aggressive sync: poll for first 15 seconds to catch all content rendering
     syncCanvas()
     const syncTimers = []
-    for (let t = 500; t <= 8000; t += 500) {
+    for (let t = 300; t <= 5000; t += 300) {
       syncTimers.push(setTimeout(() => syncCanvas(), t))
     }
-    // Also sync after fonts/images load
-    window.addEventListener('load', () => syncCanvas())
+    // Extra syncs for late-loading content (Vimeo iframe, GHL widget, etc.)
+    syncTimers.push(setTimeout(() => syncCanvas(), 7000))
+    syncTimers.push(setTimeout(() => syncCanvas(), 10000))
+    syncTimers.push(setTimeout(() => syncCanvas(), 15000))
+    window.addEventListener('load', () => { syncCanvas(); setTimeout(syncCanvas, 1000) })
 
     // --- DRAW ---
     const draw = (timestamp) => {
