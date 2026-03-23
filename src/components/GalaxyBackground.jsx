@@ -39,7 +39,7 @@ export function GalaxyBackground() {
       const rng = seededRng(42)
       const W = canvas.width
       const isMobile = W < 768
-      const starCount = isMobile ? 300 : Math.min(Math.floor((W * VIRTUAL_H) / 2200), 2000)
+      const starCount = isMobile ? 500 : Math.min(Math.floor((W * VIRTUAL_H) / 1800), 2500)
 
       stars = []
       for (let i = 0; i < starCount; i++) {
@@ -65,11 +65,16 @@ export function GalaxyBackground() {
           color = { r: 190 + rng() * 50, g: 195 + rng() * 50, b: 210 + rng() * 40 }
         }
 
+        // Density gradient: more stars near top (hero), thinning toward bottom
+        // Square root distribution biases toward lower values (top of page)
+        const rawY = rng()
+        const biasedY = rawY < 0.4 ? rawY * rawY * VIRTUAL_H * 2.5 : rawY * VIRTUAL_H
+
         stars.push({
           x: rng() * W,
-          y: rng() * VIRTUAL_H, // virtual page position
-          r: layer === 0 ? rng() * 0.6 + 0.12 : layer === 1 ? rng() * 1.0 + 0.3 : rng() * 1.6 + 0.7,
-          opacity: layer === 0 ? rng() * 0.4 + 0.15 : layer === 1 ? rng() * 0.5 + 0.3 : rng() * 0.55 + 0.45,
+          y: biasedY,
+          r: layer === 0 ? rng() * 0.7 + 0.15 : layer === 1 ? rng() * 1.1 + 0.35 : rng() * 1.8 + 0.8,
+          opacity: layer === 0 ? rng() * 0.45 + 0.18 : layer === 1 ? rng() * 0.55 + 0.32 : rng() * 0.55 + 0.45,
           tw1: rng() * 0.004 + 0.001,
           tw2: rng() * 0.007 + 0.002,
           tw3: rng() * 0.002 + 0.0005,
@@ -88,7 +93,7 @@ export function GalaxyBackground() {
       const clusterCount = Math.floor(VIRTUAL_H / 700)
       for (let c = 0; c < clusterCount; c++) {
         const cx = rng() * W, cy = rng() * VIRTUAL_H
-        const n = isMobile ? 12 : 25 + Math.floor(rng() * 35)
+        const n = isMobile ? 18 : 25 + Math.floor(rng() * 35)
         const radius = 50 + rng() * 70
         const ct = rng()
         const clr = ct < 0.3 ? { r: 195, g: 215, b: 255 } : ct < 0.5 ? { r: 255, g: 225, b: 195 } : ct < 0.7 ? { r: 215, g: 190, b: 250 } : { r: 190, g: 245, b: 225 }
@@ -117,7 +122,7 @@ export function GalaxyBackground() {
 
       // Constellations
       constellations = []
-      for (let c = 0; c < 18; c++) {
+      for (let c = 0; c < 24; c++) {
         const cx = rng() * W, cy = rng() * VIRTUAL_H
         const n = 3 + Math.floor(rng() * 4)
         const points = []
@@ -206,8 +211,19 @@ export function GalaxyBackground() {
       // --- Stars ---
       stars.forEach((s) => {
         s.x += s.dx; s.y += s.dy
+
         const sy = toScreen(s.y, s.scrollSpeed)
         if (sy < -20 || sy > H + 20) return
+
+        // Cursor gravity field — bend drift toward cursor
+        const gDist = Math.sqrt((s.x - mx)**2 + (sy - my)**2)
+        if (gDist < 200 && gDist > 10) {
+          const gForce = 0.015 / (gDist * 0.05 + 1)
+          s.dx += ((mx - s.x) / gDist) * gForce
+          s.dy += ((my - sy) / gDist) * gForce * s.scrollSpeed
+          // Dampen to prevent runaway
+          s.dx *= 0.998; s.dy *= 0.998
+        }
 
         const t1 = Math.sin(time * s.tw1 + s.phase)
         const t2 = Math.sin(time * s.tw2 + s.phase * 1.3)
@@ -274,7 +290,7 @@ export function GalaxyBackground() {
       scrollTrail.forEach((p) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.015; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fillStyle=`rgba(201,169,110,${p.life*0.1})`; ctx.fill() })
 
       // --- Shooting stars ---
-      const sInt = isIdle ? 1500 + Math.random()*2000 : 2500 + Math.random()*5000
+      const sInt = isIdle ? 1000 + Math.random()*1500 : 2000 + Math.random()*4000
       if (time - lastShoot > sInt) {
         lastShoot = time
         const dir = Math.random() > 0.5 ? 1 : -1

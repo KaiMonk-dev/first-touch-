@@ -12,28 +12,32 @@ export function Footer() {
     canvas.height = canvas.parentElement.offsetHeight
 
     const W = canvas.width, H = canvas.height
-    // Create constellation points roughly matching the link layout
-    const points = [
-      { x: W * 0.55, y: H * 0.12 },
-      { x: W * 0.62, y: H * 0.22 },
-      { x: W * 0.58, y: H * 0.35 },
-      { x: W * 0.65, y: H * 0.45 },
-      { x: W * 0.7, y: H * 0.15 },
-      { x: W * 0.78, y: H * 0.25 },
-      { x: W * 0.82, y: H * 0.38 },
-      { x: W * 0.75, y: H * 0.5 },
-      { x: W * 0.88, y: H * 0.12 },
-      { x: W * 0.92, y: H * 0.3 },
-    ]
-    const lines = [[0,1],[1,2],[2,3],[0,4],[4,5],[5,6],[6,7],[4,8],[8,9],[5,9]]
 
-    // Draw lines
+    // Elegant arc constellation — like Orion's belt
+    const points = [
+      { x: W * 0.4, y: H * 0.2 },
+      { x: W * 0.48, y: H * 0.15 },
+      { x: W * 0.56, y: H * 0.12 },
+      { x: W * 0.64, y: H * 0.15 },
+      { x: W * 0.72, y: H * 0.2 },
+      // Lower wing
+      { x: W * 0.45, y: H * 0.35 },
+      { x: W * 0.56, y: H * 0.4 },
+      { x: W * 0.67, y: H * 0.35 },
+    ]
+    const lines = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,4],[2,6]]
+
+    // Draw lines with gradient fade
     lines.forEach(([a, b]) => {
+      const grad = ctx.createLinearGradient(points[a].x, points[a].y, points[b].x, points[b].y)
+      grad.addColorStop(0, 'rgba(201, 169, 110, 0.05)')
+      grad.addColorStop(0.5, 'rgba(201, 169, 110, 0.03)')
+      grad.addColorStop(1, 'rgba(201, 169, 110, 0.05)')
       ctx.beginPath()
       ctx.moveTo(points[a].x, points[a].y)
       ctx.lineTo(points[b].x, points[b].y)
-      ctx.strokeStyle = 'rgba(201, 169, 110, 0.04)'
-      ctx.lineWidth = 0.5
+      ctx.strokeStyle = grad
+      ctx.lineWidth = 0.4
       ctx.stroke()
     })
 

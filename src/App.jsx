@@ -23,6 +23,7 @@ import { GalaxyBackground } from './components/GalaxyBackground'
 import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
 import { EasterEggs } from './components/EasterEggs'
 import { SectionBurst } from './components/SectionBurst'
+import { GalaxyMinimap } from './components/GalaxyMinimap'
 import { ScrollReward } from './components/ScrollReward'
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
           <ExitIntent />
           <BackToTop />
           <AmbientCursor />
+          <GalaxyMinimap />
           <EasterEggs />
           <ScrollReward />
         </div>
