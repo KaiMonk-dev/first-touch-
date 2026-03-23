@@ -139,7 +139,7 @@ export function GalaxyBackground() {
 
     // Ephemeral effects
     let shootingStars = [], comets = [], supernovae = [], stellarBirths = [], scrollTrail = []
-    let arrivalBoost = 1.5 // post-portal arrival brightness boost, decays to 1
+    let arrivalBoost = 1.25 // post-portal arrival brightness boost, decays to 1 slowly
     let lastShoot = 0, lastComet = 0, lastSupernova = 0, lastBirth = 0, lastScrollY = 0
 
     // Track cursor velocity — galaxy is "idle" when velocity is near zero
@@ -211,7 +211,7 @@ export function GalaxyBackground() {
       ctx.clearRect(0, 0, W, H)
 
       // Post-portal arrival settling — stars briefly brighter
-      if (arrivalBoost > 1.01) arrivalBoost *= 0.998 // slow decay over ~2 seconds
+      if (arrivalBoost > 1.005) arrivalBoost *= 0.9995 // very slow decay over ~4 seconds
       else arrivalBoost = 1
 
       // --- Nebulae ---

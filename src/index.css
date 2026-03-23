@@ -310,6 +310,11 @@ h1, h2, h3 {
   transition: text-shadow 0.3s ease;
 }
 
+/* Nav color temperature shift with scroll */
+nav {
+  --nav-warmth: 1;
+}
+
 /* Heading parallax depth — different sections at different speeds */
 section h2 {
   will-change: transform;
