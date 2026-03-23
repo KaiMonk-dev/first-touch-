@@ -60,13 +60,17 @@ export function Nav() {
               <a
                 key={link.label}
                 href={link.href}
-                className={`px-4 py-2 text-[13px] transition-all duration-300 rounded-xl ${
+                className={`relative px-4 py-2 text-[13px] transition-all duration-300 rounded-xl group/nav ${
                   activeSection === link.href.slice(1)
                     ? 'text-white font-medium bg-white/[0.06]'
                     : 'text-white/50 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >
                 {link.label}
+                {/* Hover starburst */}
+                <span className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
+                  <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 rounded-full bg-[radial-gradient(circle,rgba(201,169,110,0.15),transparent_70%)] group-hover/nav:w-16 group-hover/nav:h-16 transition-all duration-500 ease-out" />
+                </span>
               </a>
             ))}
           </div>

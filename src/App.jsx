@@ -20,6 +20,8 @@ import { ExitIntent } from './components/ExitIntent'
 import { BackToTop } from './components/BackToTop'
 import { AmbientCursor } from './components/AmbientCursor'
 import { GalaxyBackground } from './components/GalaxyBackground'
+import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
+import { EasterEggs } from './components/EasterEggs'
 
 function App() {
   return (
@@ -39,6 +41,7 @@ function App() {
             <DashboardPreview />
             <TryAlex />
             <ComparisonTable />
+            <TestimonialPlaceholder />
             <Pricing />
             <FAQ />
             <FinalCTA />
@@ -48,6 +51,7 @@ function App() {
           <ExitIntent />
           <BackToTop />
           <AmbientCursor />
+        <EasterEggs />
         </div>
       </CalendlyProvider>
     </ErrorBoundary>

@@ -239,9 +239,29 @@ export function GalaxyBackground() {
         ctx.fill()
       })
 
+      // --- Collect bright star positions for gravity wells ---
+      const gravityWells = g.stars
+        .filter(s => s.layer === 2 && s.y > vTop - 50 && s.y < vBot + 50)
+        .filter(s => Math.sqrt((s.x - mx) ** 2 + (s.y - my) ** 2) < 250)
+        .map(s => ({ x: s.x, y: s.y }))
+
       // --- STARS ---
       g.stars.forEach((s) => {
         s.x += s.dx; s.y += s.dy
+
+        // Gravity well attraction — dim stars pulled toward bright stars near cursor
+        if (s.layer === 0 && gravityWells.length > 0) {
+          gravityWells.forEach((w) => {
+            const gdx = w.x - s.x, gdy = w.y - s.y
+            const gd = Math.sqrt(gdx * gdx + gdy * gdy)
+            if (gd < 100 && gd > 5) {
+              const force = 0.02 / (gd * 0.1)
+              s.x += (gdx / gd) * force
+              s.y += (gdy / gd) * force
+            }
+          })
+        }
+
         if (s.y < vTop - 30 || s.y > vBot + 30) return
 
         // Triple-harmonic twinkle for organic shimmer

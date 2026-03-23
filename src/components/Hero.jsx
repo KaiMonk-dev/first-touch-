@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { InfiniteSlider } from './InfiniteSlider'
 import { useCalendly } from './CalendlyModal'
 import { useMagnetic } from '../hooks/useMagnetic'
@@ -6,6 +7,13 @@ export function Hero() {
   const calendly = useCalendly()
   const primaryBtn = useMagnetic(0.35, 100)
   const secondaryBtn = useMagnetic(0.25, 80)
+  const [scrollY, setScrollY] = useState(0)
+
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
     <section className="relative min-h-screen overflow-hidden flex flex-col">
@@ -15,9 +23,16 @@ export function Hero() {
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-0.03em] leading-[0.9] mb-8 max-w-5xl animate-fade-up"
           style={{ animationDelay: '0.3s', animationFillMode: 'both' }}
         >
-          <span className="text-white">Every Call Answered.</span>
-          <br />
-          <span className="bg-gradient-to-b from-white/90 to-white/60 bg-clip-text text-transparent">
+          <span
+            className="text-white block"
+            style={{ transform: `translateY(${scrollY * -0.08}px)`, transition: 'transform 0.1s linear' }}
+          >
+            Every Call Answered.
+          </span>
+          <span
+            className="bg-gradient-to-b from-white/90 to-white/60 bg-clip-text text-transparent block"
+            style={{ transform: `translateY(${scrollY * -0.04}px)`, transition: 'transform 0.1s linear' }}
+          >
             Every Lead Booked.
           </span>
         </h1>

@@ -296,6 +296,24 @@ section::before {
   background: radial-gradient(ellipse, rgba(110, 80, 180, 0.035), rgba(80, 60, 140, 0.01) 50%, transparent 75%);
 }
 
+/* Section divider particle burst */
+.divider-line::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(201, 169, 110, 0.4);
+  box-shadow: 0 0 8px rgba(201, 169, 110, 0.2);
+}
+
+.divider-line {
+  position: relative;
+}
+
 /* Idle waveform animation */
 @keyframes waveIdle {
   0% { transform: scaleY(0.6); }
@@ -342,6 +360,24 @@ section::before {
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════
+   PRINT STYLESHEET — clean white version
+   ═══════════════════════════════════════ */
+
+@media print {
+  body { background: white !important; color: black !important; }
+  .grain::after, canvas, .fixed, nav, footer canvas,
+  .liquid-shimmer::after { display: none !important; }
+  * { color: #222 !important; background: transparent !important; border-color: #ddd !important;
+      -webkit-text-fill-color: #222 !important; }
+  h1, h2, h3 { color: black !important; -webkit-text-fill-color: black !important; }
+  section { padding: 1.5rem 1rem !important; page-break-inside: avoid; }
+  .liquid-glass, .liquid-glass-strong, .liquid-glass-nav {
+    background: #f9f9f9 !important; border: 1px solid #ddd !important;
+    backdrop-filter: none !important; }
+  a[href^="tel:"]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
 }
 
 /* ═══════════════════════════════════════
