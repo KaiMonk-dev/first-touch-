@@ -138,18 +138,21 @@ export function GalaxyBackground() {
     initGalaxy()
 
     // Ephemeral effects
-    let shootingStars = [], comets = [], supernovae = [], stellarBirths = [], scrollTrail = []
+    let shootingStars = [], comets = [], supernovae = [], stellarBirths = [], scrollTrail = [], scrollBursts = []
     let lastShoot = 0, lastComet = 0, lastSupernova = 0, lastBirth = 0, lastScrollY = 0
 
+    const markActive = () => { lastMoveRef.current = Date.now() }
     const onMove = (e) => {
       mouseRef.current = { x: e.clientX, y: e.clientY }
-      lastMoveRef.current = Date.now()
+      markActive()
     }
     const onClick = (e) => {
       clickRipples.current.push({ x: e.clientX, y: e.clientY, radius: 0, life: 1, decay: 0.01 })
     }
     window.addEventListener('mousemove', onMove, { passive: true })
+    window.addEventListener('scroll', markActive, { passive: true })
     window.addEventListener('click', onClick, { passive: true })
+    window.addEventListener('touchmove', markActive, { passive: true })
 
     function drawSpikes(x, y, size, opacity, color) {
       ctx.save()
@@ -166,14 +169,32 @@ export function GalaxyBackground() {
       return pageY - window.scrollY * scrollSpeed
     }
 
+    // Performance monitoring — auto-reduce if FPS drops
+    let lastFrameTime = 0
+    let lowFpsCount = 0
+    let perfReduced = false
+
     const draw = (timestamp) => {
       const time = timestamp || 0
       const W = canvas.width, H = canvas.height
+
+      // FPS check — if consistently below 30fps, reduce star rendering
+      if (lastFrameTime > 0) {
+        const delta = time - lastFrameTime
+        if (delta > 33) lowFpsCount++ // below 30fps
+        else if (lowFpsCount > 0) lowFpsCount--
+        if (lowFpsCount > 60 && !perfReduced) { // 60 slow frames = reduce
+          perfReduced = true
+          // Remove 30% of far stars (cheapest to lose)
+          stars = stars.filter(s => s.layer > 0 || Math.random() > 0.3)
+        }
+      }
+      lastFrameTime = time
       const scrollY = window.scrollY
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
       const idle = (Date.now() - lastMoveRef.current) / 1000
-      const isIdle = idle > 3
+      const isIdle = idle > 1
 
       ctx.clearRect(0, 0, W, H)
 
@@ -232,10 +253,11 @@ export function GalaxyBackground() {
         let o = s.opacity * (0.65 + 0.35 * (t1*0.45 + t2*0.35 + t3*0.2))
         // Idle boost — stars get noticeably brighter and twinkle more when screen is still
         if (isIdle) {
-          const idleBoost = Math.min(idle - 3, 6) * 0.06
+          const idleRamp = Math.min(idle - 1, 4)
+          const idleBoost = idleRamp * 0.08
           o *= 1 + idleBoost
           // Extra twinkle amplitude when idle
-          o += Math.sin(time * s.tw1 * 3 + s.phase) * 0.05 * Math.min(idle - 3, 3)
+          o += Math.sin(time * s.tw1 * 3 + s.phase) * 0.06 * idleRamp
         }
 
         const dist = Math.sqrt((s.x - mx)**2 + (sy - my)**2)
@@ -304,8 +326,29 @@ export function GalaxyBackground() {
       scrollTrail = scrollTrail.filter(p => p.life > 0)
       scrollTrail.forEach((p) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.015; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fillStyle=`rgba(201,169,110,${p.life*0.1})`; ctx.fill() })
 
+      // --- Scroll velocity color burst (fast scroll = hyperspace streak) ---
+      if (scrollDelta > 25) {
+        scrollBursts.push({ y: H * 0.5, life: 1, speed: scrollDelta })
+      }
+      scrollBursts = scrollBursts.filter(b => b.life > 0)
+      scrollBursts.forEach((b) => {
+        b.life -= 0.03
+        const warmPct = 1 - Math.min(1, scrollY / 8000)
+        const br = Math.round(201 * warmPct + 100 * (1-warmPct))
+        const bg = Math.round(169 * warmPct + 150 * (1-warmPct))
+        const bb = Math.round(110 * warmPct + 255 * (1-warmPct))
+        const grad = ctx.createLinearGradient(0, 0, W, 0)
+        grad.addColorStop(0, 'transparent')
+        grad.addColorStop(0.3, `rgba(${br},${bg},${bb},${b.life * 0.04})`)
+        grad.addColorStop(0.5, `rgba(${br},${bg},${bb},${b.life * 0.06})`)
+        grad.addColorStop(0.7, `rgba(${br},${bg},${bb},${b.life * 0.04})`)
+        grad.addColorStop(1, 'transparent')
+        ctx.fillStyle = grad
+        ctx.fillRect(0, b.y - 30, W, 60)
+      })
+
       // --- Shooting stars ---
-      const sInt = isIdle ? 600 + Math.random()*1000 : 2000 + Math.random()*4000
+      const sInt = isIdle ? 400 + Math.random()*800 : 2500 + Math.random()*4500
       if (time - lastShoot > sInt) {
         lastShoot = time
         const dir = Math.random() > 0.5 ? 1 : -1
@@ -349,7 +392,7 @@ export function GalaxyBackground() {
       })
 
       // --- Stellar births ---
-      const birthInt = isIdle ? 5000+Math.random()*5000 : 15000+Math.random()*12000
+      const birthInt = isIdle ? 3000+Math.random()*3000 : 15000+Math.random()*12000
       if (time - lastBirth > birthInt) {
         lastBirth=time;const bc=[[201,169,110],[170,200,255],[200,160,215],[150,215,195]]
         stellarBirths.push({x:Math.random()*W,y:Math.random()*H,life:0,growing:true,maxR:8+Math.random()*10,color:bc[Math.floor(Math.random()*bc.length)]})
@@ -369,6 +412,8 @@ export function GalaxyBackground() {
       cancelAnimationFrame(animId)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('scroll', markActive)
+      window.removeEventListener('touchmove', markActive)
       window.removeEventListener('click', onClick)
     }
   }, [])

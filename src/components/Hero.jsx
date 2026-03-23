@@ -10,6 +10,7 @@ export function Hero() {
   const secondaryBtn = useMagnetic(0.25, 80)
   const [scrollY, setScrollY] = useState(0)
   const variant = useVariant()
+  const hasWowed = useRef(false)
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY)
@@ -51,7 +52,21 @@ export function Hero() {
           className="flex flex-col sm:flex-row items-center gap-4 mb-10 animate-fade-up"
           style={{ animationDelay: '0.7s', animationFillMode: 'both' }}
         >
-          <div onMouseMove={primaryBtn.onMouseMove} onMouseLeave={primaryBtn.onMouseLeave}>
+          <div
+            onMouseMove={primaryBtn.onMouseMove}
+            onMouseLeave={primaryBtn.onMouseLeave}
+            onMouseEnter={() => {
+              if (!hasWowed.current) {
+                hasWowed.current = true
+                // One-time supernova burst from button
+                const el = document.createElement('div')
+                el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:0;height:0;border-radius:50%;z-index:200;background:radial-gradient(circle,rgba(255,255,255,0.25),rgba(201,169,110,0.15) 40%,transparent 70%);pointer-events:none;transition:all 0.8s cubic-bezier(0.16,1,0.3,1);'
+                document.body.appendChild(el)
+                requestAnimationFrame(() => { el.style.width='600px'; el.style.height='600px'; el.style.opacity='0' })
+                setTimeout(() => el.remove(), 1000)
+              }
+            }}
+          >
             <button
               ref={primaryBtn.ref}
               onClick={() => calendly.open()}
