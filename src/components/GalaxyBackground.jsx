@@ -5,7 +5,6 @@ export function GalaxyBackground() {
   const canvasRef = useRef(null)
   const mouseRef = useRef({ x: -999, y: -999 })
   const clickRipples = useRef([])
-  const lastMoveRef = useRef(Date.now())
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -142,18 +141,18 @@ export function GalaxyBackground() {
     let shootingStars = [], comets = [], supernovae = [], stellarBirths = [], scrollTrail = [], scrollBursts = []
     let lastShoot = 0, lastComet = 0, lastSupernova = 0, lastBirth = 0, lastScrollY = 0
 
-    // Only deliberate mouse movement (>5px) breaks idle — not scroll, not micro-movements
-    let lastMouseX = -1, lastMouseY = -1
+    // Track cursor velocity — galaxy is "idle" when velocity is near zero
+    let mouseVelocity = 0
+    let prevMX = -1, prevMY = -1
     const onMove = (e) => {
-      const dx = Math.abs(e.clientX - lastMouseX)
-      const dy = Math.abs(e.clientY - lastMouseY)
       mouseRef.current = { x: e.clientX, y: e.clientY }
-      // Only count as "active" if mouse actually moved significantly
-      if (dx > 5 || dy > 5) {
-        lastMoveRef.current = Date.now()
-        lastMouseX = e.clientX
-        lastMouseY = e.clientY
+      if (prevMX >= 0) {
+        const dx = e.clientX - prevMX
+        const dy = e.clientY - prevMY
+        mouseVelocity = Math.sqrt(dx * dx + dy * dy)
       }
+      prevMX = e.clientX
+      prevMY = e.clientY
     }
     const onClick = (e) => {
       clickRipples.current.push({ x: e.clientX, y: e.clientY, radius: 0, life: 1, decay: 0.01 })
@@ -200,8 +199,11 @@ export function GalaxyBackground() {
       const scrollY = window.scrollY
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
-      const idle = (Date.now() - lastMoveRef.current) / 1000
-      const isIdle = idle > 1
+
+      // Velocity decays each frame — galaxy is "idle" when velocity is low
+      mouseVelocity *= 0.9 // natural decay
+      const isIdle = mouseVelocity < 2 // effectively idle when barely moving
+      const idleStrength = isIdle ? Math.min(3, 3 * (1 - mouseVelocity / 2)) : 0
 
       ctx.clearRect(0, 0, W, H)
 
@@ -260,11 +262,8 @@ export function GalaxyBackground() {
         let o = s.opacity * (0.65 + 0.35 * (t1*0.45 + t2*0.35 + t3*0.2))
         // Idle boost — stars get noticeably brighter and twinkle more when screen is still
         if (isIdle) {
-          const idleRamp = Math.min(idle - 1, 4)
-          const idleBoost = idleRamp * 0.08
-          o *= 1 + idleBoost
-          // Extra twinkle amplitude when idle
-          o += Math.sin(time * s.tw1 * 3 + s.phase) * 0.06 * idleRamp
+          o *= 1 + idleStrength * 0.1
+          o += Math.sin(time * s.tw1 * 3 + s.phase) * 0.06 * idleStrength
         }
 
         const dist = Math.sqrt((s.x - mx)**2 + (sy - my)**2)
@@ -382,7 +381,7 @@ export function GalaxyBackground() {
       })
 
       // --- Shooting stars ---
-      const sInt = isIdle ? 400 + Math.random()*800 : 2500 + Math.random()*4500
+      const sInt = isIdle ? 500 + Math.random()*1000 : 3000 + Math.random()*5000
       if (time - lastShoot > sInt) {
         lastShoot = time
         const dir = Math.random() > 0.5 ? 1 : -1
@@ -426,7 +425,7 @@ export function GalaxyBackground() {
       })
 
       // --- Stellar births ---
-      const birthInt = isIdle ? 3000+Math.random()*3000 : 15000+Math.random()*12000
+      const birthInt = isIdle ? 4000+Math.random()*4000 : 15000+Math.random()*12000
       if (time - lastBirth > birthInt) {
         lastBirth=time;const bc=[[201,169,110],[170,200,255],[200,160,215],[150,215,195]]
         stellarBirths.push({x:Math.random()*W,y:Math.random()*H,life:0,growing:true,maxR:8+Math.random()*10,color:bc[Math.floor(Math.random()*bc.length)]})
