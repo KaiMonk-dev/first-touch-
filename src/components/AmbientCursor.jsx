@@ -14,10 +14,16 @@ export function AmbientCursor() {
   useEffect(() => {
     if (window.innerWidth < 768) return
 
-    // Hide the default cursor
-    document.body.style.cursor = 'none'
+    // Hide default cursor on main content — restore on modals and interactive elements
     const styleEl = document.createElement('style')
-    styleEl.textContent = '*, *::before, *::after { cursor: none !important; } a, button, [role="button"] { cursor: none !important; }'
+    styleEl.textContent = `
+      body { cursor: none; }
+      main, main *, nav, nav *, footer, footer *, section, section * { cursor: none; }
+      /* Restore cursor on modals, iframes, and overlays */
+      [class*="z-[70]"], [class*="z-[70]"] *, iframe, iframe * { cursor: auto !important; }
+      .calendly-overlay, .calendly-overlay * { cursor: auto !important; }
+      /* Show pointer hint on clickable elements (star still renders on top) */
+    `
     document.head.appendChild(styleEl)
 
     const canvas = canvasRef.current
@@ -124,46 +130,46 @@ export function AmbientCursor() {
       const pulse = 1 + Math.sin(coronaPulse.current) * 0.12
       const motionScale = Math.min(1, speed * 0.03)
 
-      // Outer corona — follows with lag for depth (uses pos, not sx/sy)
-      const cx = pos.current.x, cy = pos.current.y
-      const g0 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, 70 * pulse))
-      g0.addColorStop(0, `rgba(${trailR}, ${trailG}, ${trailB}, 0.07)`)
-      g0.addColorStop(0.4, `rgba(${trailR}, ${trailG}, ${trailB}, 0.025)`)
+      // Outer corona — follows with lag for depth
+      const coronaX = pos.current.x, coronaY = pos.current.y
+      const g0 = ctx.createRadialGradient(coronaX, coronaY, 0, coronaX, coronaY, Math.max(1, 80 * pulse))
+      g0.addColorStop(0, `rgba(${trailR}, ${trailG}, ${trailB}, 0.09)`)
+      g0.addColorStop(0.35, `rgba(${trailR}, ${trailG}, ${trailB}, 0.03)`)
       g0.addColorStop(1, 'transparent')
       ctx.fillStyle = g0
-      ctx.fillRect(cx - 70, cy - 70, 140, 140)
+      ctx.fillRect(coronaX - 80, coronaY - 80, 160, 160)
 
       // Inner corona — tighter, brighter
-      const g1 = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(1, 30 * pulse))
-      g1.addColorStop(0, `rgba(255, 248, 230, 0.14)`)
-      g1.addColorStop(0.3, `rgba(${trailR}, ${trailG}, ${trailB}, 0.07)`)
+      const g1 = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(1, 35 * pulse))
+      g1.addColorStop(0, 'rgba(255, 248, 230, 0.18)')
+      g1.addColorStop(0.3, `rgba(${trailR}, ${trailG}, ${trailB}, 0.08)`)
       g1.addColorStop(1, 'transparent')
       ctx.fillStyle = g1
-      ctx.fillRect(sx - 30, sy - 30, 60, 60)
+      ctx.fillRect(sx - 35, sy - 35, 70, 70)
 
-      // Star core — BIGGER, bright white-gold, exactly at cursor
-      const g2 = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(1, 10 * pulse))
-      g2.addColorStop(0, 'rgba(255, 252, 245, 0.45)')
-      g2.addColorStop(0.4, 'rgba(255, 240, 210, 0.2)')
+      // Star core — bright, clearly visible, exactly at cursor
+      const g2 = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(1, 12 * pulse))
+      g2.addColorStop(0, 'rgba(255, 252, 245, 0.55)')
+      g2.addColorStop(0.35, 'rgba(255, 240, 210, 0.25)')
       g2.addColorStop(1, 'transparent')
       ctx.fillStyle = g2
-      ctx.fillRect(sx - 10, sy - 10, 20, 20)
+      ctx.fillRect(sx - 12, sy - 12, 24, 24)
 
-      // Core dot — visible, marks the click point
+      // Core dot — bright white point, the click anchor
       ctx.beginPath()
-      ctx.arc(sx, sy, 2.5 * pulse, 0, Math.PI * 2)
-      ctx.fillStyle = 'rgba(255, 252, 245, 0.6)'
+      ctx.arc(sx, sy, 3 * pulse, 0, Math.PI * 2)
+      ctx.fillStyle = 'rgba(255, 252, 245, 0.7)'
       ctx.fill()
 
-      // Diffraction cross — the star signature
+      // Diffraction cross
       ctx.save()
-      ctx.globalAlpha = 0.15 + Math.sin(coronaPulse.current * 0.7) * 0.05
+      ctx.globalAlpha = 0.2 + Math.sin(coronaPulse.current * 0.7) * 0.06
       ctx.strokeStyle = 'rgba(255, 248, 235, 1)'
-      ctx.lineWidth = 0.5
-      const spikeLen = 16 * pulse + motionScale * 6
+      ctx.lineWidth = 0.6
+      const spikeLen = 18 * pulse + motionScale * 7
       ctx.beginPath(); ctx.moveTo(sx - spikeLen, sy); ctx.lineTo(sx + spikeLen, sy); ctx.stroke()
       ctx.beginPath(); ctx.moveTo(sx, sy - spikeLen); ctx.lineTo(sx, sy + spikeLen); ctx.stroke()
-      ctx.globalAlpha = 0.07
+      ctx.globalAlpha = 0.08
       const dLen = spikeLen * 0.55
       ctx.beginPath(); ctx.moveTo(sx - dLen, sy - dLen); ctx.lineTo(sx + dLen, sy + dLen); ctx.stroke()
       ctx.beginPath(); ctx.moveTo(sx + dLen, sy - dLen); ctx.lineTo(sx - dLen, sy + dLen); ctx.stroke()
