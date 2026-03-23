@@ -1,4 +1,5 @@
 import { CalendlyProvider } from './components/CalendlyModal'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoadingScreen } from './components/LoadingScreen'
 import { ScrollProgress } from './components/ScrollProgress'
 import { Nav } from './components/Nav'
@@ -22,32 +23,34 @@ import { GalaxyBackground } from './components/GalaxyBackground'
 
 function App() {
   return (
-    <CalendlyProvider>
-      <div className="min-h-screen bg-black text-white overflow-x-hidden grain">
-        <LoadingScreen />
-        <GalaxyBackground />
-        <ScrollProgress />
-        <Nav />
-        <main>
-          <Hero />
-          <ProofTicker />
-          <SpeedProof />
-          <MeetAlex />
-          <HowItWorks />
-          <DashboardPreview />
-          <TryAlex />
-          <ComparisonTable />
-          <Pricing />
-          <FAQ />
-          <FinalCTA />
-        </main>
-        <Footer />
-        <StickyMobileCTA />
-        <ExitIntent />
-        <BackToTop />
-        <AmbientCursor />
-      </div>
-    </CalendlyProvider>
+    <ErrorBoundary>
+      <CalendlyProvider>
+        <div className="min-h-screen bg-black text-white overflow-x-hidden grain">
+          <LoadingScreen />
+          <GalaxyBackground />
+          <ScrollProgress />
+          <Nav />
+          <main>
+            <Hero />
+            <ProofTicker />
+            <SpeedProof />
+            <MeetAlex />
+            <HowItWorks />
+            <DashboardPreview />
+            <TryAlex />
+            <ComparisonTable />
+            <Pricing />
+            <FAQ />
+            <FinalCTA />
+          </main>
+          <Footer />
+          <StickyMobileCTA />
+          <ExitIntent />
+          <BackToTop />
+          <AmbientCursor />
+        </div>
+      </CalendlyProvider>
+    </ErrorBoundary>
   )
 }
 

@@ -146,6 +146,8 @@ export function GalaxyBackground() {
     let comets = []
     let supernovae = []
     let stellarBirths = []
+    let scrollTrail = []
+    let lastScrollY = 0
     let lastShoot = 0, lastComet = 0, lastSupernova = 0, lastBirth = 0
 
     function drawSpikes(x, y, size, opacity, color) {
@@ -331,6 +333,32 @@ export function GalaxyBackground() {
         ctx.fillStyle = hGrad; ctx.fillRect(s.x - hr, s.y - hr, hr * 2, hr * 2)
       })
 
+      // --- SCROLL TRAIL (wake particles) ---
+      const scrollDelta = Math.abs(vTop - lastScrollY)
+      lastScrollY = vTop
+      if (scrollDelta > 3) {
+        const count = Math.min(Math.floor(scrollDelta * 0.15), 4)
+        for (let i = 0; i < count; i++) {
+          scrollTrail.push({
+            x: Math.random() * W,
+            y: vTop + window.innerHeight * (0.3 + Math.random() * 0.4),
+            life: 1,
+            r: 0.5 + Math.random() * 0.8,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: scrollDelta > 0 ? -0.2 : 0.2,
+          })
+        }
+      }
+      scrollTrail = scrollTrail.filter(p => p.life > 0)
+      scrollTrail.forEach((p) => {
+        p.x += p.vx; p.y += p.vy; p.life -= 0.015
+        if (p.y < vTop - 20 || p.y > vBot + 20) return
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(201, 169, 110, ${p.life * 0.12})`
+        ctx.fill()
+      })
+
       // --- COMETS ---
       if (time - lastComet > 40000 + Math.random() * 50000) {
         lastComet = time
@@ -419,6 +447,7 @@ export function GalaxyBackground() {
     <canvas
       ref={canvasRef}
       className="absolute top-0 left-0 w-full pointer-events-none z-0"
+      style={{ willChange: 'auto' }}
     />
   )
 }

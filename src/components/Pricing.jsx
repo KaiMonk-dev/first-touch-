@@ -145,6 +145,7 @@ export function Pricing() {
 function PricingCard({ plan, delay, onBook }) {
   const [priceRef, animatedPrice] = useCounter(plan.price || 0, 1200)
   const tilt = useTilt(plan.tier === 'featured' ? 8 : 5)
+  const [hovered, setHovered] = useState(false)
 
   const badges = {
     standard: { label: 'Starter', className: 'bg-white/5 border border-white/10 text-white/50' },
@@ -159,7 +160,8 @@ function PricingCard({ plan, delay, onBook }) {
       <div
         ref={priceRef}
         onMouseMove={tilt.onMouseMove}
-        onMouseLeave={tilt.onMouseLeave}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={(e) => { tilt.onMouseLeave(e); setHovered(false) }}
         className={`h-full p-9 rounded-2xl flex flex-col ${
           plan.tier === 'featured'
             ? 'liquid-glass-strong liquid-shimmer'
@@ -171,6 +173,18 @@ function PricingCard({ plan, delay, onBook }) {
       >
         {plan.tier === 'enterprise' && (
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#C9A96E]/50 to-transparent" />
+        )}
+
+        {/* Spotlight glow on hover */}
+        {plan.tier === 'featured' && (
+          <div
+            className="absolute -inset-8 rounded-3xl pointer-events-none transition-opacity duration-700"
+            style={{
+              background: 'radial-gradient(ellipse at center, rgba(201,169,110,0.06), transparent 70%)',
+              opacity: hovered ? 1 : 0,
+              zIndex: -1,
+            }}
+          />
         )}
 
         <span className={`inline-block self-start px-3 py-1 rounded-full text-[10px] font-medium tracking-wider uppercase mb-5 ${badge.className}`}>
