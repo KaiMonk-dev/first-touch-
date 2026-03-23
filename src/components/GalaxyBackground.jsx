@@ -138,7 +138,7 @@ export function GalaxyBackground() {
     initGalaxy()
 
     // Ephemeral effects
-    let shootingStars = [], comets = [], supernovae = [], stellarBirths = [], scrollTrail = [], scrollBursts = []
+    let shootingStars = [], comets = [], supernovae = [], stellarBirths = [], scrollTrail = []
     let lastShoot = 0, lastComet = 0, lastSupernova = 0, lastBirth = 0, lastScrollY = 0
 
     // Track cursor velocity — galaxy is "idle" when velocity is near zero
@@ -363,34 +363,12 @@ export function GalaxyBackground() {
       scrollTrail = scrollTrail.filter(p => p.life > 0)
       scrollTrail.forEach((p) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.015; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fillStyle=`rgba(201,169,110,${p.life*0.1})`; ctx.fill() })
 
-      // --- Scroll velocity color burst (fast scroll = hyperspace streak) ---
-      if (scrollDelta > 25) {
-        scrollBursts.push({ y: H * 0.5, life: 1, speed: scrollDelta })
-      }
-      scrollBursts = scrollBursts.filter(b => b.life > 0)
-      scrollBursts.forEach((b) => {
-        b.life -= 0.03
-        const warmPct = 1 - Math.min(1, scrollY / 8000)
-        const br = Math.round(201 * warmPct + 100 * (1-warmPct))
-        const bg = Math.round(169 * warmPct + 150 * (1-warmPct))
-        const bb = Math.round(110 * warmPct + 255 * (1-warmPct))
-        const grad = ctx.createLinearGradient(0, 0, W, 0)
-        grad.addColorStop(0, 'transparent')
-        grad.addColorStop(0.3, `rgba(${br},${bg},${bb},${b.life * 0.04})`)
-        grad.addColorStop(0.5, `rgba(${br},${bg},${bb},${b.life * 0.06})`)
-        grad.addColorStop(0.7, `rgba(${br},${bg},${bb},${b.life * 0.04})`)
-        grad.addColorStop(1, 'transparent')
-        ctx.fillStyle = grad
-        ctx.fillRect(0, b.y - 30, W, 60)
-      })
-
-      // --- Shooting stars ---
-      // Shooting stars — MUCH more when idle
-      const sInt = isIdle ? 300 + Math.random()*700 : 3000 + Math.random()*5000
+      // --- Shooting stars (gentle, not overwhelming) ---
+      const sInt = isIdle ? 1500 + Math.random()*2500 : 4000 + Math.random()*6000
       if (time - lastShoot > sInt) {
         lastShoot = time
         const dir = Math.random() > 0.5 ? 1 : -1
-        shootingStars.push({ x: dir>0?-20:W+20, y: Math.random()*H*0.6, vx: dir*(6+Math.random()*7), vy: 1+Math.random()*3, life: 1, decay: 0.003+Math.random()*0.003, brightness: 0.4+Math.random()*0.4 })
+        shootingStars.push({ x: dir>0?-20:W+20, y: Math.random()*H*0.5, vx: dir*(3+Math.random()*4), vy: 0.8+Math.random()*2, life: 1, decay: 0.004+Math.random()*0.003, brightness: 0.3+Math.random()*0.3 })
       }
       shootingStars = shootingStars.filter(s => s.life > 0)
       shootingStars.forEach((s) => {
