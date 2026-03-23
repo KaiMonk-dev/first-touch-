@@ -1,8 +1,11 @@
 import { InfiniteSlider } from './InfiniteSlider'
 import { useCalendly } from './CalendlyModal'
+import { useMagnetic } from '../hooks/useMagnetic'
 
 export function Hero() {
   const calendly = useCalendly()
+  const primaryBtn = useMagnetic(0.35, 100)
+  const secondaryBtn = useMagnetic(0.25, 80)
 
   return (
     <section className="relative min-h-screen overflow-hidden flex flex-col">
@@ -27,29 +30,37 @@ export function Hero() {
           and follows up before your competitor even knows the lead exists.
         </p>
 
-        {/* CTAs */}
+        {/* CTAs with magnetic pull */}
         <div
           className="flex flex-col sm:flex-row items-center gap-4 mb-10 animate-fade-up"
           style={{ animationDelay: '0.7s', animationFillMode: 'both' }}
         >
-          <button
-            onClick={() => calendly.open()}
-            className="group px-8 py-4 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] btn-press flex items-center gap-3"
-          >
-            Book a Free Strategy Call
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </button>
-          <a
-            href="tel:+18584347041"
-            className="px-8 py-4 rounded-2xl liquid-glass text-white/80 font-medium text-[15px] hover:text-white hover:bg-white/[0.08] transition-all flex items-center gap-2.5 liquid-shimmer"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-            </svg>
-            Call Alex Now
-          </a>
+          <div onMouseMove={primaryBtn.onMouseMove} onMouseLeave={primaryBtn.onMouseLeave}>
+            <button
+              ref={primaryBtn.ref}
+              onClick={() => calendly.open()}
+              className="group px-8 py-4 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-colors hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] btn-press flex items-center gap-3"
+              style={primaryBtn.style}
+            >
+              Book a Free Strategy Call
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <div onMouseMove={secondaryBtn.onMouseMove} onMouseLeave={secondaryBtn.onMouseLeave}>
+            <a
+              ref={secondaryBtn.ref}
+              href="tel:+18584347041"
+              className="px-8 py-4 rounded-2xl liquid-glass text-white/80 font-medium text-[15px] hover:text-white hover:bg-white/[0.08] transition-colors flex items-center gap-2.5 liquid-shimmer"
+              style={secondaryBtn.style}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              Call Alex Now
+            </a>
+          </div>
         </div>
 
         {/* Trust */}

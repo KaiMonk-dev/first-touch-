@@ -1,7 +1,67 @@
+import { useEffect, useRef } from 'react'
+
 export function Footer() {
+  const canvasRef = useRef(null)
+
+  // Footer constellation — decorative star pattern
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    canvas.width = canvas.parentElement.offsetWidth
+    canvas.height = canvas.parentElement.offsetHeight
+
+    const W = canvas.width, H = canvas.height
+    // Create constellation points roughly matching the link layout
+    const points = [
+      { x: W * 0.55, y: H * 0.12 },
+      { x: W * 0.62, y: H * 0.22 },
+      { x: W * 0.58, y: H * 0.35 },
+      { x: W * 0.65, y: H * 0.45 },
+      { x: W * 0.7, y: H * 0.15 },
+      { x: W * 0.78, y: H * 0.25 },
+      { x: W * 0.82, y: H * 0.38 },
+      { x: W * 0.75, y: H * 0.5 },
+      { x: W * 0.88, y: H * 0.12 },
+      { x: W * 0.92, y: H * 0.3 },
+    ]
+    const lines = [[0,1],[1,2],[2,3],[0,4],[4,5],[5,6],[6,7],[4,8],[8,9],[5,9]]
+
+    // Draw lines
+    lines.forEach(([a, b]) => {
+      ctx.beginPath()
+      ctx.moveTo(points[a].x, points[a].y)
+      ctx.lineTo(points[b].x, points[b].y)
+      ctx.strokeStyle = 'rgba(201, 169, 110, 0.04)'
+      ctx.lineWidth = 0.5
+      ctx.stroke()
+    })
+
+    // Draw star dots
+    points.forEach(p => {
+      ctx.beginPath()
+      ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2)
+      ctx.fillStyle = 'rgba(201, 169, 110, 0.15)'
+      ctx.fill()
+
+      // Tiny glow
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 6)
+      grad.addColorStop(0, 'rgba(201, 169, 110, 0.08)')
+      grad.addColorStop(1, 'transparent')
+      ctx.fillStyle = grad
+      ctx.fillRect(p.x - 6, p.y - 6, 12, 12)
+    })
+  }, [])
+
   return (
-    <footer className="border-t border-white/[0.06] py-16 px-6">
-      <div className="max-w-5xl mx-auto">
+    <footer className="relative border-t border-white/[0.06] py-16 px-6 overflow-hidden">
+      {/* Constellation canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full pointer-events-none opacity-60"
+      />
+
+      <div className="max-w-5xl mx-auto relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
           <div className="md:col-span-2">
@@ -18,7 +78,7 @@ export function Footer() {
           <div>
             <p className="label mb-5">Product</p>
             <ul className="space-y-3">
-              {['How It Works', 'Results', 'Pricing', 'FAQ'].map((link) => (
+              {['How It Works', 'Pricing', 'FAQ'].map((link) => (
                 <li key={link}>
                   <a
                     href={`#${link.toLowerCase().replace(/\s+/g, '-')}`}

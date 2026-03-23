@@ -41,7 +41,9 @@ export function GalaxyBackground() {
 
       // --- STARS ---
       const stars = []
-      const count = Math.min(Math.floor((W * pageH) / 2200), 2000)
+      const isMobile = W < 768
+      const baseCount = Math.min(Math.floor((W * pageH) / 2200), 2000)
+      const count = isMobile ? Math.floor(baseCount * 0.4) : baseCount
       for (let i = 0; i < count; i++) {
         const depth = rng()
         const layer = depth < 0.55 ? 0 : depth < 0.85 ? 1 : 2

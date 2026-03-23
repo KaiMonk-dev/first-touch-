@@ -34,6 +34,10 @@ const faqs = [
     q: 'Can Alex handle multiple languages?',
     a: 'Yes. Alex can be trained to handle calls in English and Spanish out of the box. Additional languages are available on Enterprise plans — we\'ll configure the right setup during your strategy call.',
   },
+  {
+    q: 'What industries does First Touch work for?',
+    a: 'First Touch works for any service-based business that relies on phone calls to book jobs. Plumbing, HVAC, roofing, electrical, landscaping, dental offices, law firms, med spas, auto repair — if your customers call to book, Alex can handle it. Each agent is custom-trained for your specific industry and services.',
+  },
 ]
 
 export function FAQ() {
