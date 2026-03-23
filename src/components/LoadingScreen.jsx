@@ -7,12 +7,58 @@ export function LoadingScreen() {
   const animRef = useRef(null)
   const phaseRef = useRef('intro')
   const mouseRef = useRef({ x: 0.5, y: 0.5 })
+  const isReturn = useRef(false)
 
   useEffect(() => { phaseRef.current = phase }, [phase])
+
+  // Check returning visitor
   useEffect(() => {
-    const t = setTimeout(() => setPhase('ready'), 800)
+    try {
+      isReturn.current = localStorage.getItem('ft_visited') === '1'
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    const t = setTimeout(() => setPhase('ready'), isReturn.current ? 300 : 700)
     return () => clearTimeout(t)
   }, [])
+
+  // Sound design — low resonance hum
+  const audioCtxRef = useRef(null)
+  const playHum = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)()
+      audioCtxRef.current = ctx
+      // Deep bass drone
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'sine'
+      osc.frequency.value = 55 // low A
+      gain.gain.setValueAtTime(0, ctx.currentTime)
+      gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.5)
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.5)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start()
+      osc.stop(ctx.currentTime + 3)
+
+      // Whoosh on enter
+      setTimeout(() => {
+        const noise = ctx.createBufferSource()
+        const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.8, ctx.sampleRate)
+        const data = buffer.getChannelData(0)
+        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2)
+        noise.buffer = buffer
+        const nGain = ctx.createGain()
+        nGain.gain.value = 0.02
+        noise.connect(nGain)
+        nGain.connect(ctx.destination)
+        noise.start()
+      }, 200)
+
+      setTimeout(() => ctx.close(), 4000)
+    } catch {}
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -24,47 +70,45 @@ export function LoadingScreen() {
     const cx = W / 2, cy = H / 2
     let time = 0, enterTime = 0
 
-    // Deep space dust field
+    // Dust
     const dust = []
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 180; i++) {
       dust.push({
         x: Math.random() * W, y: Math.random() * H,
-        r: 0.2 + Math.random() * 0.8,
-        o: 0.05 + Math.random() * 0.2,
-        speed: 0.1 + Math.random() * 0.3,
+        r: 0.15 + Math.random() * 0.7, o: 0.04 + Math.random() * 0.18,
+        speed: 0.08 + Math.random() * 0.25,
         angle: Math.random() * Math.PI * 2,
         drift: (Math.random() - 0.5) * 0.002,
       })
     }
 
-    // Vortex particles — spiral inward with depth
+    // Vortex
     const vortex = []
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 100; i++) {
       const layer = Math.random()
       vortex.push({
         angle: Math.random() * Math.PI * 2,
-        dist: 40 + Math.random() * Math.max(W, H) * 0.45,
-        baseDist: 40 + Math.random() * Math.max(W, H) * 0.45,
-        speed: 0.002 + Math.random() * 0.006,
-        size: layer > 0.8 ? 1 + Math.random() * 2 : 0.3 + Math.random() * 1,
-        opacity: layer > 0.8 ? 0.3 + Math.random() * 0.4 : 0.05 + Math.random() * 0.15,
-        color: layer > 0.85 ? [255, 220, 160]
-             : layer > 0.7 ? [160, 180, 255]
-             : layer > 0.5 ? [200, 150, 230]
-             : layer > 0.3 ? [140, 220, 200]
-             : [180, 180, 200],
-        z: 0.3 + Math.random() * 0.7, // depth
+        dist: 30 + Math.random() * Math.max(W, H) * 0.42,
+        baseDist: 30 + Math.random() * Math.max(W, H) * 0.42,
+        speed: 0.002 + Math.random() * 0.005,
+        size: layer > 0.8 ? 1 + Math.random() * 1.8 : 0.3 + Math.random() * 0.8,
+        opacity: layer > 0.8 ? 0.25 + Math.random() * 0.35 : 0.04 + Math.random() * 0.12,
+        color: layer > 0.85 ? [255, 215, 150] : layer > 0.7 ? [150, 175, 255] : layer > 0.5 ? [195, 145, 225] : layer > 0.3 ? [130, 210, 195] : [175, 175, 195],
+        z: 0.3 + Math.random() * 0.7,
         wobble: Math.random() * Math.PI * 2,
       })
     }
 
-    // Nebula clouds — large color washes
-    const nebulaClouds = [
-      { x: cx - 100, y: cy - 80, w: 300, h: 200, color: [80, 40, 120], o: 0.04, phase: 0 },
-      { x: cx + 80, y: cy + 50, w: 250, h: 180, color: [40, 60, 130], o: 0.035, phase: 2 },
-      { x: cx - 50, y: cy + 30, w: 200, h: 150, color: [120, 80, 60], o: 0.025, phase: 4 },
-      { x: cx + 30, y: cy - 60, w: 180, h: 220, color: [60, 100, 100], o: 0.02, phase: 6 },
+    // Nebulae
+    const nebulae = [
+      { x: cx - 90, y: cy - 70, w: 280, h: 190, color: [70, 35, 110], o: 0.035, phase: 0 },
+      { x: cx + 70, y: cy + 40, w: 240, h: 170, color: [35, 55, 120], o: 0.03, phase: 2 },
+      { x: cx - 40, y: cy + 25, w: 190, h: 140, color: [110, 70, 50], o: 0.02, phase: 4 },
+      { x: cx + 25, y: cy - 50, w: 170, h: 200, color: [50, 90, 90], o: 0.018, phase: 6 },
     ]
+
+    // Cursor magnetism state
+    let cursorPullX = 0, cursorPullY = 0
 
     const onMove = (e) => {
       mouseRef.current = { x: e.clientX / W, y: e.clientY / H }
@@ -82,169 +126,156 @@ export function LoadingScreen() {
       if (isEntering && enterTime === 0) enterTime = time
       const ep = isEntering ? Math.min(1, (time - enterTime) / 80) : 0
 
-      const mx = mouseRef.current.x - 0.5
-      const my = mouseRef.current.y - 0.5
+      const rawMx = mouseRef.current.x - 0.5
+      const rawMy = mouseRef.current.y - 0.5
 
-      // --- Nebula color clouds (deep background) ---
-      nebulaClouds.forEach((n) => {
-        const pulse = 1 + Math.sin(time * 0.008 + n.phase) * 0.15
-        const nx = n.x + mx * 20 + Math.sin(time * 0.003 + n.phase) * 10
-        const ny = n.y + my * 20 + Math.cos(time * 0.004 + n.phase) * 8
+      // Cursor magnetism — pull toward center
+      const pullStrength = 0.03
+      cursorPullX += (rawMx * (1 - pullStrength) - cursorPullX) * 0.05
+      cursorPullY += (rawMy * (1 - pullStrength) - cursorPullY) * 0.05
+      const mx = cursorPullX
+      const my = cursorPullY
+
+      // --- Nebulae ---
+      nebulae.forEach((n) => {
+        const pulse = 1 + Math.sin(time * 0.007 + n.phase) * 0.12
+        const nx = n.x + mx * 25 + Math.sin(time * 0.003 + n.phase) * 8
+        const ny = n.y + my * 25 + Math.cos(time * 0.004 + n.phase) * 6
         const r = Math.max(1, n.w * pulse * 0.5)
+        const enterBoost = isEntering ? 1 + ep * 3 : 1
         const grad = ctx.createRadialGradient(nx, ny, 0, nx, ny, r)
-        grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.o * pulse * (isEntering ? 1 + ep * 2 : 1)})`)
-        grad.addColorStop(0.5, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.o * 0.3})`)
+        grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.o * pulse * enterBoost})`)
+        grad.addColorStop(0.5, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.o * 0.25})`)
         grad.addColorStop(1, 'transparent')
         ctx.fillStyle = grad
         ctx.fillRect(nx - r, ny - r, r * 2, r * 2)
       })
 
-      // --- Dust field (ambient distant particles) ---
+      // --- Dust ---
       dust.forEach((d) => {
         d.angle += d.drift
-        d.x += Math.cos(d.angle) * d.speed + mx * 0.3
-        d.y += Math.sin(d.angle) * d.speed + my * 0.3
-        if (d.x < -5) d.x = W + 5
-        if (d.x > W + 5) d.x = -5
-        if (d.y < -5) d.y = H + 5
-        if (d.y > H + 5) d.y = -5
+        d.x += Math.cos(d.angle) * d.speed + mx * 0.2
+        d.y += Math.sin(d.angle) * d.speed + my * 0.2
+        if (d.x < -5) d.x = W + 5; if (d.x > W + 5) d.x = -5
+        if (d.y < -5) d.y = H + 5; if (d.y > H + 5) d.y = -5
 
-        const dO = isEntering ? d.o * (1 + ep * 3) : d.o
+        // Cursor wake — particles near cursor scatter away
+        const cdx = d.x - (0.5 + rawMx) * W
+        const cdy = d.y - (0.5 + rawMy) * H
+        const cdist = Math.sqrt(cdx * cdx + cdy * cdy)
+        if (cdist < 80 && cdist > 1) {
+          d.x += (cdx / cdist) * 0.8
+          d.y += (cdy / cdist) * 0.8
+        }
+
         ctx.beginPath()
         ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(200, 210, 230, ${dO})`
+        ctx.fillStyle = `rgba(195, 205, 225, ${isEntering ? d.o * (1 + ep * 4) : d.o})`
         ctx.fill()
       })
 
-      // --- Vortex spiral particles ---
+      // --- Vortex particles ---
       vortex.forEach((v) => {
-        v.angle += v.speed * (isEntering ? -2 - ep * 8 : 1)
-        const inwardPull = isEntering ? ep * 500 : Math.sin(time * 0.005 + v.wobble) * 15
+        v.angle += v.speed * (isEntering ? -2 - ep * 10 : 1)
+        v.dist = isEntering ? v.baseDist + ep * 600 : v.baseDist - time * 0.04 + Math.sin(time * 0.008 + v.wobble) * 18
+        if (v.dist < 3 && !isEntering) { v.dist = v.baseDist; v.angle += Math.PI * 0.4 }
 
-        v.dist = isEntering
-          ? v.baseDist + inwardPull
-          : v.baseDist - time * 0.05 + Math.sin(time * 0.01 + v.wobble) * 20
-
-        if (v.dist < 3 && !isEntering) { v.dist = v.baseDist; v.angle += Math.PI * 0.5 }
-
-        const depthScale = 0.5 + v.z * 0.5
-        const px = cx + Math.cos(v.angle) * v.dist * depthScale + mx * v.z * 30
-        const py = cy + Math.sin(v.angle) * v.dist * depthScale + my * v.z * 30
-
+        const ds = 0.5 + v.z * 0.5
+        const px = cx + Math.cos(v.angle) * v.dist * ds + mx * v.z * 25
+        const py = cy + Math.sin(v.angle) * v.dist * ds + my * v.z * 25
         if (px < -20 || px > W + 20 || py < -20 || py > H + 20) return
 
-        const vO = isEntering ? v.opacity * (1 - ep * 0.5) : v.opacity * Math.min(1, v.dist / 30)
+        const vO = isEntering ? v.opacity * (1 - ep * 0.6) : v.opacity * Math.min(1, v.dist / 25)
 
-        // Glow for bright particles
-        if (v.size > 1) {
-          const gr = Math.max(0.5, v.size * 5 * depthScale)
+        if (v.size > 0.8) {
+          const gr = Math.max(0.5, v.size * 4 * ds)
           const grad = ctx.createRadialGradient(px, py, 0, px, py, gr)
-          grad.addColorStop(0, `rgba(${v.color[0]},${v.color[1]},${v.color[2]},${vO * 0.4})`)
+          grad.addColorStop(0, `rgba(${v.color[0]},${v.color[1]},${v.color[2]},${vO * 0.35})`)
           grad.addColorStop(1, 'transparent')
           ctx.fillStyle = grad
           ctx.fillRect(px - gr, py - gr, gr * 2, gr * 2)
         }
 
         ctx.beginPath()
-        ctx.arc(px, py, Math.max(0.1, v.size * depthScale * (isEntering ? 1 + ep : 1)), 0, Math.PI * 2)
+        ctx.arc(px, py, Math.max(0.1, v.size * ds * (isEntering ? 1 + ep : 1)), 0, Math.PI * 2)
         ctx.fillStyle = `rgba(${v.color[0]},${v.color[1]},${v.color[2]},${vO})`
         ctx.fill()
       })
 
-      // --- Organic vortex rings with depth ---
-      const ringCount = 12
+      // --- Rings ---
+      const ringCount = 10
       for (let i = 0; i < ringCount; i++) {
         const depth = (ringCount - i) / ringCount
-        const baseR = 15 + i * 18 * (1 + depth * 0.3)
-        let r = baseR + Math.sin(time * 0.02 + i * 0.5) * (4 + i)
-
-        if (isEntering) r += ep * ep * (200 + i * 80)
+        let r = 12 + i * 17 * (1 + depth * 0.25) + Math.sin(time * 0.018 + i * 0.5) * (3 + i * 0.5)
+        if (isEntering) r += ep * ep * (180 + i * 70)
         if (r <= 0) continue
 
-        const opacity = isEntering
-          ? Math.max(0, (1 - ep) * (0.03 + depth * 0.06))
-          : 0.02 + depth * 0.05
-
+        const opacity = isEntering ? Math.max(0, (1 - ep) * (0.02 + depth * 0.04)) : 0.015 + depth * 0.035
         if (opacity <= 0) continue
 
         const hue = i / ringCount
-        const red = Math.round(200 * (1 - hue * 0.6) + 80 * hue)
-        const green = Math.round(160 * (1 - hue * 0.3) + 120 * hue)
-        const blue = Math.round(100 + hue * 155)
-
-        const wobbleX = cx + mx * (8 + i * 2) + Math.sin(time * 0.012 + i * 0.8) * (2 + i * 0.3)
-        const wobbleY = cy + my * (8 + i * 2) + Math.cos(time * 0.01 + i * 0.6) * (2 + i * 0.3)
+        const wx = cx + mx * (6 + i * 1.5) + Math.sin(time * 0.01 + i * 0.7) * (1.5 + i * 0.2)
+        const wy = cy + my * (6 + i * 1.5) + Math.cos(time * 0.008 + i * 0.5) * (1.5 + i * 0.2)
 
         ctx.beginPath()
         ctx.save()
-        ctx.translate(wobbleX, wobbleY)
-        ctx.rotate(Math.sin(time * 0.003 + i * 0.2) * 0.03)
-        ctx.scale(1 + Math.sin(time * 0.006 + i) * 0.04, 1 - Math.sin(time * 0.006 + i) * 0.04)
+        ctx.translate(wx, wy)
+        ctx.rotate(Math.sin(time * 0.002 + i * 0.15) * 0.02)
+        ctx.scale(1 + Math.sin(time * 0.005 + i) * 0.03, 1 - Math.sin(time * 0.005 + i) * 0.03)
         ctx.arc(0, 0, Math.max(1, r), 0, Math.PI * 2)
         ctx.restore()
-        ctx.strokeStyle = `rgba(${red},${green},${blue},${opacity})`
-        ctx.lineWidth = 0.4 + depth * 1.2
+        ctx.strokeStyle = `rgba(${Math.round(195 - hue * 60)},${Math.round(160 - hue * 25)},${Math.round(95 + hue * 155)},${opacity})`
+        ctx.lineWidth = 0.3 + depth * 0.8
         ctx.stroke()
       }
 
-      // --- Central eye (the heart of the vortex) ---
-      if (!isEntering || ep < 0.5) {
-        const eyeO = isEntering ? (1 - ep * 2) : 0.6 + Math.sin(time * 0.015) * 0.2
-        const eyeR = Math.max(1, isEntering ? 6 + ep * 300 : 5 + Math.sin(time * 0.02) * 2)
-        const eyePulse = 1 + Math.sin(time * 0.025) * 0.15
+      // --- Central eye ---
+      if (!isEntering || ep < 0.4) {
+        const eo = isEntering ? (1 - ep * 2.5) : 0.5 + Math.sin(time * 0.013) * 0.15
+        const er = Math.max(1, isEntering ? 4 + ep * 350 : 4 + Math.sin(time * 0.018) * 1.5)
+        const ep2 = 1 + Math.sin(time * 0.02) * 0.12
 
-        // Deep violet outer
-        const g0 = ctx.createRadialGradient(cx + mx * 3, cy + my * 3, 0, cx, cy, Math.max(1, eyeR * 4 * eyePulse))
-        g0.addColorStop(0, `rgba(120, 80, 180, ${eyeO * 0.08})`)
-        g0.addColorStop(0.5, `rgba(80, 60, 140, ${eyeO * 0.03})`)
+        const g0 = ctx.createRadialGradient(cx + mx * 2, cy + my * 2, 0, cx, cy, Math.max(1, er * 3.5 * ep2))
+        g0.addColorStop(0, `rgba(100, 65, 160, ${eo * 0.06})`)
+        g0.addColorStop(0.6, `rgba(70, 50, 130, ${eo * 0.02})`)
         g0.addColorStop(1, 'transparent')
-        ctx.fillStyle = g0
-        ctx.fillRect(cx - eyeR * 4, cy - eyeR * 4, eyeR * 8, eyeR * 8)
+        ctx.fillStyle = g0; ctx.fillRect(cx - er * 4, cy - er * 4, er * 8, er * 8)
 
-        // Warm gold middle
-        const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, eyeR * 2 * eyePulse))
-        g1.addColorStop(0, `rgba(220, 190, 130, ${eyeO * 0.15})`)
-        g1.addColorStop(0.5, `rgba(201, 169, 110, ${eyeO * 0.06})`)
+        const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, er * 1.8 * ep2))
+        g1.addColorStop(0, `rgba(210, 185, 125, ${eo * 0.12})`)
+        g1.addColorStop(0.6, `rgba(201, 169, 110, ${eo * 0.04})`)
         g1.addColorStop(1, 'transparent')
-        ctx.fillStyle = g1
-        ctx.fillRect(cx - eyeR * 2, cy - eyeR * 2, eyeR * 4, eyeR * 4)
+        ctx.fillStyle = g1; ctx.fillRect(cx - er * 2, cy - er * 2, er * 4, er * 4)
 
-        // White hot core
-        const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, eyeR * eyePulse))
-        g2.addColorStop(0, `rgba(255, 252, 240, ${eyeO * 0.2})`)
-        g2.addColorStop(0.5, `rgba(255, 240, 210, ${eyeO * 0.08})`)
+        const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, er * ep2))
+        g2.addColorStop(0, `rgba(255, 252, 242, ${eo * 0.18})`)
+        g2.addColorStop(0.5, `rgba(255, 240, 210, ${eo * 0.06})`)
         g2.addColorStop(1, 'transparent')
-        ctx.fillStyle = g2
-        ctx.fillRect(cx - eyeR, cy - eyeR, eyeR * 2, eyeR * 2)
+        ctx.fillStyle = g2; ctx.fillRect(cx - er, cy - er, er * 2, er * 2)
       }
 
-      // --- Hyperspace burst ---
-      if (isEntering && ep > 0.25) {
-        const tp = Math.min(1, (ep - 0.25) / 0.75)
-        for (let s = 0; s < 50; s++) {
-          const angle = (s / 50) * Math.PI * 2 + Math.sin(s * 1.7) * 0.4
-          const innerR = 5 + tp * 40
-          const outerR = innerR + 60 + tp * 600
-          const sx = cx + Math.cos(angle) * innerR
-          const sy = cy + Math.sin(angle) * innerR
-          const ex = cx + Math.cos(angle) * outerR
-          const ey = cy + Math.sin(angle) * outerR
-
-          const so = tp * (1 - tp * 0.4) * 0.15
-          const colors = ['220,190,130', '160,180,255', '200,160,230', '140,220,200']
-          const sColor = colors[s % 4]
-
+      // --- Hyperspace ---
+      if (isEntering && ep > 0.2) {
+        const tp = Math.min(1, (ep - 0.2) / 0.8)
+        for (let s = 0; s < 45; s++) {
+          const angle = (s / 45) * Math.PI * 2 + Math.sin(s * 1.6) * 0.35
+          const innerR = 3 + tp * 30
+          const outerR = innerR + 50 + tp * 650
+          const sx = cx + Math.cos(angle) * innerR, sy = cy + Math.sin(angle) * innerR
+          const ex = cx + Math.cos(angle) * outerR, ey = cy + Math.sin(angle) * outerR
+          const so = tp * (1 - tp * 0.3) * 0.12
+          const colors = ['215,185,125', '155,175,255', '195,150,225', '130,210,195']
           const grad = ctx.createLinearGradient(sx, sy, ex, ey)
           grad.addColorStop(0, `rgba(255,252,245,${so})`)
-          grad.addColorStop(0.15, `rgba(${sColor},${so * 0.7})`)
-          grad.addColorStop(0.5, `rgba(${sColor},${so * 0.2})`)
+          grad.addColorStop(0.12, `rgba(${colors[s % 4]},${so * 0.6})`)
+          grad.addColorStop(0.4, `rgba(${colors[s % 4]},${so * 0.15})`)
           grad.addColorStop(1, 'transparent')
           ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey)
-          ctx.strokeStyle = grad; ctx.lineWidth = 0.6 + tp * 1.5; ctx.stroke()
+          ctx.strokeStyle = grad; ctx.lineWidth = 0.5 + tp * 1.2; ctx.stroke()
         }
       }
 
-      } catch(e) { /* keep loop alive */ }
+      } catch(e) { /* keep alive */ }
       animRef.current = requestAnimationFrame(draw)
     }
 
@@ -254,15 +285,18 @@ export function LoadingScreen() {
 
   const enterPortal = () => {
     if (phase !== 'ready') return
+    playHum()
     setPhase('entering')
+    try { localStorage.setItem('ft_visited', '1') } catch {}
     setTimeout(() => setPhase('traveling'), 700)
-    setTimeout(() => setPhase('arrived'), 2000)
-    setTimeout(() => setRemoved(true), 2800)
+    setTimeout(() => setPhase('arrived'), 2200)
+    setTimeout(() => setRemoved(true), 3000)
   }
 
   if (removed) return null
   const isLeaving = phase === 'arrived'
   const show = phase === 'ready'
+  const returning = isReturn.current
 
   return (
     <div
@@ -270,55 +304,66 @@ export function LoadingScreen() {
         position: 'fixed', inset: 0, zIndex: 100, background: '#000',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         cursor: show ? 'pointer' : 'default',
-        opacity: isLeaving ? 0 : 1, transition: 'opacity 0.8s ease',
+        opacity: isLeaving ? 0 : 1,
+        filter: isLeaving ? 'blur(4px)' : 'blur(0)',
+        transform: isLeaving ? 'scale(1.05)' : 'scale(1)',
+        transition: 'opacity 0.8s ease, filter 0.8s ease, transform 0.8s ease',
       }}
       onClick={enterPortal}
     >
       <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
 
       <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', pointerEvents: 'none' }}>
-        {/* Brand — elegant, minimal, centered above the vortex eye */}
-        <p style={{
-          fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 600, letterSpacing: '-0.04em',
-          opacity: show ? 1 : 0, transform: show ? 'translateY(0)' : 'translateY(20px)',
-          filter: show ? 'blur(0)' : 'blur(10px)',
-          transition: 'all 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
-          margin: 0, lineHeight: 1,
-        }}>
-          <span style={{ color: 'white' }}>First</span>
-          <span style={{ color: 'rgba(255,255,255,0.35)' }}>Touch</span>
-        </p>
-
-        {/* Thin gold line separator */}
+        {/* Brand — integrated with the vortex, not floating on top */}
         <div style={{
-          width: show ? 80 : 0, height: 1, margin: '16px auto',
-          background: 'linear-gradient(90deg, transparent, rgba(201,169,110,0.4), transparent)',
-          transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s',
-        }} />
-
-        <p style={{
-          fontSize: '0.5rem', fontWeight: 300, letterSpacing: '0.25em',
-          textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)',
-          opacity: show ? 1 : 0, transition: 'opacity 0.8s ease 0.5s', margin: 0,
+          opacity: show ? 1 : 0,
+          transform: show ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.95)',
+          filter: show ? 'blur(0)' : 'blur(12px)',
+          transition: 'all 1.6s cubic-bezier(0.16, 1, 0.3, 1)',
         }}>
-          Powered by Ascension First AI
-        </p>
+          <p style={{
+            fontSize: 'clamp(1.5rem, 3.5vw, 2.2rem)',
+            fontWeight: 700,
+            letterSpacing: '-0.04em',
+            margin: 0, lineHeight: 1,
+            textShadow: '0 0 40px rgba(201,169,110,0.15)',
+          }}>
+            <span style={{ color: 'rgba(255,255,255,0.95)' }}>First</span>
+            <span style={{ color: 'rgba(255,255,255,0.3)' }}>Touch</span>
+          </p>
 
-        {/* Invitation — centered, elegant question */}
-        <p style={{
-          fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase',
-          color: 'rgba(201, 169, 110, 0.45)', marginTop: 50,
-          opacity: show ? 1 : 0, transition: 'opacity 1s ease 1s',
-          animation: show ? 'portalBreath 3s ease-in-out infinite' : 'none',
+          <p style={{
+            fontSize: '0.45rem', fontWeight: 300, letterSpacing: '0.3em',
+            textTransform: 'uppercase', color: 'rgba(201,169,110,0.3)',
+            marginTop: 14, margin: '14px 0 0',
+          }}>
+            Ascension First AI
+          </p>
+        </div>
+
+        {/* Invitation */}
+        <div style={{
+          marginTop: 60,
+          opacity: show ? 1 : 0,
+          transition: 'opacity 1.2s ease 1.2s',
         }}>
-          Click anywhere to enter
-        </p>
+          <p style={{
+            fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
+            fontWeight: 300,
+            letterSpacing: '0.15em',
+            color: 'rgba(255, 255, 255, 0.35)',
+            fontStyle: 'italic',
+            animation: show ? 'breathe 4s ease-in-out infinite' : 'none',
+          }}>
+            {returning ? 'Welcome back. Click to re-enter.' : 'Ready to enter our universe?'}
+          </p>
+        </div>
       </div>
 
       <style>{`
-        @keyframes portalBreath {
-          0%, 100% { opacity: 0.45; }
-          50% { opacity: 0.8; }
+        @keyframes breathe {
+          0%, 100% { opacity: 0.35; }
+          50% { opacity: 0.7; }
         }
       `}</style>
     </div>
