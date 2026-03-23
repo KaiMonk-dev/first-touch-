@@ -126,7 +126,7 @@ export function Pricing() {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 group/cards">
           {plans.map((plan, i) => (
             <PricingCard key={i} plan={plan} delay={i * 150} onBook={() => calendly.open()} />
           ))}
@@ -162,13 +162,14 @@ function PricingCard({ plan, delay, onBook }) {
         onMouseMove={tilt.onMouseMove}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={(e) => { tilt.onMouseLeave(e); setHovered(false) }}
-        className={`h-full p-9 rounded-2xl flex flex-col ${
+        className={`h-full p-9 rounded-2xl flex flex-col transition-all duration-500 ${
           plan.tier === 'featured'
             ? 'liquid-glass-strong liquid-shimmer'
             : plan.tier === 'enterprise'
             ? 'liquid-glass-strong relative overflow-hidden'
             : 'liquid-glass'
-        }`}
+        } ${hovered ? 'scale-[1.02] z-10' : 'group-hover/cards:opacity-60 group-hover/cards:scale-[0.98]'}
+        hover:!opacity-100 hover:!scale-100`}
         style={tilt.style}
       >
         {plan.tier === 'enterprise' && (

@@ -32,8 +32,13 @@ export function GalaxyBackground() {
       return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646 }
     }
 
-    // Virtual page height — stars spread across this range
-    // Using a very large value so stars always exist no matter how tall the page gets
+    // Time-of-day color shift — universe knows when you're visiting
+    const hour = new Date().getHours()
+    const timeWarmth = hour >= 6 && hour < 10 ? 0.7   // morning — warm gold
+      : hour >= 10 && hour < 16 ? 0.5                  // midday — neutral
+      : hour >= 16 && hour < 20 ? 0.3                  // evening — cooler
+      : 0.15                                             // night — deep cool purple
+
     const isMobileCheck = window.innerWidth < 768
     const VIRTUAL_H = isMobileCheck ? 8000 : 20000
     const theme = getSeasonalTheme()
@@ -315,9 +320,9 @@ export function GalaxyBackground() {
         const dist = Math.sqrt((s.x - mx)**2 + (sy - my)**2)
         const prox = Math.max(0, 1 - dist/280) * 0.5
 
-        // Galaxy memory — stars retain warmth after cursor leaves
-        if (prox > 0.05) s.warmth = Math.min(0.3, s.warmth + 0.02)
-        else s.warmth *= 0.995 // slow decay
+        // Galaxy memory — stars retain warmth after cursor leaves (very slow fade)
+        if (prox > 0.05) s.warmth = Math.min(0.35, s.warmth + 0.025)
+        else s.warmth *= 0.9992 // very slow decay — stays warm for ~10 seconds
 
         o = Math.min(1, o + prox + s.warmth)
         const rs = 1 + prox * 0.3 + s.warmth * 0.15
@@ -354,10 +359,10 @@ export function GalaxyBackground() {
           }
         }
 
-        // Color temperature shift: warm at top → cool at bottom
+        // Color temperature shift: warm at top → cool at bottom + time-of-day
         const scrollPct = Math.min(1, scrollY / 8000)
-        const warmShift = (1 - scrollPct) * 15
-        const coolShift = scrollPct * 20
+        const warmShift = (1 - scrollPct) * 15 * (0.5 + timeWarmth)
+        const coolShift = scrollPct * 20 * (1.5 - timeWarmth)
         const cr = Math.min(255, s.color.r + warmShift - coolShift * 0.5)
         const cg = s.color.g
         const cb = Math.min(255, s.color.b + coolShift - warmShift * 0.3)
