@@ -19,15 +19,18 @@ export function GalaxyBackground() {
       return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646 }
     }
 
-    function syncCanvasHeight() {
-      // Use a generous minimum — better to have extra canvas than missing stars
+    let canvasW = 0
+    function syncCanvas() {
       const measuredH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
-      const newH = Math.max(measuredH, 8000) // minimum 8000px ensures full coverage
-      if (Math.abs(newH - pageH) > 200 || !galaxyRef.current) {
+      const newH = Math.max(measuredH, 8000)
+      const newW = window.innerWidth
+      const needsResize = Math.abs(newH - pageH) > 200 || Math.abs(newW - canvasW) > 50 || !galaxyRef.current
+      if (needsResize) {
         pageH = newH
-        canvas.width = window.innerWidth
+        canvasW = newW
+        canvas.width = newW
         canvas.height = pageH
-        galaxyRef.current = null // force reinit
+        galaxyRef.current = null
         initGalaxy()
       }
     }
@@ -38,7 +41,7 @@ export function GalaxyBackground() {
 
       // --- STARS ---
       const stars = []
-      const count = Math.min(Math.floor((W * pageH) / 3000), 1500)
+      const count = Math.min(Math.floor((W * pageH) / 2200), 2000)
       for (let i = 0; i < count; i++) {
         const depth = rng()
         const layer = depth < 0.55 ? 0 : depth < 0.85 ? 1 : 2
@@ -63,7 +66,7 @@ export function GalaxyBackground() {
         stars.push({
           x: rng() * W, y: rng() * pageH,
           r: layer === 0 ? rng() * 0.6 + 0.12 : layer === 1 ? rng() * 1.0 + 0.3 : rng() * 1.6 + 0.7,
-          opacity: layer === 0 ? rng() * 0.35 + 0.1 : layer === 1 ? rng() * 0.5 + 0.25 : rng() * 0.6 + 0.4,
+          opacity: layer === 0 ? rng() * 0.4 + 0.15 : layer === 1 ? rng() * 0.5 + 0.3 : rng() * 0.55 + 0.45,
           // Multiple twinkle harmonics for organic shimmer
           tw1: rng() * 0.004 + 0.001,
           tw2: rng() * 0.007 + 0.002,
@@ -169,21 +172,19 @@ export function GalaxyBackground() {
     window.addEventListener('click', onClick, { passive: true })
 
     // Sync height on resize and content changes
-    const ro = new ResizeObserver(() => syncCanvasHeight())
+    const ro = new ResizeObserver(() => syncCanvas())
     ro.observe(document.body)
-    window.addEventListener('resize', () => {
-      galaxyRef.current = null
-      syncCanvasHeight()
-    })
+    const onResize = () => syncCanvas()
+    window.addEventListener('resize', onResize)
 
     // Aggressive sync: poll every 500ms for first 8 seconds, then settle
-    syncCanvasHeight()
+    syncCanvas()
     const syncTimers = []
     for (let t = 500; t <= 8000; t += 500) {
-      syncTimers.push(setTimeout(() => syncCanvasHeight(), t))
+      syncTimers.push(setTimeout(() => syncCanvas(), t))
     }
     // Also sync after fonts/images load
-    window.addEventListener('load', () => syncCanvasHeight())
+    window.addEventListener('load', () => syncCanvas())
 
     // --- DRAW ---
     const draw = (timestamp) => {
@@ -296,31 +297,36 @@ export function GalaxyBackground() {
         ctx.lineWidth = r.life; ctx.stroke()
       })
 
-      // --- SHOOTING STARS ---
-      const sInt = isIdle ? 2500 + Math.random() * 3000 : 5000 + Math.random() * 9000
+      // --- SHOOTING STARS (more frequent, more prominent) ---
+      const sInt = isIdle ? 1500 + Math.random() * 2000 : 2500 + Math.random() * 5000
       if (time - lastShoot > sInt) {
         lastShoot = time
         const dir = Math.random() > 0.5 ? 1 : -1
         shootingStars.push({
-          x: dir > 0 ? -20 : W + 20, y: vTop + Math.random() * window.innerHeight * 0.4,
-          vx: dir * (4 + Math.random() * 5), vy: 1.5 + Math.random() * 3,
-          life: 1, decay: 0.005 + Math.random() * 0.004, brightness: 0.25 + Math.random() * 0.3,
+          x: dir > 0 ? -20 : W + 20, y: vTop + Math.random() * window.innerHeight * 0.5,
+          vx: dir * (5 + Math.random() * 6), vy: 1.5 + Math.random() * 3.5,
+          life: 1, decay: 0.004 + Math.random() * 0.003, brightness: 0.35 + Math.random() * 0.35,
         })
       }
       shootingStars = shootingStars.filter(s => s.life > 0)
       shootingStars.forEach((s) => {
         s.x += s.vx; s.y += s.vy; s.life -= s.decay
         if (s.y < vTop - 50 || s.y > vBot + 50) return
-        const len = 20
+        const len = 28
         const tx = s.x - s.vx * len, ty = s.y - s.vy * len
         const grad = ctx.createLinearGradient(s.x, s.y, tx, ty)
-        grad.addColorStop(0, `rgba(255, 252, 240, ${s.life * s.brightness})`)
-        grad.addColorStop(0.2, `rgba(200, 180, 150, ${s.life * s.brightness * 0.4})`)
+        grad.addColorStop(0, `rgba(255, 252, 240, ${s.life * s.brightness * 1.2})`)
+        grad.addColorStop(0.15, `rgba(220, 200, 165, ${s.life * s.brightness * 0.6})`)
+        grad.addColorStop(0.4, `rgba(180, 160, 130, ${s.life * s.brightness * 0.2})`)
         grad.addColorStop(1, 'transparent')
         ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(tx, ty)
-        ctx.strokeStyle = grad; ctx.lineWidth = 1 * s.life; ctx.lineCap = 'round'; ctx.stroke()
-        ctx.beginPath(); ctx.arc(s.x, s.y, 1.2 * s.life, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255, 252, 240, ${s.life * s.brightness})`; ctx.fill()
+        ctx.strokeStyle = grad; ctx.lineWidth = 1.3 * s.life; ctx.lineCap = 'round'; ctx.stroke()
+        // Head glow
+        const hr = 3 * s.life
+        const hGrad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, hr)
+        hGrad.addColorStop(0, `rgba(255, 252, 240, ${s.life * s.brightness})`)
+        hGrad.addColorStop(1, 'transparent')
+        ctx.fillStyle = hGrad; ctx.fillRect(s.x - hr, s.y - hr, hr * 2, hr * 2)
       })
 
       // --- COMETS ---
@@ -400,6 +406,7 @@ export function GalaxyBackground() {
     return () => {
       cancelAnimationFrame(animId)
       syncTimers.forEach(clearTimeout)
+      window.removeEventListener('resize', onResize)
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('click', onClick)
       ro.disconnect()
