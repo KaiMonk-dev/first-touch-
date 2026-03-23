@@ -181,6 +181,8 @@ export function GalaxyBackground() {
     let perfReduced = false
 
     const draw = (timestamp) => {
+      try { // Protect animation loop — never let a crash kill it
+
       const time = timestamp || 0
       const W = canvas.width, H = canvas.height
 
@@ -215,7 +217,7 @@ export function GalaxyBackground() {
         ctx.save()
         ctx.translate(n.x, sy)
         ctx.rotate(n.rotation)
-        const r = n.w * pulse * 0.5
+        const r = Math.max(0.1, n.w * pulse * 0.5)
         const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r)
         grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.opacity * pulse * 0.6})`)
         grad.addColorStop(0.3, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.opacity * 0.2})`)
@@ -284,7 +286,7 @@ export function GalaxyBackground() {
         })
 
         if (s.layer >= 1 && o > 0.12) {
-          const gr = s.r * (7 + prox * 9)
+          const gr = Math.max(0.1, s.r * (7 + prox * 9))
           const grad = ctx.createRadialGradient(s.x, sy, 0, s.x, sy, gr)
           grad.addColorStop(0, `rgba(${s.color.r},${s.color.g},${s.color.b},${o*0.3})`)
           grad.addColorStop(0.3, `rgba(${s.color.r},${s.color.g},${s.color.b},${o*0.06})`)
@@ -400,7 +402,7 @@ export function GalaxyBackground() {
         grad.addColorStop(0.4, `rgba(180,160,130,${s.life*s.brightness*0.2})`)
         grad.addColorStop(1, 'transparent')
         ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(tx,ty); ctx.strokeStyle=grad; ctx.lineWidth=1.3*s.life; ctx.lineCap='round'; ctx.stroke()
-        const hr=3*s.life; const hG=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,hr); hG.addColorStop(0,`rgba(255,252,240,${s.life*s.brightness})`); hG.addColorStop(1,'transparent'); ctx.fillStyle=hG; ctx.fillRect(s.x-hr,s.y-hr,hr*2,hr*2)
+        const hr=Math.max(0.1,3*s.life); const hG=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,hr); hG.addColorStop(0,`rgba(255,252,240,${s.life*s.brightness})`); hG.addColorStop(1,'transparent'); ctx.fillStyle=hG; ctx.fillRect(s.x-hr,s.y-hr,hr*2,hr*2)
       })
 
       // --- Comets ---
@@ -423,7 +425,7 @@ export function GalaxyBackground() {
       supernovae=supernovae.filter(s=>s.life>=0)
       supernovae.forEach((s) => {
         if(s.growing){s.life+=0.008;if(s.life>=1)s.growing=false}else s.life-=0.002
-        const r=s.maxR*s.life;const grad=ctx.createRadialGradient(s.x,s.y,r*0.15,s.x,s.y,r);grad.addColorStop(0,`rgba(${s.color[0]},${s.color[1]},${s.color[2]},${s.life*0.05})`);grad.addColorStop(0.5,`rgba(${s.color[0]},${s.color[1]},${s.color[2]},${s.life*0.1})`);grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.fillRect(s.x-r,s.y-r,r*2,r*2)
+        const r=Math.max(0.1,s.maxR*s.life);const grad=ctx.createRadialGradient(s.x,s.y,r*0.15,s.x,s.y,r);grad.addColorStop(0,`rgba(${s.color[0]},${s.color[1]},${s.color[2]},${s.life*0.05})`);grad.addColorStop(0.5,`rgba(${s.color[0]},${s.color[1]},${s.color[2]},${s.life*0.1})`);grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.fillRect(s.x-r,s.y-r,r*2,r*2)
         ctx.beginPath();ctx.arc(s.x,s.y,1.2*s.life,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${s.life*0.5})`;ctx.fill()
       })
 
@@ -436,9 +438,10 @@ export function GalaxyBackground() {
       stellarBirths=stellarBirths.filter(b=>b.life>=0)
       stellarBirths.forEach((b) => {
         if(b.growing){b.life+=0.004;if(b.life>=1)b.growing=false}else b.life-=0.002
-        const r=b.maxR*b.life;const grad=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,r);grad.addColorStop(0,`rgba(${b.color[0]},${b.color[1]},${b.color[2]},${b.life*0.08})`);grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.fillRect(b.x-r,b.y-r,r*2,r*2)
+        const r=Math.max(0.1,b.maxR*b.life);const grad=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,r);grad.addColorStop(0,`rgba(${b.color[0]},${b.color[1]},${b.color[2]},${b.life*0.08})`);grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.fillRect(b.x-r,b.y-r,r*2,r*2)
       })
 
+      } catch (e) { /* Silently recover — never let draw loop die */ }
       animId = requestAnimationFrame(draw)
     }
 
