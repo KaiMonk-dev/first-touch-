@@ -74,6 +74,7 @@ export function GalaxyBackground() {
         stars.push({
           x: rng() * W,
           y: biasedY,
+          warmth: 0, // memory — retains brightness after cursor leaves
           r: layer === 0 ? rng() * 0.7 + 0.15 : layer === 1 ? rng() * 1.1 + 0.35 : rng() * 1.8 + 0.8,
           opacity: layer === 0 ? rng() * 0.45 + 0.18 : layer === 1 ? rng() * 0.55 + 0.32 : rng() * 0.55 + 0.45,
           tw1: rng() * 0.004 + 0.001,
@@ -141,18 +142,24 @@ export function GalaxyBackground() {
     let shootingStars = [], comets = [], supernovae = [], stellarBirths = [], scrollTrail = [], scrollBursts = []
     let lastShoot = 0, lastComet = 0, lastSupernova = 0, lastBirth = 0, lastScrollY = 0
 
-    const markActive = () => { lastMoveRef.current = Date.now() }
+    // Only deliberate mouse movement (>5px) breaks idle — not scroll, not micro-movements
+    let lastMouseX = -1, lastMouseY = -1
     const onMove = (e) => {
+      const dx = Math.abs(e.clientX - lastMouseX)
+      const dy = Math.abs(e.clientY - lastMouseY)
       mouseRef.current = { x: e.clientX, y: e.clientY }
-      markActive()
+      // Only count as "active" if mouse actually moved significantly
+      if (dx > 5 || dy > 5) {
+        lastMoveRef.current = Date.now()
+        lastMouseX = e.clientX
+        lastMouseY = e.clientY
+      }
     }
     const onClick = (e) => {
       clickRipples.current.push({ x: e.clientX, y: e.clientY, radius: 0, life: 1, decay: 0.01 })
     }
     window.addEventListener('mousemove', onMove, { passive: true })
-    window.addEventListener('scroll', markActive, { passive: true })
     window.addEventListener('click', onClick, { passive: true })
-    window.addEventListener('touchmove', markActive, { passive: true })
 
     function drawSpikes(x, y, size, opacity, color) {
       ctx.save()
@@ -262,8 +269,13 @@ export function GalaxyBackground() {
 
         const dist = Math.sqrt((s.x - mx)**2 + (sy - my)**2)
         const prox = Math.max(0, 1 - dist/280) * 0.5
-        o = Math.min(1, o + prox)
-        const rs = 1 + prox * 0.3
+
+        // Galaxy memory — stars retain warmth after cursor leaves
+        if (prox > 0.05) s.warmth = Math.min(0.3, s.warmth + 0.02)
+        else s.warmth *= 0.995 // slow decay
+
+        o = Math.min(1, o + prox + s.warmth)
+        const rs = 1 + prox * 0.3 + s.warmth * 0.15
 
         clickRipples.current.forEach((rp) => {
           const rd = Math.sqrt((s.x - rp.x)**2 + (sy - rp.y)**2)
@@ -280,7 +292,22 @@ export function GalaxyBackground() {
           ctx.fillRect(s.x-gr, sy-gr, gr*2, gr*2)
         }
 
-        if (s.hasSpikes && o > 0.3) drawSpikes(s.x, sy, s.r * (3.5 + prox*6), o, s.color)
+        if (s.hasSpikes && o > 0.3) {
+          drawSpikes(s.x, sy, s.r * (3.5 + prox*6), o, s.color)
+          // Diamond shape for brightest stars instead of plain circle
+          if (s.layer === 2 && o > 0.5) {
+            const dSize = s.r * rs * 1.8
+            ctx.save()
+            ctx.translate(s.x, sy)
+            ctx.rotate(Math.PI / 4)
+            ctx.beginPath()
+            ctx.moveTo(0, -dSize); ctx.lineTo(dSize * 0.4, 0); ctx.lineTo(0, dSize); ctx.lineTo(-dSize * 0.4, 0)
+            ctx.closePath()
+            ctx.fillStyle = `rgba(${s.color.r},${s.color.g},${s.color.b},${o * 0.15})`
+            ctx.fill()
+            ctx.restore()
+          }
+        }
 
         // Color temperature shift: warm at top → cool at bottom
         const scrollPct = Math.min(1, scrollY / 8000)
@@ -317,10 +344,17 @@ export function GalaxyBackground() {
       // --- Scroll trail ---
       const scrollDelta = Math.abs(scrollY - lastScrollY)
       lastScrollY = scrollY
-      if (scrollDelta > 3) {
-        const count = Math.min(Math.floor(scrollDelta * 0.12), 3)
+      if (scrollDelta > 2) {
+        const count = Math.min(Math.floor(scrollDelta * 0.15), 5)
         for (let i = 0; i < count; i++) {
-          scrollTrail.push({ x: Math.random()*W, y: H*(0.3+Math.random()*0.4), life: 1, r: 0.4+Math.random()*0.7, vx: (Math.random()-0.5)*0.3, vy: -0.2 })
+          scrollTrail.push({
+            x: Math.random()*W,
+            y: H*(0.2+Math.random()*0.6),
+            life: 1,
+            r: 0.3+Math.random()*0.8,
+            vx: (Math.random()-0.5)*0.5,
+            vy: scrollDelta > 0 ? -0.3 - Math.random()*0.3 : 0.3 + Math.random()*0.3,
+          })
         }
       }
       scrollTrail = scrollTrail.filter(p => p.life > 0)
@@ -412,8 +446,6 @@ export function GalaxyBackground() {
       cancelAnimationFrame(animId)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('scroll', markActive)
-      window.removeEventListener('touchmove', markActive)
       window.removeEventListener('click', onClick)
     }
   }, [])

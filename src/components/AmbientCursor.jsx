@@ -67,6 +67,19 @@ export function AmbientCursor() {
         coreRef.current.style.transform = `translate(${target.current.x - 60}px, ${target.current.y - 60}px)`
       }
 
+      // Update cursor glow CSS variable for text proximity glow (throttled)
+      if (Math.random() < 0.2) { // ~12fps for this check
+        const headings = document.querySelectorAll('h1, h2, h3')
+        headings.forEach((h) => {
+          const rect = h.getBoundingClientRect()
+          const hcx = rect.left + rect.width / 2
+          const hcy = rect.top + rect.height / 2
+          const dist = Math.sqrt((target.current.x - hcx) ** 2 + (target.current.y - hcy) ** 2)
+          const glow = Math.max(0, 1 - dist / 300)
+          h.style.setProperty('--cursor-glow', glow.toFixed(2))
+        })
+      }
+
       // Draw trail + sparks — use clearRect instead of resizing
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       const now = Date.now()
