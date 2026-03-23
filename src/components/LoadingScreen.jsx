@@ -19,21 +19,10 @@ export function LoadingScreen() {
   }, [])
 
   useEffect(() => {
-    if (isReturn.current) {
-      // Returning visitor — quick flash then auto-enter
-      const t1 = setTimeout(() => setPhase('ready'), 200)
-      const t2 = setTimeout(() => {
-        setPhase('entering')
-        try { localStorage.setItem('ft_visited', '1') } catch {}
-      }, 800)
-      const t3 = setTimeout(() => setPhase('traveling'), 1200)
-      const t4 = setTimeout(() => setPhase('arrived'), 1800)
-      const t5 = setTimeout(() => setRemoved(true), 2400)
-      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5) }
-    } else {
-      const t = setTimeout(() => setPhase('ready'), 700)
-      return () => clearTimeout(t)
-    }
+    // Returning visitors get to 'ready' faster but still must click to enter
+    const delay = isReturn.current ? 200 : 700
+    const t = setTimeout(() => setPhase('ready'), delay)
+    return () => clearTimeout(t)
   }, [])
 
   // Sound design — layered cosmic audio
