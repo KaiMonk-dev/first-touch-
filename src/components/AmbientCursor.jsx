@@ -8,6 +8,7 @@ export function AmbientCursor() {
   const target = useRef({ x: -300, y: -300 })
   const pos = useRef({ x: -300, y: -300 })
   const trailPoints = useRef([])
+  const sparks = useRef([])
 
   useEffect(() => {
     const onMove = (e) => {
@@ -15,9 +16,25 @@ export function AmbientCursor() {
 
       // Add trail point (throttled by distance)
       const last = trailPoints.current[trailPoints.current.length - 1]
-      if (!last || Math.sqrt((e.clientX - last.x) ** 2 + (e.clientY - last.y) ** 2) > 25) {
+      const dist = last ? Math.sqrt((e.clientX - last.x) ** 2 + (e.clientY - last.y) ** 2) : 999
+      if (dist > 25) {
         trailPoints.current.push({ x: e.clientX, y: e.clientY, time: Date.now() })
         if (trailPoints.current.length > 8) trailPoints.current.shift()
+
+        // Spawn wake sparks on fast movement
+        if (dist > 40 && Math.random() > 0.5) {
+          for (let i = 0; i < 2; i++) {
+            sparks.current.push({
+              x: e.clientX + (Math.random() - 0.5) * 10,
+              y: e.clientY + (Math.random() - 0.5) * 10,
+              vx: (Math.random() - 0.5) * 1.5,
+              vy: (Math.random() - 0.5) * 1.5 - 0.5,
+              life: 1,
+              r: 0.5 + Math.random() * 1,
+            })
+          }
+          if (sparks.current.length > 30) sparks.current.splice(0, 5)
+        }
       }
     }
     window.addEventListener('mousemove', onMove, { passive: true })
@@ -63,6 +80,19 @@ export function AmbientCursor() {
           ctx.lineWidth = 0.5
           ctx.stroke()
         }
+
+        // Draw wake sparks
+        sparks.current = sparks.current.filter(s => s.life > 0)
+        sparks.current.forEach((s) => {
+          s.x += s.vx
+          s.y += s.vy
+          s.vy += 0.02 // slight gravity
+          s.life -= 0.025
+          ctx.beginPath()
+          ctx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(201, 169, 110, ${s.life * 0.35})`
+          ctx.fill()
+        })
 
         // Draw dots
         points.forEach((p) => {

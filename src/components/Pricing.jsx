@@ -229,13 +229,13 @@ function PricingCard({ plan, delay, onBook }) {
 
         <ul className="space-y-3.5 mb-8 flex-1">
           {plan.features.map((feature, j) => (
-            <li key={j} className="flex items-start gap-3">
-              <svg className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
+            <li key={j} className="flex items-start gap-3 group/feature">
+              <svg className={`w-4 h-4 flex-shrink-0 mt-0.5 transition-all duration-300 group-hover/feature:scale-125 group-hover/feature:text-[#C9A96E] ${
                 plan.tier === 'enterprise' ? 'text-[#C9A96E]/50' : 'text-[#C9A96E]/60'
               }`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6L9 17l-5-5" />
               </svg>
-              <span className="text-[13px] text-white/60 leading-relaxed font-light">
+              <span className="text-[13px] text-white/60 leading-relaxed font-light group-hover/feature:text-white/75 transition-colors duration-300">
                 {feature.text}
                 <Tooltip text={feature.tip} />
               </span>

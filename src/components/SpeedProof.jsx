@@ -32,7 +32,7 @@ export function SpeedProof() {
       <div className="max-w-4xl mx-auto">
         <AnimatedSection>
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold tracking-[-0.03em] leading-[0.9]">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-[-0.03em] leading-[0.9] text-shimmer">
               <span className="bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
                 The First 60 Seconds Win the Job.
               </span>

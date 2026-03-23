@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { InfiniteSlider } from './InfiniteSlider'
 import { useCalendly } from './CalendlyModal'
 import { useMagnetic } from '../hooks/useMagnetic'
+import { useVariant } from '../hooks/useVariant'
 
 export function Hero() {
   const calendly = useCalendly()
   const primaryBtn = useMagnetic(0.35, 100)
   const secondaryBtn = useMagnetic(0.25, 80)
   const [scrollY, setScrollY] = useState(0)
+  const variant = useVariant()
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY)
@@ -27,13 +29,13 @@ export function Hero() {
             className="text-white block"
             style={{ transform: `translateY(${scrollY * -0.08}px)`, transition: 'transform 0.1s linear' }}
           >
-            Every Call Answered.
+            {variant.heroHeadline[0]}
           </span>
           <span
             className="bg-gradient-to-b from-white/90 to-white/60 bg-clip-text text-transparent block"
             style={{ transform: `translateY(${scrollY * -0.04}px)`, transition: 'transform 0.1s linear' }}
           >
-            Every Lead Booked.
+            {variant.heroHeadline[1]}
           </span>
         </h1>
 
@@ -41,8 +43,7 @@ export function Hero() {
           className="text-base md:text-lg text-white/60 max-w-xl mx-auto leading-relaxed font-light mb-14 animate-fade-up"
           style={{ animationDelay: '0.5s', animationFillMode: 'both' }}
         >
-          Alex picks up in under 1 second, books 3-5 extra jobs per week,
-          and follows up before your competitor even knows the lead exists.
+          {variant.heroSubtext}
         </p>
 
         {/* CTAs with magnetic pull */}
@@ -57,7 +58,7 @@ export function Hero() {
               className="group px-8 py-4 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-colors hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] btn-press flex items-center gap-3"
               style={primaryBtn.style}
             >
-              Book a Free Strategy Call
+              {variant.heroCTA}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
