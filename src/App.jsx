@@ -28,6 +28,8 @@ import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
 import { EasterEggs } from './components/EasterEggs'
 import { SectionBurst } from './components/SectionBurst'
 import { ScrollReward } from './components/ScrollReward'
+import { LiquidGlassEffects } from './components/LiquidGlassEffects'
+import { LiquidDripDivider } from './components/LiquidDripDivider'
 
 function App() {
   return (
@@ -36,22 +38,29 @@ function App() {
         <div className="min-h-screen bg-black text-white overflow-x-hidden grain">
           <LoadingScreen />
           <GalaxyBackground />
+          <LiquidGlassEffects />
           <ScrollProgress />
           <Nav />
           <main>
             <Hero />
             <ProofTicker />
             <SpeedProof />
+            <LiquidDripDivider />
             <SectionBurst />
             <MeetAlex />
+            <LiquidDripDivider />
             <HowItWorks />
+            <LiquidDripDivider />
             <SectionBurst />
             <DashboardPreview />
             <TryAlex />
+            <LiquidDripDivider />
             <SectionBurst />
             <ComparisonTable />
             <TestimonialPlaceholder />
+            <LiquidDripDivider />
             <Pricing />
+            <LiquidDripDivider />
             <FAQ />
             <FinalCTA />
           </main>

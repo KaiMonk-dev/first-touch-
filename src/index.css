@@ -31,41 +31,62 @@ body {
    LIQUID GLASS SYSTEM — Apple-inspired glassmorphism
    ═══════════════════════════════════════════════════ */
 
+/* ── Feature 1: Refraction Shift CSS vars ── */
+/* ── Feature 5: Responsive Glass Thickness CSS vars ── */
+/* ── Feature 6: Cursor Wake CSS vars ── */
+:root {
+  --glass-thickness: 1;
+  --glass-border-opacity: 0.25;
+  --cursor-x: 50%;
+  --cursor-y: 50%;
+}
+
 .liquid-glass {
   background: rgba(255, 255, 255, 0.04);
   background-blend-mode: luminosity;
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  /* Feature 1: hue-rotate driven by cursor proximity */
+  /* Feature 5: blur scales with --glass-thickness (1.0 → 1.8 as you scroll) */
+  backdrop-filter:
+    blur(calc(16px * var(--glass-thickness, 1)))
+    saturate(calc(140% + 10% * var(--glass-thickness, 1)))
+    hue-rotate(var(--refract-hue, 0deg))
+    brightness(var(--refract-brightness, 1));
+  -webkit-backdrop-filter:
+    blur(calc(16px * var(--glass-thickness, 1)))
+    saturate(calc(140% + 10% * var(--glass-thickness, 1)))
+    hue-rotate(var(--refract-hue, 0deg))
+    brightness(var(--refract-brightness, 1));
   border: none;
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.1),
-    0 4px 20px rgba(0, 0, 0, 0.15);
+    inset 0 1px 1px rgba(255, 255, 255, calc(0.1 * var(--glass-thickness, 1))),
+    0 4px calc(20px * var(--glass-thickness, 1)) rgba(0, 0, 0, 0.15);
   position: relative;
   overflow: hidden;
-  transition: box-shadow 0.5s ease, background 0.5s ease;
+  transition: box-shadow 0.5s ease, background 0.5s ease, backdrop-filter 0.8s ease;
 }
 
 .liquid-glass:hover {
   background: rgba(255, 255, 255, 0.055);
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.12),
-    0 8px 30px rgba(0, 0, 0, 0.2);
+    inset 0 1px 1px rgba(255, 255, 255, calc(0.12 * var(--glass-thickness, 1))),
+    0 8px calc(30px * var(--glass-thickness, 1)) rgba(0, 0, 0, 0.2);
 }
 
+/* Border gradient — Feature 5: opacity scales with depth */
 .liquid-glass::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: calc(1px * var(--glass-thickness, 1));
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, var(--glass-border-opacity, 0.25)) 0%,
     rgba(255, 255, 255, 0.08) 25%,
     rgba(255, 255, 255, 0) 45%,
     rgba(255, 255, 255, 0) 55%,
     rgba(255, 255, 255, 0.08) 75%,
-    rgba(255, 255, 255, 0.25) 100%
+    rgba(255, 255, 255, var(--glass-border-opacity, 0.25)) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -73,27 +94,56 @@ body {
   pointer-events: none;
 }
 
+/* ── Feature 6: Cursor Wake — bright trail on glass surface ── */
+/* Wake is rendered as a dynamic overlay via LiquidGlassEffects.jsx */
+/* to avoid conflicting with liquid-shimmer::after */
+.glass-wake-spot {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.08),
+    rgba(201, 169, 110, 0.03) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.5s ease;
+}
+
 .liquid-glass-strong {
   background: rgba(255, 255, 255, 0.06);
   background-blend-mode: luminosity;
-  backdrop-filter: blur(40px) saturate(190%);
-  -webkit-backdrop-filter: blur(40px) saturate(190%);
+  backdrop-filter:
+    blur(calc(40px * var(--glass-thickness, 1)))
+    saturate(calc(180% + 10% * var(--glass-thickness, 1)))
+    hue-rotate(var(--refract-hue, 0deg))
+    brightness(var(--refract-brightness, 1));
+  -webkit-backdrop-filter:
+    blur(calc(40px * var(--glass-thickness, 1)))
+    saturate(calc(180% + 10% * var(--glass-thickness, 1)))
+    hue-rotate(var(--refract-hue, 0deg))
+    brightness(var(--refract-brightness, 1));
   border: none;
   box-shadow:
     4px 4px 4px rgba(0, 0, 0, 0.06),
-    inset 0 1px 1px rgba(255, 255, 255, 0.14),
-    0 8px 32px rgba(0, 0, 0, 0.2);
+    inset 0 1px 1px rgba(255, 255, 255, calc(0.14 * var(--glass-thickness, 1))),
+    0 8px calc(32px * var(--glass-thickness, 1)) rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
-  transition: box-shadow 0.5s ease, background 0.5s ease;
+  transition: box-shadow 0.5s ease, background 0.5s ease, backdrop-filter 0.8s ease;
 }
 
 .liquid-glass-strong:hover {
   background: rgba(255, 255, 255, 0.08);
   box-shadow:
     4px 4px 4px rgba(0, 0, 0, 0.06),
-    inset 0 1px 1px rgba(255, 255, 255, 0.16),
-    0 12px 40px rgba(0, 0, 0, 0.25);
+    inset 0 1px 1px rgba(255, 255, 255, calc(0.16 * var(--glass-thickness, 1))),
+    0 12px calc(40px * var(--glass-thickness, 1)) rgba(0, 0, 0, 0.25);
 }
 
 .liquid-glass-strong::before {
@@ -101,15 +151,15 @@ body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1.2px;
+  padding: calc(1.2px * var(--glass-thickness, 1));
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, calc(var(--glass-border-opacity, 0.25) + 0.1)) 0%,
     rgba(255, 255, 255, 0.12) 25%,
     rgba(255, 255, 255, 0) 45%,
     rgba(255, 255, 255, 0) 55%,
     rgba(255, 255, 255, 0.12) 75%,
-    rgba(255, 255, 255, 0.35) 100%
+    rgba(255, 255, 255, calc(var(--glass-border-opacity, 0.25) + 0.1)) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -404,6 +454,152 @@ footer {
 @keyframes waveIdle {
   0% { transform: scaleY(0.6); }
   100% { transform: scaleY(1.2); }
+}
+
+/* ═══════════════════════════════════════
+   Feature 2: PARALLAX DEPTH STAGGER
+   Headings arrive before body text, cards arrive last
+   ═══════════════════════════════════════ */
+
+section h2 {
+  transition-delay: 0s !important;
+}
+
+section p {
+  transition-delay: 0.06s;
+}
+
+section .liquid-glass,
+section .liquid-glass-strong {
+  transition-delay: 0.12s;
+}
+
+/* Ensure AnimatedSection children stagger naturally */
+section > div > div > div:nth-child(1) { --stagger: 0s; }
+section > div > div > div:nth-child(2) { --stagger: 0.04s; }
+section > div > div > div:nth-child(3) { --stagger: 0.08s; }
+section > div > div > div:nth-child(4) { --stagger: 0.12s; }
+section > div > div > div:nth-child(5) { --stagger: 0.16s; }
+section > div > div > div:nth-child(6) { --stagger: 0.2s; }
+
+/* ═══════════════════════════════════════
+   Feature 3: GLASSMORPHIC TEXT REVEAL
+   Headings start as frosted bars, glass melts to reveal text
+   ═══════════════════════════════════════ */
+
+@keyframes glassReveal {
+  0% {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  60% {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.01);
+  }
+  100% {
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    background: transparent;
+  }
+}
+
+.glass-reveal-text {
+  position: relative;
+}
+
+.glass-reveal-text::before {
+  content: '';
+  position: absolute;
+  inset: -4px -12px;
+  border-radius: 12px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.03);
+  animation: glassReveal 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.3s;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ═══════════════════════════════════════
+   Feature 7: SECTION LIQUID DRIP TRANSITIONS
+   Liquid glass flowing between sections
+   ═══════════════════════════════════════ */
+
+.section-drip {
+  position: relative;
+}
+
+.section-drip::after {
+  content: '';
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 80px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%);
+  filter: blur(1px);
+  pointer-events: none;
+  z-index: 5;
+  animation: dripPulse 6s ease-in-out infinite;
+}
+
+@keyframes dripPulse {
+  0%, 100% {
+    width: 200px;
+    height: 80px;
+    opacity: 0.6;
+  }
+  50% {
+    width: 260px;
+    height: 100px;
+    opacity: 1;
+  }
+}
+
+/* SVG drip shape between sections */
+.liquid-drip-divider {
+  position: relative;
+  height: 60px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.liquid-drip-divider::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(201,169,110,0.15), transparent);
+  border-radius: 1px;
+}
+
+.liquid-drip-divider::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  background: rgba(201, 169, 110, 0.2);
+  box-shadow: 0 0 12px rgba(201, 169, 110, 0.1);
+  animation: dripDrop 4s ease-in-out infinite;
+}
+
+@keyframes dripDrop {
+  0%, 100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 0.5; }
+  50% { transform: translateX(-50%) translateY(8px) scale(0.8); opacity: 0.8; }
+  75% { transform: translateX(-50%) translateY(2px) scale(1.1); opacity: 0.3; }
 }
 
 /* Smooth reveal animation */
