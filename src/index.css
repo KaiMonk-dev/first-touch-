@@ -310,6 +310,21 @@ h1, h2, h3 {
   transition: text-shadow 0.3s ease;
 }
 
+/* Section focus fade — content brightens as it enters viewport center */
+section > div {
+  opacity: 0.92;
+  transition: opacity 0.5s ease;
+}
+section:hover > div,
+section:focus-within > div {
+  opacity: 1;
+}
+
+/* Footer end-of-universe gradient */
+footer {
+  background: linear-gradient(to bottom, transparent 0%, rgba(20, 15, 40, 0.15) 50%, rgba(15, 10, 35, 0.25) 100%);
+}
+
 /* Section divider particle burst */
 .divider-line::after {
   content: '';

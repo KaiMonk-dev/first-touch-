@@ -95,6 +95,7 @@ function VimeoPlayer() {
   const containerRef = useRef(null)
   const playerRef = useRef(null)
   const [ended, setEnded] = useState(false)
+  const [loaded, setLoaded] = useState(false)
   const durationRef = useRef(0)
   const cutoffTriggered = useRef(false)
 
@@ -113,6 +114,7 @@ function VimeoPlayer() {
 
     playerRef.current = player
     player.getDuration().then((dur) => { durationRef.current = dur })
+    player.ready().then(() => setLoaded(true))
 
     const pollInterval = setInterval(() => {
       if (!playerRef.current || cutoffTriggered.current) return
@@ -150,10 +152,21 @@ function VimeoPlayer() {
 
   return (
     <div className="rounded-2xl overflow-hidden liquid-glass-strong aspect-video relative bg-black">
+      {/* Loading shimmer while Vimeo loads */}
+      {!loaded && !ended && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-r from-transparent via-white/[0.02] to-transparent animate-pulse" />
+          <div className="absolute">
+            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center">
+              <div className="w-3 h-3 rounded-full bg-white/10 animate-ping" />
+            </div>
+          </div>
+        </div>
+      )}
       <div
         ref={containerRef}
         className="absolute inset-0 w-full h-full transition-opacity duration-500"
-        style={{ opacity: ended ? 0 : 1, pointerEvents: ended ? 'none' : 'auto' }}
+        style={{ opacity: ended ? 0 : loaded ? 1 : 0, pointerEvents: ended ? 'none' : 'auto' }}
       />
 
       {ended && (
