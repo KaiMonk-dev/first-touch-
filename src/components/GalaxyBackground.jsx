@@ -28,7 +28,7 @@ export function GalaxyBackground() {
         document.documentElement.offsetHeight
       )
       // Generous minimum — page with all sections is typically 10000-14000px
-      const newH = Math.max(measuredH, 12000)
+      const newH = Math.max(measuredH, 14000)
       const newW = window.innerWidth
       // Only reinit if height grew (never shrink — avoids losing stars)
       const needsResize = newH > pageH + 200 || Math.abs(newW - canvasW) > 50 || !galaxyRef.current

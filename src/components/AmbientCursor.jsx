@@ -11,36 +11,44 @@ export function AmbientCursor() {
   const sparks = useRef([])
 
   useEffect(() => {
+    // Skip on mobile
+    if (window.innerWidth < 768) return
+
+    const canvas = trailCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+
+    // Set canvas size ONCE, update only on resize
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    const onResize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    window.addEventListener('resize', onResize)
+
     const onMove = (e) => {
       target.current = { x: e.clientX, y: e.clientY }
 
-      // Add trail point (throttled by distance)
       const last = trailPoints.current[trailPoints.current.length - 1]
       const dist = last ? Math.sqrt((e.clientX - last.x) ** 2 + (e.clientY - last.y) ** 2) : 999
-      if (dist > 25) {
+      if (dist > 30) {
         trailPoints.current.push({ x: e.clientX, y: e.clientY, time: Date.now() })
-        if (trailPoints.current.length > 8) trailPoints.current.shift()
+        if (trailPoints.current.length > 7) trailPoints.current.shift()
 
-        // Spawn wake sparks on fast movement
-        if (dist > 40 && Math.random() > 0.5) {
-          for (let i = 0; i < 2; i++) {
-            sparks.current.push({
-              x: e.clientX + (Math.random() - 0.5) * 10,
-              y: e.clientY + (Math.random() - 0.5) * 10,
-              vx: (Math.random() - 0.5) * 1.5,
-              vy: (Math.random() - 0.5) * 1.5 - 0.5,
-              life: 1,
-              r: 0.5 + Math.random() * 1,
-            })
-          }
-          if (sparks.current.length > 30) sparks.current.splice(0, 5)
+        // Sparks on fast movement
+        if (dist > 50 && sparks.current.length < 20) {
+          sparks.current.push({
+            x: e.clientX + (Math.random() - 0.5) * 8,
+            y: e.clientY + (Math.random() - 0.5) * 8,
+            vx: (Math.random() - 0.5) * 1.2,
+            vy: (Math.random() - 0.5) * 1.2 - 0.4,
+            life: 1, r: 0.4 + Math.random() * 0.8,
+          })
         }
       }
     }
     window.addEventListener('mousemove', onMove, { passive: true })
-
-    const canvas = trailCanvasRef.current
-    const ctx = canvas ? canvas.getContext('2d') : null
 
     let animId
     const animate = () => {
@@ -53,57 +61,50 @@ export function AmbientCursor() {
         glowRef.current.style.transform = `translate(${pos.current.x - 200}px, ${pos.current.y - 200}px)`
       }
       if (innerRef.current) {
-        const ix = pos.current.x + dx * 0.08
-        const iy = pos.current.y + dy * 0.08
-        innerRef.current.style.transform = `translate(${ix - 120}px, ${iy - 120}px)`
+        innerRef.current.style.transform = `translate(${pos.current.x + dx * 0.08 - 120}px, ${pos.current.y + dy * 0.08 - 120}px)`
       }
       if (coreRef.current) {
         coreRef.current.style.transform = `translate(${target.current.x - 60}px, ${target.current.y - 60}px)`
       }
 
-      // Draw trail constellation
-      if (ctx && canvas) {
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
-        const now = Date.now()
-        const points = trailPoints.current.filter(p => now - p.time < 3000)
-        trailPoints.current = points
+      // Draw trail + sparks — use clearRect instead of resizing
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      const now = Date.now()
 
-        // Draw connection lines
-        for (let i = 1; i < points.length; i++) {
-          const age = (now - points[i].time) / 3000
-          const o = (1 - age) * 0.08
-          ctx.beginPath()
-          ctx.moveTo(points[i - 1].x, points[i - 1].y)
-          ctx.lineTo(points[i].x, points[i].y)
-          ctx.strokeStyle = `rgba(201, 169, 110, ${o})`
-          ctx.lineWidth = 0.5
-          ctx.stroke()
-        }
+      // Trail constellation
+      const points = trailPoints.current
+      for (let i = points.length - 1; i >= 0; i--) {
+        if (now - points[i].time > 2500) { points.splice(i, 1); continue }
+      }
 
-        // Draw wake sparks
-        sparks.current = sparks.current.filter(s => s.life > 0)
-        sparks.current.forEach((s) => {
-          s.x += s.vx
-          s.y += s.vy
-          s.vy += 0.02 // slight gravity
-          s.life -= 0.025
-          ctx.beginPath()
-          ctx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(201, 169, 110, ${s.life * 0.35})`
-          ctx.fill()
-        })
+      for (let i = 1; i < points.length; i++) {
+        const age = (now - points[i].time) / 2500
+        ctx.beginPath()
+        ctx.moveTo(points[i - 1].x, points[i - 1].y)
+        ctx.lineTo(points[i].x, points[i].y)
+        ctx.strokeStyle = `rgba(201, 169, 110, ${(1 - age) * 0.07})`
+        ctx.lineWidth = 0.5
+        ctx.stroke()
+      }
 
-        // Draw dots
-        points.forEach((p) => {
-          const age = (now - p.time) / 3000
-          const o = (1 - age) * 0.2
-          const r = (1 - age) * 2
-          ctx.beginPath()
-          ctx.arc(p.x, p.y, r, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(201, 169, 110, ${o})`
-          ctx.fill()
-        })
+      for (let i = 0; i < points.length; i++) {
+        const age = (now - points[i].time) / 2500
+        const o = (1 - age) * 0.15
+        ctx.beginPath()
+        ctx.arc(points[i].x, points[i].y, (1 - age) * 1.5, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(201, 169, 110, ${o})`
+        ctx.fill()
+      }
+
+      // Sparks
+      for (let i = sparks.current.length - 1; i >= 0; i--) {
+        const s = sparks.current[i]
+        s.x += s.vx; s.y += s.vy; s.vy += 0.015; s.life -= 0.03
+        if (s.life <= 0) { sparks.current.splice(i, 1); continue }
+        ctx.beginPath()
+        ctx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(201, 169, 110, ${s.life * 0.3})`
+        ctx.fill()
       }
 
       animId = requestAnimationFrame(animate)
@@ -112,41 +113,20 @@ export function AmbientCursor() {
 
     return () => {
       window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('resize', onResize)
       cancelAnimationFrame(animId)
     }
   }, [])
 
   return (
     <>
-      <div
-        ref={glowRef}
-        className="fixed top-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none z-[2] hidden md:block"
-        style={{
-          background: 'radial-gradient(circle, rgba(201,169,110,0.10) 0%, rgba(201,169,110,0.04) 35%, transparent 65%)',
-          willChange: 'transform',
-        }}
-      />
-      <div
-        ref={innerRef}
-        className="fixed top-0 left-0 w-[240px] h-[240px] rounded-full pointer-events-none z-[2] hidden md:block"
-        style={{
-          background: 'radial-gradient(circle, rgba(255,248,230,0.10) 0%, rgba(201,169,110,0.05) 35%, transparent 65%)',
-          willChange: 'transform',
-        }}
-      />
-      <div
-        ref={coreRef}
-        className="fixed top-0 left-0 w-[120px] h-[120px] rounded-full pointer-events-none z-[2] hidden md:block"
-        style={{
-          background: 'radial-gradient(circle, rgba(255,252,245,0.08) 0%, rgba(255,245,225,0.03) 40%, transparent 70%)',
-          willChange: 'transform',
-        }}
-      />
-      {/* Trail constellation canvas */}
-      <canvas
-        ref={trailCanvasRef}
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-[1] hidden md:block"
-      />
+      <div ref={glowRef} className="fixed top-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none z-[2] hidden md:block"
+        style={{ background: 'radial-gradient(circle, rgba(201,169,110,0.10) 0%, rgba(201,169,110,0.04) 35%, transparent 65%)', willChange: 'transform' }} />
+      <div ref={innerRef} className="fixed top-0 left-0 w-[240px] h-[240px] rounded-full pointer-events-none z-[2] hidden md:block"
+        style={{ background: 'radial-gradient(circle, rgba(255,248,230,0.10) 0%, rgba(201,169,110,0.05) 35%, transparent 65%)', willChange: 'transform' }} />
+      <div ref={coreRef} className="fixed top-0 left-0 w-[120px] h-[120px] rounded-full pointer-events-none z-[2] hidden md:block"
+        style={{ background: 'radial-gradient(circle, rgba(255,252,245,0.08) 0%, rgba(255,245,225,0.03) 40%, transparent 70%)', willChange: 'transform' }} />
+      <canvas ref={trailCanvasRef} className="fixed top-0 left-0 w-full h-full pointer-events-none z-[1] hidden md:block" />
     </>
   )
 }
