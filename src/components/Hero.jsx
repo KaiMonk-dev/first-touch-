@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+// useRef still needed for hasWowed
 import { InfiniteSlider } from './InfiniteSlider'
 import { useCalendly } from './CalendlyModal'
 import { useMagnetic } from '../hooks/useMagnetic'
@@ -40,12 +41,12 @@ export function Hero() {
           </span>
         </h1>
 
-        <div
-          className="text-base md:text-lg text-white/60 max-w-xl mx-auto leading-relaxed font-light mb-14 animate-fade-up min-h-[3em]"
+        <p
+          className="text-base md:text-lg text-white/60 max-w-xl mx-auto leading-relaxed font-light mb-14 animate-fade-up"
           style={{ animationDelay: '0.5s', animationFillMode: 'both' }}
         >
-          <Typewriter text={variant.heroSubtext} delay={1800} speed={25} />
-        </div>
+          {variant.heroSubtext}
+        </p>
 
         {/* CTAs with magnetic pull */}
         <div
@@ -119,37 +120,3 @@ export function Hero() {
   )
 }
 
-function Typewriter({ text, delay = 0, speed = 30 }) {
-  const [displayed, setDisplayed] = useState('')
-  const [started, setStarted] = useState(false)
-  const indexRef = useRef(0)
-
-  useEffect(() => {
-    const startTimer = setTimeout(() => setStarted(true), delay)
-    return () => clearTimeout(startTimer)
-  }, [delay])
-
-  useEffect(() => {
-    if (!started) return
-    const interval = setInterval(() => {
-      indexRef.current++
-      if (indexRef.current > text.length) {
-        clearInterval(interval)
-        return
-      }
-      setDisplayed(text.slice(0, indexRef.current))
-    }, speed)
-    return () => clearInterval(interval)
-  }, [started, text, speed])
-
-  if (!started) return null
-
-  return (
-    <span>
-      {displayed}
-      {displayed.length < text.length && (
-        <span className="inline-block w-[2px] h-[1em] bg-[#C9A96E]/50 ml-0.5 animate-pulse align-middle" />
-      )}
-    </span>
-  )
-}

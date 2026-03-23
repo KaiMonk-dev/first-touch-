@@ -260,10 +260,12 @@ export function GalaxyBackground() {
         const t2 = Math.sin(time * s.tw2 + s.phase * 1.3)
         const t3 = Math.sin(time * s.tw3 + s.phase * 0.7)
         let o = s.opacity * (0.65 + 0.35 * (t1*0.45 + t2*0.35 + t3*0.2))
-        // Idle boost — stars get noticeably brighter and twinkle more when screen is still
+        // Idle boost — DRAMATIC brightness and twinkle when screen is still
         if (isIdle) {
-          o *= 1 + idleStrength * 0.1
-          o += Math.sin(time * s.tw1 * 3 + s.phase) * 0.06 * idleStrength
+          o *= 1 + idleStrength * 0.2 // up to 60% brighter
+          o += Math.sin(time * s.tw1 * 4 + s.phase) * 0.1 * idleStrength // strong shimmer
+          // Bright stars get extra glow halo when idle
+          if (s.layer >= 1) o = Math.min(1, o + idleStrength * 0.05)
         }
 
         const dist = Math.sqrt((s.x - mx)**2 + (sy - my)**2)
@@ -381,11 +383,12 @@ export function GalaxyBackground() {
       })
 
       // --- Shooting stars ---
-      const sInt = isIdle ? 500 + Math.random()*1000 : 3000 + Math.random()*5000
+      // Shooting stars — MUCH more when idle
+      const sInt = isIdle ? 300 + Math.random()*700 : 3000 + Math.random()*5000
       if (time - lastShoot > sInt) {
         lastShoot = time
         const dir = Math.random() > 0.5 ? 1 : -1
-        shootingStars.push({ x: dir>0?-20:W+20, y: Math.random()*H*0.5, vx: dir*(5+Math.random()*6), vy: 1.5+Math.random()*3.5, life: 1, decay: 0.004+Math.random()*0.003, brightness: 0.35+Math.random()*0.35 })
+        shootingStars.push({ x: dir>0?-20:W+20, y: Math.random()*H*0.6, vx: dir*(6+Math.random()*7), vy: 1+Math.random()*3, life: 1, decay: 0.003+Math.random()*0.003, brightness: 0.4+Math.random()*0.4 })
       }
       shootingStars = shootingStars.filter(s => s.life > 0)
       shootingStars.forEach((s) => {
