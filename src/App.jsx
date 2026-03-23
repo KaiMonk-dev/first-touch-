@@ -21,6 +21,7 @@ import { BackToTop } from './components/BackToTop'
 import { AmbientCursor } from './components/AmbientCursor'
 import { MobileRipple } from './components/MobileRipple'
 import { PortalEcho } from './components/PortalEcho'
+import { StarRain } from './components/StarRain'
 import { GalaxyBackground } from './components/GalaxyBackground'
 import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
 import { EasterEggs } from './components/EasterEggs'
@@ -60,6 +61,7 @@ function App() {
           <AmbientCursor />
           <MobileRipple />
           <PortalEcho />
+          <StarRain targetId="pricing" />
           <EasterEggs />
           <ScrollReward />
         </div>

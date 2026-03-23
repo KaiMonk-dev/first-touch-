@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { getSeasonalTheme } from '../hooks/useSeasonalTheme'
+import { setVisibleStars } from '../hooks/useSharedStars'
 
 export function GalaxyBackground() {
   const canvasRef = useRef(null)
@@ -329,6 +330,17 @@ export function GalaxyBackground() {
         ctx.fillStyle = `rgba(${cr},${cg},${cb},${o})`
         ctx.fill()
       })
+
+      // Export bright star positions for cursor tethers (every 10th frame)
+      if (time % 10 === 0) {
+        const brightVisible = []
+        stars.forEach((s) => {
+          if (s.layer < 2) return
+          const sy = toScreen(s.y, s.scrollSpeed)
+          if (sy > -10 && sy < H + 10) brightVisible.push({ x: s.x, y: sy })
+        })
+        setVisibleStars(brightVisible.slice(0, 30)) // cap at 30 for performance
+      }
 
       // --- Constellations ---
       constellations.forEach((c) => {

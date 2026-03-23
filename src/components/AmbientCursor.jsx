@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { getVisibleStars } from '../hooks/useSharedStars'
 
 // You are a wandering star drifting through this universe.
 // Corona glow, stardust trail, gravitational presence.
@@ -155,10 +156,17 @@ export function AmbientCursor() {
       ctx.fillStyle = g2
       ctx.fillRect(sx - 12, sy - 12, 24, 24)
 
-      // Core dot — bright white point, the click anchor
+      // Dark outline ring — ensures visibility on white buttons/surfaces
+      ctx.beginPath()
+      ctx.arc(sx, sy, 4.5 * pulse, 0, Math.PI * 2)
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'
+      ctx.lineWidth = 1
+      ctx.stroke()
+
+      // Core dot — bright white-gold point, the click anchor
       ctx.beginPath()
       ctx.arc(sx, sy, 3 * pulse, 0, Math.PI * 2)
-      ctx.fillStyle = 'rgba(255, 252, 245, 0.7)'
+      ctx.fillStyle = 'rgba(255, 252, 245, 0.75)'
       ctx.fill()
 
       // Diffraction cross
@@ -174,6 +182,26 @@ export function AmbientCursor() {
       ctx.beginPath(); ctx.moveTo(sx - dLen, sy - dLen); ctx.lineTo(sx + dLen, sy + dLen); ctx.stroke()
       ctx.beginPath(); ctx.moveTo(sx + dLen, sy - dLen); ctx.lineTo(sx - dLen, sy + dLen); ctx.stroke()
       ctx.restore()
+
+      // --- Star-to-star gravitational tethers ---
+      const galaxyStars = getVisibleStars()
+      galaxyStars.forEach((gs) => {
+        const dist = Math.sqrt((sx - gs.x) ** 2 + (sy - gs.y) ** 2)
+        if (dist < 120 && dist > 8) {
+          const tO = Math.max(0, (1 - dist / 120)) * 0.12
+          ctx.beginPath()
+          ctx.moveTo(sx, sy)
+          ctx.lineTo(gs.x, gs.y)
+          ctx.strokeStyle = `rgba(201, 169, 110, ${tO})`
+          ctx.lineWidth = 0.4
+          ctx.stroke()
+          // Small glow at connection point on galaxy star
+          ctx.beginPath()
+          ctx.arc(gs.x, gs.y, 2 * (1 - dist / 120), 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(201, 169, 110, ${tO * 2})`
+          ctx.fill()
+        }
+      })
 
       // --- Text glow (headings near cursor brighten) ---
       if (Math.random() < 0.15) {
@@ -203,7 +231,7 @@ export function AmbientCursor() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full pointer-events-none z-[2] hidden md:block"
+      className="fixed top-0 left-0 w-full h-full pointer-events-none z-[55] hidden md:block"
     />
   )
 }

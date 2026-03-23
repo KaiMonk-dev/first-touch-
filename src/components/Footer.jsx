@@ -1,7 +1,16 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function Footer() {
   const canvasRef = useRef(null)
+  const [sessionTime, setSessionTime] = useState(0)
+
+  useEffect(() => {
+    const start = Date.now()
+    const interval = setInterval(() => {
+      setSessionTime(Math.floor((Date.now() - start) / 1000))
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -136,7 +145,13 @@ export function Footer() {
         </div>
 
         <div className="border-t border-white/[0.06] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[11px] text-white/20 font-light tracking-wide">&copy; 2026 Ascension First AI. All rights reserved.</p>
+          <p className="text-[11px] text-white/20 font-light tracking-wide">
+            &copy; 2026 Ascension First AI
+            <span className="hidden md:inline text-white/10 ml-3">·</span>
+            <span className="hidden md:inline text-white/10 ml-3 tabular-nums">
+              {Math.floor(sessionTime / 60)}:{(sessionTime % 60).toString().padStart(2, '0')} in the universe
+            </span>
+          </p>
           <div className="flex items-center gap-6">
             <a href="/privacy.html" className="text-[11px] text-white/20 hover:text-white/50 transition-colors font-light">Privacy</a>
             <a href="/terms.html" className="text-[11px] text-white/20 hover:text-white/50 transition-colors font-light">Terms</a>
