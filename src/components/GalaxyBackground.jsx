@@ -14,6 +14,9 @@ export function GalaxyBackground() {
     let animId
 
     // Canvas is FIXED viewport size — never changes except on resize
+    // Respect reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
@@ -67,9 +70,12 @@ export function GalaxyBackground() {
         }
 
         // Density gradient: more stars near top (hero), thinning toward bottom
-        // Square root distribution biases toward lower values (top of page)
+        // Density distribution: clusters at hero (top) and pricing (~65% down)
         const rawY = rng()
-        const biasedY = rawY < 0.4 ? rawY * rawY * VIRTUAL_H * 2.5 : rawY * VIRTUAL_H
+        let biasedY
+        if (rawY < 0.35) biasedY = rawY * rawY * VIRTUAL_H * 2.5 // dense at hero
+        else if (rawY > 0.55 && rawY < 0.75) biasedY = (0.6 + (rawY - 0.55) * 0.5) * VIRTUAL_H // cluster at pricing
+        else biasedY = rawY * VIRTUAL_H // spread elsewhere
 
         stars.push({
           x: rng() * W,
@@ -219,9 +225,12 @@ export function GalaxyBackground() {
 
       ctx.clearRect(0, 0, W, H)
 
-      // Post-portal arrival settling — stars briefly brighter
-      if (arrivalBoost > 1.005) arrivalBoost *= 0.9995 // very slow decay over ~4 seconds
+      // Post-portal arrival settling
+      if (arrivalBoost > 1.005) arrivalBoost *= 0.9995
       else arrivalBoost = 1
+
+      // Ambient heartbeat — universe breathes (6s cycle, 2-3% variation)
+      const heartbeat = 1 + Math.sin(time * 0.0017) * 0.025
 
       // --- Galaxy weather (drifting brightness cloud) ---
       weatherTimer++
@@ -294,7 +303,7 @@ export function GalaxyBackground() {
         const t1 = Math.sin(time * s.tw1 + s.phase)
         const t2 = Math.sin(time * s.tw2 + s.phase * 1.3)
         const t3 = Math.sin(time * s.tw3 + s.phase * 0.7)
-        let o = s.opacity * (0.65 + 0.35 * (t1*0.45 + t2*0.35 + t3*0.2)) * arrivalBoost
+        let o = s.opacity * (0.65 + 0.35 * (t1*0.45 + t2*0.35 + t3*0.2)) * arrivalBoost * heartbeat
         // Idle boost — DRAMATIC brightness and twinkle when screen is still
         if (isIdle) {
           o *= 1 + idleStrength * 0.2 // up to 60% brighter
@@ -407,7 +416,8 @@ export function GalaxyBackground() {
       scrollTrail = scrollTrail.filter(p => p.life > 0)
       scrollTrail.forEach((p) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.015; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fillStyle=`rgba(201,169,110,${p.life*0.1})`; ctx.fill() })
 
-      // --- Shooting stars (gentle, not overwhelming) ---
+      // --- Shooting stars (skip if reduced motion) ---
+      if (!prefersReducedMotion) {
       const sInt = isIdle ? 1500 + Math.random()*2500 : 4000 + Math.random()*6000
       if (time - lastShoot > sInt) {
         lastShoot = time
@@ -462,6 +472,8 @@ export function GalaxyBackground() {
         if(b.growing){b.life+=0.004;if(b.life>=1)b.growing=false}else b.life-=0.002
         const r=Math.max(0.1,b.maxR*b.life);const grad=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,r);grad.addColorStop(0,`rgba(${b.color[0]},${b.color[1]},${b.color[2]},${b.life*0.08})`);grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.fillRect(b.x-r,b.y-r,r*2,r*2)
       })
+
+      } // end reduced-motion skip for ephemeral effects
 
       } catch (e) { /* Silently recover — never let draw loop die */ }
       animId = requestAnimationFrame(draw)
