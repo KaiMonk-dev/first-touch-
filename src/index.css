@@ -397,6 +397,16 @@ footer {
   transform: scale(0.97);
 }
 
+/* CTA breathing glow — syncs with universe */
+@keyframes ctaBreath {
+  0%, 100% { box-shadow: 0 0 15px rgba(255,255,255,0.05); }
+  50% { box-shadow: 0 0 30px rgba(255,255,255,0.12); }
+}
+
+.cta-breathe {
+  animation: ctaBreath 4s ease-in-out infinite;
+}
+
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }

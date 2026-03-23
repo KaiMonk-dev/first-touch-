@@ -71,7 +71,7 @@ export function Hero() {
             <button
               ref={primaryBtn.ref}
               onClick={() => calendly.open()}
-              className="group px-8 py-4 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-colors hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] btn-press flex items-center gap-3"
+              className="group px-8 py-4 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-colors hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] btn-press cta-breathe flex items-center gap-3"
               style={primaryBtn.style}
             >
               {variant.heroCTA}
