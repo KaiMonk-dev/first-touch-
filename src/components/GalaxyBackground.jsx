@@ -383,6 +383,26 @@ export function GalaxyBackground() {
         setVisibleStars(brightVisible.slice(0, 30)) // cap at 30 for performance
       }
 
+      // --- Scroll storytelling (faint text easter eggs) ---
+      const scrollPctFull = Math.min(1, scrollY / (document.documentElement.scrollHeight - H))
+      const storyTexts = [
+        { at: 0.3, text: 'keep exploring...', x: W * 0.85, y: H * 0.15 },
+        { at: 0.55, text: 'you\'re getting closer', x: W * 0.1, y: H * 0.8 },
+        { at: 0.8, text: 'welcome to the universe', x: W * 0.75, y: H * 0.9 },
+      ]
+      storyTexts.forEach((st) => {
+        const dist = Math.abs(scrollPctFull - st.at)
+        if (dist < 0.05) {
+          const fadeO = (1 - dist / 0.05) * 0.06
+          ctx.save()
+          ctx.font = '300 10px Inter, system-ui, sans-serif'
+          ctx.fillStyle = `rgba(201, 169, 110, ${fadeO})`
+          ctx.textAlign = 'center'
+          ctx.fillText(st.text, st.x, st.y)
+          ctx.restore()
+        }
+      })
+
       // --- Constellations ---
       constellations.forEach((c) => {
         const screenPts = c.points.map(p => ({ x: p.x, y: toScreen(p.y, 0.6) }))

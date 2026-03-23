@@ -81,13 +81,39 @@ export function AmbientCursor() {
 
     let animId
     let prevX = -300, prevY = -300
+    let idleFrames = 0
+    let driftX = 0, driftY = 0
     const animate = () => {
       coronaPulse.current += 0.03
 
-      // Star renders EXACTLY at cursor position — no lerp, no lag
-      const sx = target.current.x
-      const sy = target.current.y
+      let sx = target.current.x
+      let sy = target.current.y
       const speed = Math.sqrt((sx - prevX) ** 2 + (sy - prevY) ** 2)
+
+      // CTA gravity drift — after 10s idle, star drifts toward nearest CTA
+      if (speed < 1) idleFrames++
+      else idleFrames = 0
+
+      if (idleFrames > 600) { // ~10 seconds at 60fps
+        const btns = document.querySelectorAll('.cta-breathe, button[class*="bg-white"]')
+        let nearestDist = Infinity, nearestX = sx, nearestY = sy
+        btns.forEach((btn) => {
+          const rect = btn.getBoundingClientRect()
+          const bx = rect.left + rect.width / 2
+          const by = rect.top + rect.height / 2
+          const d = Math.sqrt((sx - bx) ** 2 + (sy - by) ** 2)
+          if (d < nearestDist) { nearestDist = d; nearestX = bx; nearestY = by }
+        })
+        if (nearestDist < 500) {
+          driftX += (nearestX - sx) * 0.0003
+          driftY += (nearestY - sy) * 0.0003
+          sx += driftX
+          sy += driftY
+        }
+      } else {
+        driftX *= 0.9; driftY *= 0.9
+      }
+
       prevX = sx; prevY = sy
 
       // Corona glow trails slightly behind for depth feel

@@ -155,6 +155,21 @@ export function Footer() {
           <div className="flex items-center gap-6">
             <a href="/privacy.html" className="text-[11px] text-white/20 hover:text-white/50 transition-colors font-light">Privacy</a>
             <a href="/terms.html" className="text-[11px] text-white/20 hover:text-white/50 transition-colors font-light">Terms</a>
+            <button
+              onClick={() => {
+                const existing = document.getElementById('constellation-map')
+                if (existing) { existing.remove(); return }
+                const el = document.createElement('div')
+                el.id = 'constellation-map'
+                el.style.cssText = 'position:fixed;bottom:60px;right:20px;z-index:200;background:rgba(0,0,0,0.9);border:1px solid rgba(201,169,110,0.15);backdrop-filter:blur(20px);border-radius:12px;padding:12px 16px;color:rgba(255,255,255,0.5);font:300 11px Inter,system-ui,sans-serif;max-width:200px;pointer-events:auto;'
+                el.innerHTML = '<p style="color:rgba(201,169,110,0.6);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 8px">Constellations Discovered</p><p style="margin:0;line-height:1.6">✦ Orion\'s Echo<br>✦ The Navigator<br>✦ Alex\'s Crown<br>✦ The First Light</p><p style="margin:8px 0 0;font-size:9px;color:rgba(255,255,255,0.25)">Move your star to discover more</p>'
+                document.body.appendChild(el)
+                setTimeout(() => { if (document.getElementById('constellation-map')) el.remove() }, 8000)
+              }}
+              className="text-[11px] text-white/20 hover:text-white/50 transition-colors font-light"
+            >
+              Constellations
+            </button>
           </div>
         </div>
       </div>
