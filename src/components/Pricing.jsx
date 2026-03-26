@@ -133,9 +133,14 @@ export function Pricing() {
         </div>
 
         <AnimatedSection delay={500}>
-          <p className="text-center text-[12px] text-white/30 mt-10 font-light tracking-wide">
-            No contracts. 30-day money-back guarantee. Cancel anytime.
-          </p>
+          <div className="flex items-center justify-center gap-3 mt-12 mb-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-40">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <p className="text-[13px] text-white/40 font-light">
+              30-day money-back guarantee. No contracts. Cancel anytime.
+            </p>
+          </div>
         </AnimatedSection>
       </div>
     </section>

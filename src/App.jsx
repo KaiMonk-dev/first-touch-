@@ -4,17 +4,14 @@ import { LoadingScreen } from './components/LoadingScreen'
 import { ScrollProgress } from './components/ScrollProgress'
 import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
-import { ProofTicker } from './components/ProofTicker'
 import { SpeedProof } from './components/SpeedProof'
 import { MeetAlex } from './components/MeetAlex'
 import { HowItWorks } from './components/HowItWorks'
 import { DashboardPreview } from './components/DashboardPreview'
 import { TryAlex } from './components/TryAlex'
-import { ComparisonTable } from './components/ComparisonTable'
 import { Pricing } from './components/Pricing'
-import { FAQ } from './components/FAQ'
 import { WhoWeAre } from './components/WhoWeAre'
-import { ReferralProgram } from './components/ReferralProgram'
+import { FAQ } from './components/FAQ'
 import { FinalCTA } from './components/FinalCTA'
 import { Footer } from './components/Footer'
 import { StickyMobileCTA } from './components/StickyMobileCTA'
@@ -26,7 +23,6 @@ import { PortalEcho } from './components/PortalEcho'
 import { StarRain } from './components/StarRain'
 import { DebugOverlay } from './components/DebugOverlay'
 import { GalaxyBackground } from './components/GalaxyBackground'
-import { TestimonialPlaceholder } from './components/TestimonialPlaceholder'
 import { EasterEggs } from './components/EasterEggs'
 import { SectionBurst } from './components/SectionBurst'
 import { ScrollReward } from './components/ScrollReward'
@@ -47,7 +43,6 @@ function App() {
           <Nav />
           <main>
             <Hero />
-            <ProofTicker />
             <SpeedProof />
             <LiquidDripDivider />
             <SectionBurst />
@@ -59,15 +54,9 @@ function App() {
             <DashboardPreview />
             <TryAlex />
             <LiquidDripDivider />
-            <SectionBurst />
-            <ComparisonTable />
-            <TestimonialPlaceholder />
-            <LiquidDripDivider />
             <Pricing />
             <LiquidDripDivider />
             <WhoWeAre />
-            <LiquidDripDivider />
-            <ReferralProgram />
             <LiquidDripDivider />
             <FAQ />
             <FinalCTA />
