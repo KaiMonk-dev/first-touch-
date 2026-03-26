@@ -11,7 +11,6 @@ import { DashboardPreview } from './components/DashboardPreview'
 import { TryAlex } from './components/TryAlex'
 import { Pricing } from './components/Pricing'
 import { WhoWeAre } from './components/WhoWeAre'
-import { FirstWeekReport } from './components/FirstWeekReport'
 import { FAQ } from './components/FAQ'
 import { FinalCTA } from './components/FinalCTA'
 import { Footer } from './components/Footer'
@@ -50,7 +49,6 @@ function App() {
             <MeetAlex />
             <LiquidDripDivider />
             <HowItWorks />
-            <FirstWeekReport />
             <LiquidDripDivider />
             <SectionBurst />
             <DashboardPreview />
