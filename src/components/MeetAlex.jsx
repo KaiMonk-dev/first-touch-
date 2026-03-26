@@ -37,14 +37,14 @@ export function MeetAlex() {
         {/* Header */}
         <AnimatedSection>
           <div className="text-center mb-20">
-            <p className="label mb-6">The person behind every call</p>
+            <p className="label mb-6">The newest member of your team</p>
             <div className="divider-line mb-16" />
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9] mb-8">
               <span className="text-white">Meet Alex.</span>
             </h2>
             <p className="text-base md:text-lg text-white/55 max-w-xl mx-auto leading-relaxed font-light">
-              A custom-trained AI agent that sounds human, thinks fast, and never
-              misses a beat. Your customers won't know the difference.
+              Your dedicated team member who answers every call, books every appointment,
+              and makes every customer feel like your favorite customer. 24/7.
             </p>
           </div>
         </AnimatedSection>

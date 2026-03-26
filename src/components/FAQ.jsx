@@ -4,11 +4,11 @@ import { AnimatedSection } from './AnimatedSection'
 const faqs = [
   {
     q: 'What is First Touch?',
-    a: 'First Touch is a customer experience platform powered by AI voice technology. We build a custom AI agent — named Alex — specifically trained for your business. Alex answers calls, qualifies leads, books appointments, and follows up with customers, 24/7.',
+    a: 'First Touch is a premium customer experience platform by Ascension First. We build Alex — a dedicated team member trained specifically for your business. Alex answers calls, qualifies leads, books appointments, and follows up with customers, 24/7. Your customers feel cared for from their very first interaction.',
   },
   {
-    q: 'Will my customers know they\'re talking to AI?',
-    a: 'Alex is designed to sound natural and conversational — not robotic. Most callers don\'t realize they\'re talking to AI. If a caller asks directly, Alex will let them know and can transfer to a human at any time.',
+    q: 'Will my customers know they\'re not talking to a person?',
+    a: 'Alex is designed to sound natural and conversational — warm, not robotic. Most callers don\'t realize the difference. If a caller asks directly, Alex will be transparent and can transfer to your team at any time.',
   },
   {
     q: 'How long does setup take?',
@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     q: 'What if Alex can\'t handle a call?',
-    a: 'Alex knows its limits. Complex or sensitive calls get flagged and transferred to you or your team immediately, with full context of the conversation.',
+    a: 'Alex knows when to hand off. Complex or sensitive calls get flagged and transferred to you or your team immediately, with full context of the conversation.',
   },
   {
     q: 'Do I need any technical skills?',
@@ -36,7 +36,7 @@ const faqs = [
   },
   {
     q: 'What industries does First Touch work for?',
-    a: 'First Touch works for any service-based business that relies on phone calls to book jobs. Plumbing, HVAC, roofing, electrical, landscaping, dental offices, law firms, med spas, auto repair — if your customers call to book, Alex can handle it. Each agent is custom-trained for your specific industry and services.',
+    a: 'First Touch works for any service-based business that relies on phone calls to book jobs. Plumbing, HVAC, roofing, electrical, landscaping, dental offices, law firms, med spas, auto repair — if your customers call to book, Alex can handle it. Each Alex is custom-trained for your specific industry, services, and brand voice.',
   },
 ]
 

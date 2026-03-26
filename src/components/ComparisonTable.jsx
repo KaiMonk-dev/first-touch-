@@ -2,16 +2,16 @@ import { AnimatedSection } from './AnimatedSection'
 import { useCalendly } from './CalendlyModal'
 
 const rows = [
-  { feature: 'Answers in < 1 second', ai: true, human: false },
-  { feature: 'Available 24/7', ai: true, human: false },
-  { feature: 'Handles 100% of calls', ai: true, human: false },
-  { feature: 'Books appointments live', ai: true, human: false },
-  { feature: 'Qualifies leads on call', ai: true, human: false },
-  { feature: 'Sends SMS follow-ups', ai: true, human: false },
-  { feature: 'Never calls in sick', ai: true, human: false },
-  { feature: 'No training required', ai: true, human: false },
-  { feature: 'Monthly salary / overhead', ai: false, human: true },
-  { feature: 'Turnover risk', ai: false, human: true },
+  { feature: 'Answers in < 1 second', ft: true, human: false },
+  { feature: 'Available 24/7, 365 days', ft: true, human: false },
+  { feature: 'Handles 100% of calls', ft: true, human: false },
+  { feature: 'Books appointments live', ft: true, human: false },
+  { feature: 'Qualifies leads on call', ft: true, human: false },
+  { feature: 'Sends SMS follow-ups', ft: true, human: false },
+  { feature: 'Never calls in sick', ft: true, human: false },
+  { feature: 'Ready from day one', ft: true, human: false },
+  { feature: 'Monthly salary / overhead', ft: false, human: true },
+  { feature: 'Turnover risk', ft: false, human: true },
 ]
 
 export function ComparisonTable() {
@@ -25,7 +25,7 @@ export function ComparisonTable() {
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[0.9]">
               <span className="text-white">First Touch vs.</span>
               <br />
-              <span className="bg-gradient-to-b from-white/90 to-white/50 bg-clip-text text-transparent">A Human Receptionist.</span>
+              <span className="bg-gradient-to-b from-white/90 to-white/50 bg-clip-text text-transparent">The Traditional Way.</span>
             </h2>
           </div>
         </AnimatedSection>
@@ -55,7 +55,7 @@ export function ComparisonTable() {
                   <span className="text-[13px] text-white/60 font-light">{row.feature}</span>
                 </div>
                 <div className="p-4 md:p-5 flex items-center justify-center">
-                  {row.ai ? (
+                  {row.ft ? (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 group-hover/row:scale-110 transition-transform">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>

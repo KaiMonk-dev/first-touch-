@@ -4,8 +4,8 @@ import { useTilt } from '../hooks/useTilt'
 
 const timeline = [
   { day: 'Day 1', title: 'Strategy Call', desc: 'We learn your business, your customers, and exactly how you want calls handled.' },
-  { day: 'Day 2', title: 'We Build Alex', desc: 'Custom scripts, calendar integration, brand voice training, and conversation flows — all configured.' },
-  { day: 'Day 3', title: 'Testing & Refinement', desc: 'Live test calls, edge case handling, and fine-tuning until Alex sounds like your best employee.' },
+  { day: 'Day 2', title: 'We Train Alex', desc: 'Custom scripts, calendar integration, brand voice training, and conversation flows — all tailored to your business.' },
+  { day: 'Day 3', title: 'Testing & Refinement', desc: 'Live test calls, edge case handling, and fine-tuning until Alex feels like a natural extension of your team.' },
   { day: 'Day 4', title: 'Go Live', desc: 'Alex starts answering calls. You start booking more jobs. Every call recorded and logged.' },
   { day: 'Week 2', title: 'First Performance Report', desc: 'Calls answered, leads booked, response times — real data showing real results.' },
 ]

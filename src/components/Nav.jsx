@@ -5,6 +5,7 @@ const navLinks = [
   { label: 'How It Works', href: '#how-it-works' },
   { label: 'Pricing', href: '#pricing' },
   { label: 'FAQ', href: '#faq' },
+  { label: 'Who We Are', href: '#who-we-are' },
 ]
 
 export function Nav() {

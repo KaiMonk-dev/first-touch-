@@ -17,7 +17,7 @@ const variants = {
   },
   c: {
     heroHeadline: ['Your Phone Rings.', 'Alex Answers.'],
-    heroSubtext: 'A custom-trained AI agent that sounds human, books jobs in real-time, and never misses a call. Your customers won\'t know the difference.',
+    heroSubtext: 'A dedicated team member trained for your business, booking jobs in real-time, and never missing a call. Your customers won\'t know the difference.',
     heroCTA: 'Meet Alex',
   },
 }
