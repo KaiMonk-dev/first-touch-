@@ -63,13 +63,13 @@ export function ExitIntent() {
           <div className="w-10 h-px bg-gradient-to-r from-transparent via-[#C9A96E]/40 to-transparent mx-auto mb-8" />
 
           <h3 className="text-xl md:text-2xl font-bold tracking-[-0.02em] leading-[1.15] mb-4">
-            <span className="text-white">The universe is calling</span>
+            <span className="text-white">Before you go —</span>
             <br />
-            <span className="text-white/40">you back.</span>
+            <span className="text-white/40">one question.</span>
           </h3>
 
           <p className="text-[13px] text-white/40 font-light leading-relaxed mb-8 max-w-xs mx-auto">
-            Every hour without First Touch is another customer choosing someone else.
+            What happens to the next customer who calls your business after hours? We'd love to show you.
           </p>
 
           <div className="flex flex-col gap-2.5">

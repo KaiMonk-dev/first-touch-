@@ -69,8 +69,8 @@ export function SpeedProof() {
 
             {/* Competitors */}
             <div className="p-10 rounded-2xl liquid-glass card-hover text-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/5 border border-red-500/15 text-[10px] font-medium tracking-wider uppercase text-red-400/60 mb-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-400/50" />
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-[10px] font-medium tracking-wider uppercase text-white/30 mb-8">
+                <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
                 Industry Average
               </div>
               <div className="mb-4">
@@ -83,7 +83,7 @@ export function SpeedProof() {
 
               <div className="mt-8 h-1 rounded-full bg-white/[0.06] overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-red-400/40 transition-all duration-[2500ms] ease-out"
+                  className="h-full rounded-full bg-white/15 transition-all duration-[2500ms] ease-out"
                   style={{ width: counting ? '100%' : '0%' }}
                 />
               </div>
@@ -96,22 +96,22 @@ export function SpeedProof() {
           <div className="grid grid-cols-3 gap-6 mt-12 text-center">
             <div>
               <p className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-b from-white to-white/30 bg-clip-text text-transparent">62%</p>
-              <p className="text-[11px] text-white/40 font-light mt-2">won't call back</p>
+              <p className="text-[11px] text-white/40 font-light mt-2">of callers never try again</p>
             </div>
             <div>
               <p className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-b from-white to-white/30 bg-clip-text text-transparent">85%</p>
-              <p className="text-[11px] text-white/40 font-light mt-2">call a competitor</p>
+              <p className="text-[11px] text-white/40 font-light mt-2">move on immediately</p>
             </div>
             <div>
               <p className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-b from-white to-white/30 bg-clip-text text-transparent">$52K+</p>
-              <p className="text-[11px] text-white/40 font-light mt-2">lost per year</p>
+              <p className="text-[11px] text-white/40 font-light mt-2">in revenue left behind yearly</p>
             </div>
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={800}>
           <p className="text-center text-sm text-white/40 font-light mt-10 max-w-md mx-auto leading-relaxed">
-            78% of customers buy from the company that responds first. Alex makes sure that's always you.
+            The business that responds first wins the customer. First Touch makes sure that's you — every time.
           </p>
         </AnimatedSection>
       </div>

@@ -52,7 +52,7 @@ export function TryAlex() {
                 {/* Right — CTA content */}
                 <div className="flex-1 text-center md:text-left">
                   <p className="text-sm text-white/50 font-light mb-2">
-                    Call and experience Alex firsthand
+                    Experience the First Touch difference
                   </p>
                   <div className="flex items-center justify-center md:justify-start gap-3">
                     {/* Phone icon */}
