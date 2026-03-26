@@ -2,6 +2,7 @@ import { AnimatedSection } from './AnimatedSection'
 import { useCalendly } from './CalendlyModal'
 import { useMagnetic } from '../hooks/useMagnetic'
 import { triggerStarBirth } from './ViewportEffects'
+import { playCtaChime } from '../hooks/useCtaSound'
 
 export function FinalCTA() {
   const calendly = useCalendly()
@@ -29,7 +30,7 @@ export function FinalCTA() {
           <div onMouseMove={btn.onMouseMove} onMouseLeave={btn.onMouseLeave}>
             <button
               ref={btn.ref}
-              onClick={() => { triggerStarBirth(); calendly.open() }}
+              onClick={() => { playCtaChime(); triggerStarBirth(); calendly.open() }}
               className="group inline-flex items-center gap-3 px-10 py-5 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-all hover:shadow-[0_0_60px_rgba(255,255,255,0.15)] btn-press cta-breathe"
               style={btn.style}
             >
@@ -40,7 +41,11 @@ export function FinalCTA() {
             </button>
           </div>
 
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6 text-[12px] text-white/35 font-light">
+          <p className="text-[13px] text-white/25 mt-10 mb-8 max-w-sm mx-auto font-light leading-relaxed italic">
+            No high-pressure pitch. No spam. If First Touch is right for your business, you'll know. And when you're ready, we'll be here.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-[12px] text-white/35 font-light">
             <a href="tel:+18584347041" className="hover:text-white/60 transition-colors duration-300">
               +1 (858) 434-7041
             </a>

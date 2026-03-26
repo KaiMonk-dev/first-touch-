@@ -5,6 +5,7 @@ import { useCalendly } from './CalendlyModal'
 import { useMagnetic } from '../hooks/useMagnetic'
 import { useVariant } from '../hooks/useVariant'
 import { triggerStarBirth } from './ViewportEffects'
+import { playCtaChime } from '../hooks/useCtaSound'
 
 export function Hero() {
   const calendly = useCalendly()
@@ -71,7 +72,7 @@ export function Hero() {
           >
             <button
               ref={primaryBtn.ref}
-              onClick={() => { triggerStarBirth(); calendly.open() }}
+              onClick={() => { playCtaChime(); triggerStarBirth(); calendly.open() }}
               className="group px-8 py-4 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-colors btn-press btn-glow cta-breathe flex items-center gap-3"
               style={primaryBtn.style}
             >
