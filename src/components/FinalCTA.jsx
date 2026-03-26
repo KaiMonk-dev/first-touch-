@@ -38,8 +38,8 @@ export function FinalCTA() {
               +1 (858) 434-7041
             </a>
             <span className="hidden sm:block w-1 h-1 rounded-full bg-white/15" />
-            <a href="mailto:ascensionfirstai@gmail.com" className="hover:text-white/60 transition-colors duration-300">
-              ascensionfirstai@gmail.com
+            <a href="mailto:hello@ascensionfirst.com" className="hover:text-white/60 transition-colors duration-300">
+              hello@ascensionfirst.com
             </a>
           </div>
         </AnimatedSection>

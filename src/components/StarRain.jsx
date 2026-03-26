@@ -67,7 +67,7 @@ export function StarRain({ targetId = 'pricing' }) {
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${p.life * 0.35})`
+        ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${p.life * 0.6})`
         ctx.fill()
 
         // Tiny trail
@@ -75,7 +75,7 @@ export function StarRain({ targetId = 'pricing' }) {
           ctx.beginPath()
           ctx.moveTo(p.x, p.y)
           ctx.lineTo(p.x - p.vx * 3, p.y - p.vy * 3)
-          ctx.strokeStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${p.life * 0.1})`
+          ctx.strokeStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${p.life * 0.2})`
           ctx.lineWidth = 0.4
           ctx.stroke()
         }

@@ -86,8 +86,8 @@ export function GalaxyBackground() {
           x: rng() * W,
           y: biasedY,
           warmth: 0, // memory — retains brightness after cursor leaves
-          r: layer === 0 ? rng() * 0.8 + 0.2 : layer === 1 ? rng() * 1.2 + 0.4 : rng() * 2.0 + 0.9,
-          opacity: layer === 0 ? rng() * 0.5 + 0.25 : layer === 1 ? rng() * 0.55 + 0.4 : rng() * 0.5 + 0.55,
+          r: layer === 0 ? rng() * 0.9 + 0.3 : layer === 1 ? rng() * 1.4 + 0.5 : rng() * 2.2 + 1.1,
+          opacity: layer === 0 ? rng() * 0.55 + 0.35 : layer === 1 ? rng() * 0.5 + 0.55 : rng() * 0.4 + 0.7,
           tw1: rng() * 0.004 + 0.001,
           tw2: rng() * 0.007 + 0.002,
           tw3: rng() * 0.002 + 0.0005,
@@ -126,7 +126,7 @@ export function GalaxyBackground() {
           x: rng() * W, y: rng() * VIRTUAL_H,
           w: 300 + rng() * 500, h: 150 + rng() * 250,
           color: nebPalette[Math.floor(rng() * nebPalette.length)],
-          opacity: 0.005 + rng() * 0.009,
+          opacity: 0.012 + rng() * 0.018,
           phase: rng() * Math.PI * 2,
           rotation: (rng() - 0.5) * 0.4,
           stretch: 0.3 + rng() * 0.4,
@@ -183,7 +183,7 @@ export function GalaxyBackground() {
 
     function drawSpikes(x, y, size, opacity, color) {
       ctx.save()
-      ctx.globalAlpha = opacity * 0.18
+      ctx.globalAlpha = opacity * 0.3
       ctx.strokeStyle = `rgb(${color.r},${color.g},${color.b})`
       ctx.lineWidth = 0.5
       ctx.beginPath(); ctx.moveTo(x-size,y); ctx.lineTo(x+size,y); ctx.stroke()
@@ -249,8 +249,8 @@ export function GalaxyBackground() {
       weatherIntensity += (weatherTarget - weatherIntensity) * 0.01 // slow ramp
       if (weatherIntensity > 0.02) {
         const wGrad = ctx.createRadialGradient(weatherX, weatherY, 0, weatherX, weatherY, Math.max(1, weatherRadius))
-        wGrad.addColorStop(0, `rgba(201, 169, 110, ${weatherIntensity * 0.5})`)
-        wGrad.addColorStop(0.4, `rgba(160, 150, 200, ${weatherIntensity * 0.2})`)
+        wGrad.addColorStop(0, `rgba(201, 169, 110, ${weatherIntensity * 0.8})`)
+        wGrad.addColorStop(0.4, `rgba(160, 150, 200, ${weatherIntensity * 0.35})`)
         wGrad.addColorStop(1, 'transparent')
         ctx.fillStyle = wGrad
         ctx.fillRect(weatherX - weatherRadius, weatherY - weatherRadius, weatherRadius * 2, weatherRadius * 2)
@@ -266,8 +266,8 @@ export function GalaxyBackground() {
         ctx.rotate(n.rotation)
         const r = Math.max(0.1, n.w * pulse * 0.5)
         const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r)
-        grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.opacity * pulse * 0.6})`)
-        grad.addColorStop(0.3, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.opacity * 0.2})`)
+        grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.opacity * pulse * 1.2})`)
+        grad.addColorStop(0.3, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${n.opacity * 0.4})`)
         grad.addColorStop(1, 'transparent')
         ctx.fillStyle = grad
         ctx.scale(1, n.stretch)
@@ -393,7 +393,7 @@ export function GalaxyBackground() {
       storyTexts.forEach((st) => {
         const dist = Math.abs(scrollPctFull - st.at)
         if (dist < 0.05) {
-          const fadeO = (1 - dist / 0.05) * 0.06
+          const fadeO = (1 - dist / 0.05) * 0.12
           ctx.save()
           ctx.font = '300 10px Inter, system-ui, sans-serif'
           ctx.fillStyle = `rgba(201, 169, 110, ${fadeO})`
@@ -410,7 +410,7 @@ export function GalaxyBackground() {
         if (!near) return
         c.lines.forEach(([a,b]) => {
           ctx.beginPath(); ctx.moveTo(screenPts[a].x, screenPts[a].y); ctx.lineTo(screenPts[b].x, screenPts[b].y)
-          ctx.strokeStyle = 'rgba(201,169,110,0.045)'; ctx.lineWidth = 0.4; ctx.stroke()
+          ctx.strokeStyle = 'rgba(201,169,110,0.1)'; ctx.lineWidth = 0.6; ctx.stroke()
         })
       })
 
@@ -419,7 +419,7 @@ export function GalaxyBackground() {
       clickRipples.current.forEach((r) => {
         r.radius += 3; r.life -= r.decay
         ctx.beginPath(); ctx.arc(r.x, r.y, r.radius, 0, Math.PI*2)
-        ctx.strokeStyle = `rgba(201,169,110,${r.life*0.08})`; ctx.lineWidth = r.life; ctx.stroke()
+        ctx.strokeStyle = `rgba(201,169,110,${r.life*0.15})`; ctx.lineWidth = r.life; ctx.stroke()
       })
 
       // --- Scroll trail ---
@@ -439,7 +439,7 @@ export function GalaxyBackground() {
         }
       }
       scrollTrail = scrollTrail.filter(p => p.life > 0)
-      scrollTrail.forEach((p) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.015; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fillStyle=`rgba(201,169,110,${p.life*0.1})`; ctx.fill() })
+      scrollTrail.forEach((p) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.015; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fillStyle=`rgba(201,169,110,${p.life*0.2})`; ctx.fill() })
 
       // --- Shooting stars (skip if reduced motion) ---
       if (!prefersReducedMotion) {
@@ -447,7 +447,7 @@ export function GalaxyBackground() {
       if (time - lastShoot > sInt) {
         lastShoot = time
         const dir = Math.random() > 0.5 ? 1 : -1
-        shootingStars.push({ x: dir>0?-20:W+20, y: Math.random()*H*0.5, vx: dir*(3+Math.random()*4), vy: 0.8+Math.random()*2, life: 1, decay: 0.004+Math.random()*0.003, brightness: 0.4+Math.random()*0.35 })
+        shootingStars.push({ x: dir>0?-20:W+20, y: Math.random()*H*0.5, vx: dir*(3+Math.random()*4), vy: 0.8+Math.random()*2, life: 1, decay: 0.004+Math.random()*0.003, brightness: 0.6+Math.random()*0.4 })
       }
       shootingStars = shootingStars.filter(s => s.life > 0)
       shootingStars.forEach((s) => {

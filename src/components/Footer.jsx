@@ -53,7 +53,7 @@ export function Footer() {
         const midY = (points[a].y + points[b].y) / 2
         const dist = Math.sqrt((midX - mouseX) ** 2 + (midY - mouseY) ** 2)
         const prox = Math.max(0, 1 - dist / 200)
-        const baseO = 0.03 + prox * 0.08
+        const baseO = 0.06 + prox * 0.12
 
         ctx.beginPath()
         ctx.moveTo(points[a].x, points[a].y)
@@ -68,7 +68,7 @@ export function Footer() {
         const dist = Math.sqrt((p.x - mouseX) ** 2 + (p.y - mouseY) ** 2)
         const prox = Math.max(0, 1 - dist / 150)
         const dotR = 1.5 + prox * 2
-        const dotO = 0.12 + prox * 0.35
+        const dotO = 0.2 + prox * 0.45
 
         if (prox > 0.1) {
           const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(1, dotR * 4))
@@ -109,7 +109,7 @@ export function Footer() {
               <span className="text-white/50">Touch</span>
             </p>
             <p className="text-[11px] text-white/30 font-light tracking-wide">
-              Powered by Ascension First AI
+              Powered by Ascension First
             </p>
           </div>
 
@@ -130,7 +130,7 @@ export function Footer() {
             <p className="label mb-5">Contact</p>
             <ul className="space-y-3">
               <li><a href="tel:+18584347041" className="text-[12px] text-white/35 hover:text-white/70 transition-colors duration-300 font-light">+1 (858) 434-7041</a></li>
-              <li><a href="mailto:ascensionfirstai@gmail.com" className="text-[12px] text-white/35 hover:text-white/70 transition-colors duration-300 font-light">ascensionfirstai@gmail.com</a></li>
+              <li><a href="mailto:hello@ascensionfirst.com" className="text-[12px] text-white/35 hover:text-white/70 transition-colors duration-300 font-light">hello@ascensionfirst.com</a></li>
               <li className="flex gap-5 pt-3">
                 {[
                   { label: 'Twitter', path: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z' },
@@ -148,7 +148,7 @@ export function Footer() {
 
         <div className="border-t border-white/[0.06] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[11px] text-white/20 font-light tracking-wide">
-            &copy; 2026 Ascension First AI
+            &copy; 2026 Ascension First
             <span className="hidden md:inline text-white/10 ml-3">·</span>
             <span className="hidden md:inline text-white/10 ml-3 tabular-nums">
               {Math.floor(sessionTime / 60)}:{(sessionTime % 60).toString().padStart(2, '0')} in the universe

@@ -103,7 +103,7 @@ export function LoadingScreen() {
     for (let i = 0; i < dustCount; i++) {
       dust.push({
         x: Math.random() * W, y: Math.random() * H,
-        r: 0.2 + Math.random() * 0.9, o: 0.08 + Math.random() * 0.28,
+        r: 0.3 + Math.random() * 1.1, o: 0.15 + Math.random() * 0.4,
         speed: 0.08 + Math.random() * 0.25,
         angle: Math.random() * Math.PI * 2,
         drift: (Math.random() - 0.5) * 0.002,
@@ -120,7 +120,7 @@ export function LoadingScreen() {
         baseDist: 30 + Math.random() * Math.max(W, H) * 0.42,
         speed: 0.002 + Math.random() * 0.005,
         size: layer > 0.8 ? 1 + Math.random() * 1.8 : 0.3 + Math.random() * 0.8,
-        opacity: layer > 0.8 ? 0.35 + Math.random() * 0.4 : 0.08 + Math.random() * 0.2,
+        opacity: layer > 0.8 ? 0.5 + Math.random() * 0.45 : 0.15 + Math.random() * 0.3,
         color: layer > 0.85 ? [255, 215, 150] : layer > 0.7 ? [150, 175, 255] : layer > 0.5 ? [195, 145, 225] : layer > 0.3 ? [130, 210, 195] : [175, 175, 195],
         z: 0.3 + Math.random() * 0.7,
         wobble: Math.random() * Math.PI * 2,
@@ -129,10 +129,10 @@ export function LoadingScreen() {
 
     // Nebulae
     const nebulae = [
-      { x: cx - 90, y: cy - 70, w: 280, h: 190, color: [70, 35, 110], o: 0.035, phase: 0 },
-      { x: cx + 70, y: cy + 40, w: 240, h: 170, color: [35, 55, 120], o: 0.03, phase: 2 },
-      { x: cx - 40, y: cy + 25, w: 190, h: 140, color: [110, 70, 50], o: 0.02, phase: 4 },
-      { x: cx + 25, y: cy - 50, w: 170, h: 200, color: [50, 90, 90], o: 0.018, phase: 6 },
+      { x: cx - 90, y: cy - 70, w: 280, h: 190, color: [70, 35, 110], o: 0.08, phase: 0 },
+      { x: cx + 70, y: cy + 40, w: 240, h: 170, color: [35, 55, 120], o: 0.065, phase: 2 },
+      { x: cx - 40, y: cy + 25, w: 190, h: 140, color: [110, 70, 50], o: 0.05, phase: 4 },
+      { x: cx + 25, y: cy - 50, w: 170, h: 200, color: [50, 90, 90], o: 0.045, phase: 6 },
     ]
 
     // Cursor magnetism state
@@ -236,10 +236,10 @@ export function LoadingScreen() {
         const tcy = (0.5 + rawMy) * H
         ctx.beginPath()
         ctx.arc(tcx, tcy, 2, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(201, 169, 110, 0.2)'
+        ctx.fillStyle = 'rgba(201, 169, 110, 0.4)'
         ctx.fill()
-        const tGrad = ctx.createRadialGradient(tcx, tcy, 0, tcx, tcy, 15)
-        tGrad.addColorStop(0, 'rgba(201, 169, 110, 0.08)')
+        const tGrad = ctx.createRadialGradient(tcx, tcy, 0, tcx, tcy, 20)
+        tGrad.addColorStop(0, 'rgba(201, 169, 110, 0.18)')
         tGrad.addColorStop(1, 'transparent')
         ctx.fillStyle = tGrad
         ctx.fillRect(tcx - 15, tcy - 15, 30, 30)
@@ -257,7 +257,7 @@ export function LoadingScreen() {
         if (isEntering) r += ep * ep * (180 + i * 70)
         if (r <= 0) continue
 
-        const opacity = isEntering ? Math.max(0, (1 - ep) * (0.04 + depth * 0.06)) : 0.03 + depth * 0.055
+        const opacity = isEntering ? Math.max(0, (1 - ep) * (0.08 + depth * 0.1)) : 0.06 + depth * 0.1
         if (opacity <= 0) continue
 
         const hue = i / ringCount
@@ -278,25 +278,25 @@ export function LoadingScreen() {
 
       // --- Central eye ---
       if (!isEntering || ep < 0.4) {
-        const eo = isEntering ? (1 - ep * 2.5) : 0.5 + Math.sin(time * 0.013) * 0.15
-        const er = Math.max(1, isEntering ? 4 + ep * 350 : 4 + Math.sin(time * 0.018) * 1.5)
+        const eo = isEntering ? (1 - ep * 2.5) : 0.75 + Math.sin(time * 0.013) * 0.2
+        const er = Math.max(1, isEntering ? 5 + ep * 400 : 5 + Math.sin(time * 0.018) * 2)
         const ep2 = 1 + Math.sin(time * 0.02) * 0.12
 
         const g0 = ctx.createRadialGradient(cx + mx * 2, cy + my * 2, 0, cx, cy, Math.max(1, er * 3.5 * ep2))
-        g0.addColorStop(0, `rgba(100, 65, 160, ${eo * 0.1})`)
-        g0.addColorStop(0.6, `rgba(70, 50, 130, ${eo * 0.04})`)
+        g0.addColorStop(0, `rgba(100, 65, 160, ${eo * 0.2})`)
+        g0.addColorStop(0.6, `rgba(70, 50, 130, ${eo * 0.08})`)
         g0.addColorStop(1, 'transparent')
         ctx.fillStyle = g0; ctx.fillRect(cx - er * 4, cy - er * 4, er * 8, er * 8)
 
         const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, er * 1.8 * ep2))
-        g1.addColorStop(0, `rgba(210, 185, 125, ${eo * 0.2})`)
-        g1.addColorStop(0.6, `rgba(201, 169, 110, ${eo * 0.07})`)
+        g1.addColorStop(0, `rgba(210, 185, 125, ${eo * 0.35})`)
+        g1.addColorStop(0.6, `rgba(201, 169, 110, ${eo * 0.12})`)
         g1.addColorStop(1, 'transparent')
         ctx.fillStyle = g1; ctx.fillRect(cx - er * 2, cy - er * 2, er * 4, er * 4)
 
         const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(1, er * ep2))
-        g2.addColorStop(0, `rgba(255, 252, 242, ${eo * 0.3})`)
-        g2.addColorStop(0.5, `rgba(255, 240, 210, ${eo * 0.1})`)
+        g2.addColorStop(0, `rgba(255, 252, 242, ${eo * 0.5})`)
+        g2.addColorStop(0.5, `rgba(255, 240, 210, ${eo * 0.18})`)
         g2.addColorStop(1, 'transparent')
         ctx.fillStyle = g2; ctx.fillRect(cx - er, cy - er, er * 2, er * 2)
       }
@@ -310,7 +310,7 @@ export function LoadingScreen() {
           const outerR = innerR + 50 + tp * 650
           const sx = cx + Math.cos(angle) * innerR, sy = cy + Math.sin(angle) * innerR
           const ex = cx + Math.cos(angle) * outerR, ey = cy + Math.sin(angle) * outerR
-          const so = tp * (1 - tp * 0.3) * 0.12
+          const so = tp * (1 - tp * 0.3) * 0.22
           const colors = ['215,185,125', '155,175,255', '195,150,225', '130,210,195']
           const grad = ctx.createLinearGradient(sx, sy, ex, ey)
           grad.addColorStop(0, `rgba(255,252,245,${so})`)
@@ -395,19 +395,19 @@ export function LoadingScreen() {
             fontWeight: 700,
             letterSpacing: '-0.04em',
             margin: 0, lineHeight: 1,
-            textShadow: '0 0 60px rgba(201,169,110,0.25), 0 0 120px rgba(201,169,110,0.08)',
+            textShadow: '0 0 60px rgba(201,169,110,0.4), 0 0 120px rgba(201,169,110,0.15)',
           }}>
             <span style={{ color: 'rgba(255,255,255,1)' }}>First</span>
-            <span style={{ color: 'rgba(255,255,255,0.55)' }}>Touch</span>
+            <span style={{ color: 'rgba(255,255,255,0.7)' }}>Touch</span>
           </p>
 
           <p style={{
             fontSize: '0.55rem', fontWeight: 400, letterSpacing: '0.35em',
-            textTransform: 'uppercase', color: 'rgba(201,169,110,0.55)',
+            textTransform: 'uppercase', color: 'rgba(201,169,110,0.75)',
             marginTop: 16, margin: '16px 0 0',
-            textShadow: '0 0 20px rgba(201,169,110,0.15)',
+            textShadow: '0 0 20px rgba(201,169,110,0.3)',
           }}>
-            Ascension First AI
+            Ascension First
           </p>
         </div>
 
@@ -421,19 +421,19 @@ export function LoadingScreen() {
             fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
             fontWeight: 300,
             letterSpacing: '0.15em',
-            color: 'rgba(255, 255, 255, 0.55)',
+            color: 'rgba(255, 255, 255, 0.75)',
             fontStyle: 'italic',
             animation: show ? 'breathe 4s ease-in-out infinite' : 'none',
           }}>
-            {returning ? 'Welcome back. Click to re-enter.' : 'Ready to enter our universe?'}
+            {returning ? 'Ready to ascend again?' : 'Click to begin your ascension.'}
           </p>
         </div>
       </div>
 
       <style>{`
         @keyframes breathe {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 0.85; }
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
         }
       `}</style>
     </div>
