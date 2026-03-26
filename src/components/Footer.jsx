@@ -116,7 +116,7 @@ export function Footer() {
           <div>
             <p className="label mb-5">Product</p>
             <ul className="space-y-3">
-              {['How It Works', 'Pricing', 'FAQ', 'Who We Are'].map((link) => (
+              {['How It Works', 'Pricing', 'Who We Are', 'FAQ'].map((link) => (
                 <li key={link}>
                   <a href={`#${link.toLowerCase().replace(/\s+/g, '-')}`} className="text-[12px] text-white/35 hover:text-white/70 transition-colors duration-300 font-light">
                     {link}

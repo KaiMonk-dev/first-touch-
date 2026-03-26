@@ -64,9 +64,9 @@ function App() {
             <LiquidDripDivider />
             <Pricing />
             <LiquidDripDivider />
-            <FAQ />
-            <LiquidDripDivider />
             <WhoWeAre />
+            <LiquidDripDivider />
+            <FAQ />
             <FinalCTA />
           </main>
           <Footer />
