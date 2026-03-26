@@ -14,6 +14,7 @@ import { ComparisonTable } from './components/ComparisonTable'
 import { Pricing } from './components/Pricing'
 import { FAQ } from './components/FAQ'
 import { WhoWeAre } from './components/WhoWeAre'
+import { ReferralProgram } from './components/ReferralProgram'
 import { FinalCTA } from './components/FinalCTA'
 import { Footer } from './components/Footer'
 import { StickyMobileCTA } from './components/StickyMobileCTA'
@@ -65,6 +66,8 @@ function App() {
             <Pricing />
             <LiquidDripDivider />
             <WhoWeAre />
+            <LiquidDripDivider />
+            <ReferralProgram />
             <LiquidDripDivider />
             <FAQ />
             <FinalCTA />
