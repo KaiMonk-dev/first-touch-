@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { getSeasonalTheme } from '../hooks/useSeasonalTheme'
-import { setVisibleStars } from '../hooks/useSharedStars'
+import { setVisibleStars, getGravityWell, decayDisplacements, getStarDisplacements } from '../hooks/useSharedStars'
+import { reportFrameTime, getTierConfig, shouldEnable } from '../hooks/usePerformanceTier'
 
 export function GalaxyBackground() {
   const canvasRef = useRef(null)
@@ -48,7 +49,9 @@ export function GalaxyBackground() {
       const rng = seededRng(42)
       const W = canvas.width
       const isMobile = W < 768
-      const starCount = isMobile ? 500 : Math.min(Math.floor((W * VIRTUAL_H) / 1800), 2500)
+      const tierMult = getTierConfig().starCountMultiplier
+      const baseCount = isMobile ? 500 : Math.min(Math.floor((W * VIRTUAL_H) / 1800), 2500)
+      const starCount = Math.floor(baseCount * tierMult)
 
       stars = []
       for (let i = 0; i < starCount; i++) {
@@ -145,6 +148,20 @@ export function GalaxyBackground() {
         if (rng() > 0.5 && points.length > 3) lines.push([0, Math.floor(rng()*(points.length-2))+2])
         constellations.push({ points, lines })
       }
+
+      // Easter egg constellations — hidden shapes that reveal on cursor proximity
+      const easterEggs = [
+        // Stylized "A" for Ascension
+        { points: [{x:0,y:-60},{x:-35,y:30},{x:-18,y:0},{x:18,y:0},{x:35,y:30},{x:0,y:-60}], lines: [[0,1],[0,4],[2,3]], cx: W*0.2, cy: VIRTUAL_H*0.25 },
+        // Upward arrow — ascension symbol
+        { points: [{x:0,y:-50},{x:-30,y:-10},{x:-10,y:-10},{x:-10,y:40},{x:10,y:40},{x:10,y:-10},{x:30,y:-10}], lines: [[0,1],[0,6],[2,3],[3,4],[4,5]], cx: W*0.75, cy: VIRTUAL_H*0.5 },
+        // Crown
+        { points: [{x:-40,y:20},{x:-25,y:-20},{x:-10,y:5},{x:0,y:-30},{x:10,y:5},{x:25,y:-20},{x:40,y:20}], lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[0,6]], cx: W*0.5, cy: VIRTUAL_H*0.75 },
+      ]
+      easterEggs.forEach((egg, idx) => {
+        const pts = egg.points.map(p => ({ x: egg.cx + p.x, y: egg.cy + p.y }))
+        constellations.push({ points: pts, lines: egg.lines, secret: true, secretIdx: idx })
+      })
     }
 
     initGalaxy()
@@ -196,10 +213,7 @@ export function GalaxyBackground() {
       return pageY - window.scrollY * scrollSpeed
     }
 
-    // Performance monitoring — auto-reduce if FPS drops
     let lastFrameTime = 0
-    let lowFpsCount = 0
-    let perfReduced = false
 
     const draw = (timestamp) => {
       try { // Protect animation loop — never let a crash kill it
@@ -207,17 +221,8 @@ export function GalaxyBackground() {
       const time = timestamp || 0
       const W = canvas.width, H = canvas.height
 
-      // FPS check — if consistently below 30fps, reduce star rendering
-      if (lastFrameTime > 0) {
-        const delta = time - lastFrameTime
-        if (delta > 33) lowFpsCount++ // below 30fps
-        else if (lowFpsCount > 0) lowFpsCount--
-        if (lowFpsCount > 60 && !perfReduced) { // 60 slow frames = reduce
-          perfReduced = true
-          // Remove 30% of far stars (cheapest to lose)
-          stars = stars.filter(s => s.layer > 0 || Math.random() > 0.3)
-        }
-      }
+      // Report frame time to adaptive tier system
+      if (lastFrameTime > 0) reportFrameTime(time - lastFrameTime)
       lastFrameTime = time
       const scrollY = window.scrollY
       const mx = mouseRef.current.x
@@ -238,6 +243,7 @@ export function GalaxyBackground() {
       const heartbeat = 1 + Math.sin(time * 0.0017) * 0.025
 
       // --- Galaxy weather (drifting brightness cloud) ---
+      if (!shouldEnable('galaxyWeather')) { weatherIntensity = 0 }
       weatherTimer++
       if (weatherTimer > 600 + Math.random() * 600) { // shift every 10-20 seconds
         weatherTimer = 0
@@ -288,12 +294,43 @@ export function GalaxyBackground() {
         ctx.fill()
       })
 
+      // --- Gravity well & displacement ---
+      const well = getGravityWell()
+      const displacements = getStarDisplacements()
+      decayDisplacements()
+
       // --- Stars ---
-      stars.forEach((s) => {
+      stars.forEach((s, si) => {
         s.x += s.dx; s.y += s.dy
 
-        const sy = toScreen(s.y, s.scrollSpeed)
+        let sy = toScreen(s.y, s.scrollSpeed)
         if (sy < -20 || sy > H + 20) return
+
+        // Apply click supernova displacement (spring-back via decay in shared module)
+        const disp = displacements[si]
+        let renderX = s.x, renderY = sy
+        if (disp) { renderX += disp.dx; renderY += disp.dy }
+
+        // Gravity well — pull stars toward hovered element
+        if (well.active && shouldEnable('gravityWell')) {
+          const wDist = Math.sqrt((renderX - well.x)**2 + (renderY - well.y)**2)
+          if (wDist < 180 && wDist > 5) {
+            const wForce = Math.max(0, 1 - wDist / 180)
+            const config = getTierConfig()
+            if (config.gravityWell === 'orbit') {
+              // Orbital motion — tangential pull
+              const angle = Math.atan2(renderY - well.y, renderX - well.x)
+              const tangent = angle + Math.PI * 0.5
+              const orbitPull = wForce * 2.5
+              renderX += Math.cos(tangent) * orbitPull + (well.x - renderX) * wForce * 0.03
+              renderY += Math.sin(tangent) * orbitPull + (well.y - renderY) * wForce * 0.03
+            } else {
+              // Simple pull
+              renderX += (well.x - renderX) * wForce * 0.05
+              renderY += (well.y - renderY) * wForce * 0.05
+            }
+          }
+        }
 
         // Cursor gravity field — bend drift toward cursor
         const gDist = Math.sqrt((s.x - mx)**2 + (sy - my)**2)
@@ -334,21 +371,20 @@ export function GalaxyBackground() {
 
         if (s.layer >= 1 && o > 0.12) {
           const gr = Math.max(0.1, s.r * (7 + prox * 9))
-          const grad = ctx.createRadialGradient(s.x, sy, 0, s.x, sy, gr)
+          const grad = ctx.createRadialGradient(renderX, renderY, 0, renderX, renderY, gr)
           grad.addColorStop(0, `rgba(${s.color.r},${s.color.g},${s.color.b},${o*0.3})`)
           grad.addColorStop(0.3, `rgba(${s.color.r},${s.color.g},${s.color.b},${o*0.06})`)
           grad.addColorStop(1, 'transparent')
           ctx.fillStyle = grad
-          ctx.fillRect(s.x-gr, sy-gr, gr*2, gr*2)
+          ctx.fillRect(renderX-gr, renderY-gr, gr*2, gr*2)
         }
 
         if (s.hasSpikes && o > 0.3) {
-          drawSpikes(s.x, sy, s.r * (3.5 + prox*6), o, s.color)
-          // Diamond shape for brightest stars instead of plain circle
+          drawSpikes(renderX, renderY, s.r * (3.5 + prox*6), o, s.color)
           if (s.layer === 2 && o > 0.5) {
             const dSize = s.r * rs * 1.8
             ctx.save()
-            ctx.translate(s.x, sy)
+            ctx.translate(renderX, renderY)
             ctx.rotate(Math.PI / 4)
             ctx.beginPath()
             ctx.moveTo(0, -dSize); ctx.lineTo(dSize * 0.4, 0); ctx.lineTo(0, dSize); ctx.lineTo(-dSize * 0.4, 0)
@@ -367,7 +403,7 @@ export function GalaxyBackground() {
         const cg = s.color.g
         const cb = Math.min(255, s.color.b + coolShift - warmShift * 0.3)
 
-        ctx.beginPath(); ctx.arc(s.x, sy, s.r * rs, 0, Math.PI*2)
+        ctx.beginPath(); ctx.arc(renderX, renderY, s.r * rs, 0, Math.PI*2)
         ctx.fillStyle = `rgba(${cr},${cg},${cb},${o})`
         ctx.fill()
       })
@@ -406,12 +442,38 @@ export function GalaxyBackground() {
       // --- Constellations ---
       constellations.forEach((c) => {
         const screenPts = c.points.map(p => ({ x: p.x, y: toScreen(p.y, 0.6) }))
-        const near = screenPts.some(p => p.y > -50 && p.y < H + 50 && Math.sqrt((p.x-mx)**2 + (p.y-my)**2) < 300)
-        if (!near) return
-        c.lines.forEach(([a,b]) => {
-          ctx.beginPath(); ctx.moveTo(screenPts[a].x, screenPts[a].y); ctx.lineTo(screenPts[b].x, screenPts[b].y)
-          ctx.strokeStyle = 'rgba(201,169,110,0.1)'; ctx.lineWidth = 0.6; ctx.stroke()
+        const revealDist = c.secret ? 200 : 300
+        let minDist = Infinity
+        const near = screenPts.some(p => {
+          if (p.y < -50 || p.y > H + 50) return false
+          const d = Math.sqrt((p.x-mx)**2 + (p.y-my)**2)
+          if (d < minDist) minDist = d
+          return d < revealDist
         })
+        if (!near) return
+
+        // Secret constellations fade based on proximity + report discovery
+        const secretFade = c.secret ? Math.max(0, 1 - minDist / 200) : 1
+        if (c.secret && secretFade > 0.5 && c.secretIdx !== undefined) {
+          if (!window.__constellationDiscoveries) window.__constellationDiscoveries = []
+          if (!window.__constellationDiscoveries.includes(c.secretIdx)) window.__constellationDiscoveries.push(c.secretIdx)
+        }
+        const baseOpacity = c.secret ? 0.18 * secretFade : 0.1
+        const color = c.secret ? '220,190,120' : '201,169,110'
+
+        c.lines.forEach(([a,b]) => {
+          if (!screenPts[a] || !screenPts[b]) return
+          ctx.beginPath(); ctx.moveTo(screenPts[a].x, screenPts[a].y); ctx.lineTo(screenPts[b].x, screenPts[b].y)
+          ctx.strokeStyle = `rgba(${color},${baseOpacity})`; ctx.lineWidth = c.secret ? 0.8 : 0.6; ctx.stroke()
+        })
+
+        // Secret constellations get glowing dots at vertices
+        if (c.secret && secretFade > 0.1) {
+          screenPts.forEach(p => {
+            ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(${color},${secretFade * 0.3})`; ctx.fill()
+          })
+        }
       })
 
       // --- Click ripples ---
@@ -441,6 +503,24 @@ export function GalaxyBackground() {
       scrollTrail = scrollTrail.filter(p => p.life > 0)
       scrollTrail.forEach((p) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.015; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fillStyle=`rgba(201,169,110,${p.life*0.2})`; ctx.fill() })
 
+      // --- Scroll hyperspace (fast scroll = star streaks) ---
+      if (scrollDelta > 15 && !prefersReducedMotion) {
+        const hyperFactor = Math.min(1, (scrollDelta - 15) / 40)
+        const scrollDir = scrollY > lastScrollY + scrollDelta ? 1 : -1
+        stars.forEach((s) => {
+          if (s.layer < 1) return // only bright stars streak
+          const sy2 = toScreen(s.y, s.scrollSpeed)
+          if (sy2 < -20 || sy2 > H + 20) return
+          const streakLen = hyperFactor * (8 + s.layer * 12) * s.scrollSpeed
+          if (streakLen < 2) return
+          const grad = ctx.createLinearGradient(s.x, sy2, s.x, sy2 + streakLen * scrollDir)
+          grad.addColorStop(0, `rgba(${s.color.r},${s.color.g},${s.color.b},${hyperFactor * 0.3})`)
+          grad.addColorStop(1, 'transparent')
+          ctx.beginPath(); ctx.moveTo(s.x, sy2); ctx.lineTo(s.x, sy2 + streakLen * scrollDir)
+          ctx.strokeStyle = grad; ctx.lineWidth = s.r * 0.5; ctx.stroke()
+        })
+      }
+
       // --- Shooting stars (skip if reduced motion) ---
       if (!prefersReducedMotion) {
       const sInt = isIdle ? 1200 + Math.random()*2000 : 3000 + Math.random()*5000
@@ -463,7 +543,7 @@ export function GalaxyBackground() {
       })
 
       // --- Comets ---
-      if (time - lastComet > 40000+Math.random()*50000) {
+      if (shouldEnable('comets') && time - lastComet > 40000+Math.random()*50000) {
         lastComet = time
         comets.push({ x:-50, y:H*(0.1+Math.random()*0.3), vx:1+Math.random()*0.7, vy:0.15+Math.random()*0.3, trail:[], color:Math.random()>0.5?[170,210,255]:[190,255,210] })
       }
@@ -475,7 +555,7 @@ export function GalaxyBackground() {
       })
 
       // --- Supernovae ---
-      if (time - lastSupernova > 55000+Math.random()*65000) {
+      if (shouldEnable('supernovae') && time - lastSupernova > 55000+Math.random()*65000) {
         lastSupernova=time; const sc=[[255,190,90],[190,140,255],[90,190,255]]
         supernovae.push({x:Math.random()*W,y:Math.random()*H,life:0,growing:true,maxR:30+Math.random()*20,color:sc[Math.floor(Math.random()*sc.length)]})
       }
@@ -488,7 +568,7 @@ export function GalaxyBackground() {
 
       // --- Stellar births ---
       const birthInt = isIdle ? 4000+Math.random()*4000 : 15000+Math.random()*12000
-      if (time - lastBirth > birthInt) {
+      if (shouldEnable('stellarBirths') && time - lastBirth > birthInt) {
         lastBirth=time;const bc=[[201,169,110],[170,200,255],[200,160,215],[150,215,195]]
         stellarBirths.push({x:Math.random()*W,y:Math.random()*H,life:0,growing:true,maxR:8+Math.random()*10,color:bc[Math.floor(Math.random()*bc.length)]})
       }

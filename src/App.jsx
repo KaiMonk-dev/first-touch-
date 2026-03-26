@@ -30,12 +30,14 @@ import { SectionBurst } from './components/SectionBurst'
 import { ScrollReward } from './components/ScrollReward'
 import { LiquidGlassEffects } from './components/LiquidGlassEffects'
 import { LiquidDripDivider } from './components/LiquidDripDivider'
+import { AmbientSound } from './components/AmbientSound'
+import { ViewportEffects } from './components/ViewportEffects'
 
 function App() {
   return (
     <ErrorBoundary>
       <CalendlyProvider>
-        <div className="min-h-screen bg-black text-white overflow-x-hidden grain">
+        <div className="min-h-screen bg-black text-white overflow-x-hidden grain edge-glow">
           <LoadingScreen />
           <GalaxyBackground />
           <LiquidGlassEffects />
@@ -69,6 +71,8 @@ function App() {
           <ExitIntent />
           <BackToTop />
           <AmbientCursor />
+          <AmbientSound />
+          <ViewportEffects />
           <MobileRipple />
           <PortalEcho />
           <StarRain targetId="pricing" />

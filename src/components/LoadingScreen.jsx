@@ -135,6 +135,10 @@ export function LoadingScreen() {
       { x: cx + 25, y: cy - 50, w: 170, h: 200, color: [50, 90, 90], o: 0.045, phase: 6 },
     ]
 
+    // --- Ascending Ember cursor system ---
+    const embers = []
+    let lastEmberX = 0, lastEmberY = 0
+
     // Cursor magnetism state
     let cursorPullX = 0, cursorPullY = 0
 
@@ -230,19 +234,107 @@ export function LoadingScreen() {
         ctx.fill()
       })
 
-      // --- Portal cursor trail ---
-      if (p === 'ready') {
+      // --- Ascending Ember cursor ---
+      if (p === 'ready' || p === 'intro') {
         const tcx = (0.5 + rawMx) * W
         const tcy = (0.5 + rawMy) * H
+
+        // Spawn embers on movement
+        const emDist = Math.sqrt((tcx - lastEmberX) ** 2 + (tcy - lastEmberY) ** 2)
+        if (emDist > 8 && embers.length < 40) {
+          for (let e = 0; e < 2; e++) {
+            embers.push({
+              x: tcx + (Math.random() - 0.5) * 4,
+              y: tcy + (Math.random() - 0.5) * 4,
+              vx: (Math.random() - 0.5) * 0.6,
+              vy: -0.5 - Math.random() * 1.2, // drift upward — ascending
+              life: 1,
+              r: 0.5 + Math.random() * 1.2,
+              color: Math.random() > 0.3
+                ? [255, 190 + Math.random() * 40, 80 + Math.random() * 40]  // gold-orange
+                : [255, 140 + Math.random() * 30, 50 + Math.random() * 30], // warm amber
+            })
+          }
+          lastEmberX = tcx; lastEmberY = tcy
+        }
+
+        // Also spawn ambient embers even when still (flame flickers)
+        if (time % 6 === 0 && embers.length < 40) {
+          embers.push({
+            x: tcx + (Math.random() - 0.5) * 3,
+            y: tcy,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: -0.3 - Math.random() * 0.8,
+            life: 0.7 + Math.random() * 0.3,
+            r: 0.3 + Math.random() * 0.7,
+            color: [255, 200 + Math.random() * 30, 100 + Math.random() * 40],
+          })
+        }
+
+        // Update and draw embers
+        for (let e = embers.length - 1; e >= 0; e--) {
+          const em = embers[e]
+          em.x += em.vx + Math.sin(time * 0.02 + e) * 0.15 // gentle sway
+          em.y += em.vy
+          em.vy *= 0.995 // slow deceleration
+          em.vx *= 0.98
+          em.life -= 0.018
+          if (em.life <= 0) { embers.splice(e, 1); continue }
+
+          // Ember glow
+          const emGr = em.r * 3 * em.life
+          if (emGr > 0.5) {
+            const emGrad = ctx.createRadialGradient(em.x, em.y, 0, em.x, em.y, emGr)
+            emGrad.addColorStop(0, `rgba(${em.color[0]},${em.color[1]},${em.color[2]},${em.life * 0.2})`)
+            emGrad.addColorStop(1, 'transparent')
+            ctx.fillStyle = emGrad
+            ctx.fillRect(em.x - emGr, em.y - emGr, emGr * 2, emGr * 2)
+          }
+
+          // Ember core
+          ctx.beginPath()
+          ctx.arc(em.x, em.y, em.r * em.life, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(${em.color[0]},${em.color[1]},${em.color[2]},${em.life * 0.5})`
+          ctx.fill()
+        }
+
+        // --- Flame core at cursor position ---
+        // Outer warm glow
+        const flameR = 18 + Math.sin(time * 0.06) * 3
+        const fGrad = ctx.createRadialGradient(tcx, tcy - 2, 0, tcx, tcy - 2, flameR)
+        fGrad.addColorStop(0, `rgba(255, 200, 100, ${0.15 + Math.sin(time * 0.08) * 0.04})`)
+        fGrad.addColorStop(0.4, `rgba(255, 160, 60, ${0.06 + Math.sin(time * 0.1) * 0.02})`)
+        fGrad.addColorStop(1, 'transparent')
+        ctx.fillStyle = fGrad
+        ctx.fillRect(tcx - flameR, tcy - 2 - flameR, flameR * 2, flameR * 2)
+
+        // Inner bright core — flickers
+        const flicker = 0.55 + Math.sin(time * 0.12) * 0.1 + Math.sin(time * 0.07) * 0.08
+        const coreR = 3.5 + Math.sin(time * 0.09) * 0.8
+        const cGrad = ctx.createRadialGradient(tcx, tcy - 1, 0, tcx, tcy - 1, coreR * 2)
+        cGrad.addColorStop(0, `rgba(255, 245, 220, ${flicker})`)
+        cGrad.addColorStop(0.4, `rgba(255, 200, 120, ${flicker * 0.5})`)
+        cGrad.addColorStop(1, 'transparent')
+        ctx.fillStyle = cGrad
+        ctx.fillRect(tcx - coreR * 2, tcy - 1 - coreR * 2, coreR * 4, coreR * 4)
+
+        // Tiny bright point
         ctx.beginPath()
-        ctx.arc(tcx, tcy, 2, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(201, 169, 110, 0.4)'
+        ctx.arc(tcx, tcy - 1, 1.8 + Math.sin(time * 0.15) * 0.3, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(255, 248, 230, ${flicker * 0.9})`
         ctx.fill()
-        const tGrad = ctx.createRadialGradient(tcx, tcy, 0, tcx, tcy, 20)
-        tGrad.addColorStop(0, 'rgba(201, 169, 110, 0.18)')
-        tGrad.addColorStop(1, 'transparent')
-        ctx.fillStyle = tGrad
-        ctx.fillRect(tcx - 15, tcy - 15, 30, 30)
+
+        // Upward flame wisp — a faint line that flickers above the cursor
+        const wispLen = 8 + Math.sin(time * 0.05) * 3
+        const wispGrad = ctx.createLinearGradient(tcx, tcy - 2, tcx + Math.sin(time * 0.04) * 2, tcy - 2 - wispLen)
+        wispGrad.addColorStop(0, `rgba(255, 210, 130, ${flicker * 0.3})`)
+        wispGrad.addColorStop(1, 'transparent')
+        ctx.beginPath()
+        ctx.moveTo(tcx, tcy - 2)
+        ctx.lineTo(tcx + Math.sin(time * 0.04) * 2, tcy - 2 - wispLen)
+        ctx.strokeStyle = wispGrad
+        ctx.lineWidth = 1.2
+        ctx.stroke()
       }
 
       // --- Vortex depth zoom (cursor proximity to center = zoom in) ---
@@ -375,7 +467,7 @@ export function LoadingScreen() {
       style={{
         position: 'fixed', inset: 0, zIndex: 100, background: '#000',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        cursor: show ? 'pointer' : 'default',
+        cursor: 'none',
         ...getExitStyle(),
       }}
       onClick={enterPortal}
@@ -388,7 +480,7 @@ export function LoadingScreen() {
           opacity: show ? 1 : 0,
           transform: show ? 'translateY(0) scale(1)' : 'translateY(24px) scale(0.95)',
           filter: show ? 'blur(0)' : 'blur(12px)',
-          transition: 'all 1.6s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: show ? 'all 1.6s cubic-bezier(0.16, 1, 0.3, 1)' : 'all 0.4s ease',
         }}>
           <p style={{
             fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
@@ -415,7 +507,7 @@ export function LoadingScreen() {
         <div style={{
           marginTop: 60,
           opacity: show ? 1 : 0,
-          transition: 'opacity 1.2s ease 1.2s',
+          transition: show ? 'opacity 1.2s ease 1.2s' : 'opacity 0.3s ease 0s',
         }}>
           <p style={{
             fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
@@ -425,7 +517,13 @@ export function LoadingScreen() {
             fontStyle: 'italic',
             animation: show ? 'breathe 4s ease-in-out infinite' : 'none',
           }}>
-            {returning ? 'Ready to ascend again?' : 'Click to begin your ascension.'}
+            {returning ? 'Ready to ascend again?' : (() => {
+              const h = new Date().getHours()
+              if (h >= 5 && h < 12) return 'A new dawn rises. Click to begin your ascension.'
+              if (h >= 12 && h < 17) return 'The stars align. Click to begin your ascension.'
+              if (h >= 17 && h < 21) return 'The universe awaits. Click to begin your ascension.'
+              return 'The stars are bright tonight. Click to begin your ascension.'
+            })()}
           </p>
         </div>
       </div>

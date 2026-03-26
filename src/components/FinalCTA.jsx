@@ -1,8 +1,11 @@
 import { AnimatedSection } from './AnimatedSection'
 import { useCalendly } from './CalendlyModal'
+import { useMagnetic } from '../hooks/useMagnetic'
+import { triggerStarBirth } from './ViewportEffects'
 
 export function FinalCTA() {
   const calendly = useCalendly()
+  const btn = useMagnetic(0.35, 100)
   return (
     <section className="relative py-28 md:py-36 px-6">
       {/* Ambient glow */}
@@ -23,15 +26,19 @@ export function FinalCTA() {
             First Touch works for your business.
           </p>
 
-          <button
-            onClick={() => calendly.open()}
-            className="group inline-flex items-center gap-3 px-10 py-5 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-all hover:shadow-[0_0_60px_rgba(255,255,255,0.15)] btn-press"
-          >
-            Book Your Free Call
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </button>
+          <div onMouseMove={btn.onMouseMove} onMouseLeave={btn.onMouseLeave}>
+            <button
+              ref={btn.ref}
+              onClick={() => { triggerStarBirth(); calendly.open() }}
+              className="group inline-flex items-center gap-3 px-10 py-5 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-all hover:shadow-[0_0_60px_rgba(255,255,255,0.15)] btn-press cta-breathe"
+              style={btn.style}
+            >
+              Book Your Free Call
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
 
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6 text-[12px] text-white/35 font-light">
             <a href="tel:+18584347041" className="hover:text-white/60 transition-colors duration-300">
