@@ -42,7 +42,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           type: 'SMS',
           contactId,
-          message: `Hey ${firstName}! This is Kai from Ascension First. Thanks for reaching out — I'd love to learn about your business and show you how First Touch works. Got 20 minutes for a quick call this week? Here's my calendar: https://link.ascensionfirst.com/widget/booking/strategy-and-demo`,
+          message: `Hey ${firstName}! This is Kai from Ascension First. Thanks for reaching out — I'd love to learn about your business and show you how First Touch works. Got 20 minutes for a quick call this week? Here's my calendar: https://link.ascensionfirst.com/widget/bookings/strategy-and-demo`,
         }),
       });
     }
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
           type: 'Email',
           contactId,
           subject: `${firstName}, thanks for reaching out`,
-          message: `Hey ${firstName},\n\nThanks for checking out Ascension First. I saw you came through ${source || 'our website'} — love that you're thinking about leveling up your customer experience.\n\nI'd love to hop on a quick 20-minute call to learn about your business and show you exactly how First Touch handles calls, books appointments, and follows up — automatically.\n\nHere's my calendar if you want to grab a time: https://link.ascensionfirst.com/widget/booking/strategy-and-demo\n\nOr just reply to this email and we'll figure out a time.\n\nTalk soon,\nKai\nAscension First`,
+          message: `Hey ${firstName},\n\nThanks for checking out Ascension First. I saw you came through ${source || 'our website'} — love that you're thinking about leveling up your customer experience.\n\nI'd love to hop on a quick 20-minute call to learn about your business and show you exactly how First Touch handles calls, books appointments, and follows up — automatically.\n\nHere's my calendar if you want to grab a time: https://link.ascensionfirst.com/widget/bookings/strategy-and-demo\n\nOr just reply to this email and we'll figure out a time.\n\nTalk soon,\nKai\nAscension First`,
         }),
       });
     }

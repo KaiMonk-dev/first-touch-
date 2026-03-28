@@ -40,7 +40,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         type: 'SMS',
         contactId,
-        message: `Hey ${firstName}, looks like we missed each other for our call today! No worries at all — things come up. Here's a link to grab another time that works for you: https://link.ascensionfirst.com/widget/booking/strategy-and-demo\n\nLooking forward to connecting! - Kai`,
+        message: `Hey ${firstName}, looks like we missed each other for our call today! No worries at all — things come up. Here's a link to grab another time that works for you: https://link.ascensionfirst.com/widget/bookings/strategy-and-demo\n\nLooking forward to connecting! - Kai`,
       }),
     });
 

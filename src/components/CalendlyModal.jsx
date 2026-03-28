@@ -45,7 +45,7 @@ function CalendlyModal({ onClose }) {
 
         {/* GHL Calendar embed */}
         <iframe
-          src="https://link.msgsndr.com/widget/booking/strategy-and-demo"
+          src="https://link.msgsndr.com/widget/bookings/strategy-and-demo"
           width="100%"
           height="100%"
           frameBorder="0"
