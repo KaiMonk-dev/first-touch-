@@ -253,8 +253,8 @@
     };
 
     try {
-      // Post to GHL webhook — replace WEBHOOK_ID with your actual webhook URL
-      await fetch('https://services.leadconnectorhq.com/hooks/WEBHOOK_ID', {
+      // Post to our own feedback API endpoint
+      await fetch('/api/feedback-webhook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
