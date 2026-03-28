@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback — Ascension First</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: #e8e4df;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+  .card {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 16px;
+    padding: 48px 36px;
+    backdrop-filter: blur(12px);
+  }
+  .accent-line {
+    width: 48px;
+    height: 2px;
+    background: #c9a84c;
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    color: #f5f0e8;
+  }
+  .subtitle {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(232,228,223,0.5);
+    margin-bottom: 36px;
+  }
+  .stars {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    justify-content: center;
+  }
+  .star {
+    font-size: 36px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: rgba(201,168,76,0.2);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .star:hover, .star.active {
+    color: #c9a84c;
+    transform: scale(1.15);
+  }
+  .star-label {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(201,168,76,0.6);
+    margin-top: -20px;
+    margin-bottom: 28px;
+    min-height: 18px;
+    font-weight: 300;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(232,228,223,0.6);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.12);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: #e8e4df;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  textarea:focus {
+    border-color: rgba(201,168,76,0.4);
+  }
+  textarea::placeholder {
+    color: rgba(232,228,223,0.2);
+  }
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #c9a84c, #a8893e);
+    border: none;
+    border-radius: 10px;
+    color: #0a0a0a;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.02em;
+    margin-top: 8px;
+  }
+  .submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(201,168,76,0.25);
+  }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.3);
+  }
+  .thank-you {
+    display: none;
+    text-align: center;
+    padding: 40px 0;
+  }
+  .thank-you .check {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.1);
+    border: 2px solid #c9a84c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 28px;
+  }
+  .thank-you h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: #f5f0e8;
+  }
+  .thank-you p {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(232,228,223,0.5);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div id="formView">
+    <div class="accent-line"></div>
+    <h1>How was your experience?</h1>
+    <p class="subtitle">Takes less than a minute. Your feedback shapes everything we do.</p>
+
+    <div class="stars" id="stars">
+      <span class="star" data-value="1">&#9733;</span>
+      <span class="star" data-value="2">&#9733;</span>
+      <span class="star" data-value="3">&#9733;</span>
+      <span class="star" data-value="4">&#9733;</span>
+      <span class="star" data-value="5">&#9733;</span>
+    </div>
+    <div class="star-label" id="starLabel"></div>
+
+    <label for="standout">What stood out most?</label>
+    <textarea id="standout" placeholder="The thing that impressed you, surprised you, or made a difference..."></textarea>
+
+    <label for="improve">Anything we could improve?</label>
+    <textarea id="improve" placeholder="Be honest — it helps us get better."></textarea>
+
+    <button class="submit-btn" id="submitBtn" disabled onclick="submitFeedback()">Submit Feedback</button>
+  </div>
+
+  <div class="thank-you" id="thankYou">
+    <div class="check">&#10003;</div>
+    <h2>Appreciated.</h2>
+    <p>Your feedback means more than you know.<br>We take every response seriously.</p>
+  </div>
+
+  <div class="footer">Ascension First</div>
+</div>
+
+<script>
+  let rating = 0;
+  const labels = ['', 'Not great', 'Could be better', 'Solid', 'Really good', 'Exceptional'];
+  const stars = document.querySelectorAll('.star');
+  const label = document.getElementById('starLabel');
+  const btn = document.getElementById('submitBtn');
+
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const v = parseInt(star.dataset.value);
+      stars.forEach((s, i) => s.classList.toggle('active', i < v));
+      label.textContent = labels[v];
+    });
+    star.addEventListener('click', () => {
+      rating = parseInt(star.dataset.value);
+      stars.forEach((s, i) => s.classList.toggle('active', i < rating));
+      label.textContent = labels[rating];
+      btn.disabled = false;
+    });
+  });
+
+  document.getElementById('stars').addEventListener('mouseleave', () => {
+    stars.forEach((s, i) => s.classList.toggle('active', i < rating));
+    label.textContent = rating ? labels[rating] : '';
+  });
+
+  async function submitFeedback() {
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    const data = {
+      rating,
+      standout: document.getElementById('standout').value,
+      improve: document.getElementById('improve').value,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      // Post to GHL webhook — replace WEBHOOK_ID with your actual webhook URL
+      await fetch('https://services.leadconnectorhq.com/hooks/WEBHOOK_ID', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    } catch (e) {
+      // Still show thank you even if webhook fails
+    }
+
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('thankYou').style.display = 'block';
+  }
+</script>
+</body>
+</html>
