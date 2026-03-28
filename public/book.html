@@ -471,37 +471,39 @@
 
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const SLOTS = [];
-  // Generate 30-min slots from 9:00 AM to 5:00 PM
-  for (let h = 9; h <= 16; h++) {
+  // Generate 30-min slots from 11:00 AM to 6:00 PM
+  for (let h = 11; h <= 17; h++) {
     for (let m = 0; m < 60; m += 30) {
-      if (h === 16 && m === 30) continue; // stop at 4:30 (last slot is 5:00 PM)
-      const hour12 = h > 12 ? h - 12 : h;
+      if (h === 17 && m === 30) continue;
+      const hour12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
       const ampm = h >= 12 ? 'PM' : 'AM';
       const minStr = m === 0 ? '00' : '30';
       SLOTS.push(hour12 + ':' + minStr + ' ' + ampm);
     }
   }
-  // Add 5:00 PM
-  SLOTS.push('5:00 PM');
+  // Add 6:00 PM
+  SLOTS.push('6:00 PM');
+  const MIN_NOTICE_HOURS = 3; // 3-hour minimum notice for same-day
 
-  function getNext14Days() {
+  function getAvailableDays() {
     const days = [];
+    const now = new Date();
     const start = new Date(today);
-    start.setDate(start.getDate() + 1); // start from tomorrow
-    let count = 0;
+    // Allow same-day if there are slots still 3+ hours away
     let d = new Date(start);
-    while (count < 14) {
+    const maxDate = new Date(today);
+    maxDate.setDate(maxDate.getDate() + 5); // max 5 days in advance
+    while (d <= maxDate) {
       const dow = d.getDay();
-      if (dow !== 0 && dow !== 6) { // skip weekends
+      if (dow !== 0) { // skip Sunday only (0=Sunday)
         days.push(new Date(d));
-        count++;
       }
       d.setDate(d.getDate() + 1);
     }
     return days;
   }
 
-  const availableDays = getNext14Days();
+  const availableDays = getAvailableDays();
 
   function renderCalendar() {
     const grid = document.getElementById('calGrid');
@@ -542,12 +544,12 @@
 
       const isToday = thisDate.toDateString() === today.toDateString();
       const isAvail = availSet.has(thisDate.toDateString());
-      const isPast = thisDate <= today;
-      const isWeekend = thisDate.getDay() === 0 || thisDate.getDay() === 6;
+      const isPast = thisDate < today; // allow today (3-hour notice handled in time slots)
+      const isSunday = thisDate.getDay() === 0;
 
       if (isToday) el.classList.add('today');
 
-      if (!isAvail || isPast || isWeekend) {
+      if (!isAvail || isPast || isSunday) {
         el.classList.add('disabled');
       } else {
         el.addEventListener('click', () => selectDate(thisDate));
@@ -592,16 +594,38 @@
   function renderTimeSlots() {
     const grid = document.getElementById('timeGrid');
     grid.innerHTML = '';
+    const now = new Date();
+    const isToday = selectedDate === today.toISOString().split('T')[0];
+
     SLOTS.forEach(slot => {
+      // Check if this slot is at least 3 hours from now (same-day only)
+      let tooSoon = false;
+      if (isToday) {
+        const [timePart, ampm] = slot.split(' ');
+        let [h, m] = timePart.split(':').map(Number);
+        if (ampm === 'PM' && h !== 12) h += 12;
+        if (ampm === 'AM' && h === 12) h = 0;
+        const slotTime = new Date(now);
+        slotTime.setHours(h, m, 0, 0);
+        const hoursUntil = (slotTime - now) / (1000 * 60 * 60);
+        if (hoursUntil < MIN_NOTICE_HOURS) tooSoon = true;
+      }
+
       const el = document.createElement('div');
       el.className = 'time-slot';
       el.textContent = slot;
-      if (selectedTime === slot) el.classList.add('selected');
-      el.addEventListener('click', () => {
-        selectedTime = slot;
-        renderTimeSlots();
-        updateBtn();
-      });
+      if (tooSoon) {
+        el.style.opacity = '0.25';
+        el.style.pointerEvents = 'none';
+        el.style.cursor = 'default';
+      } else {
+        if (selectedTime === slot) el.classList.add('selected');
+        el.addEventListener('click', () => {
+          selectedTime = slot;
+          renderTimeSlots();
+          updateBtn();
+        });
+      }
       grid.appendChild(el);
     });
   }
