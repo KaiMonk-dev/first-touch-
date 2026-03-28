@@ -43,14 +43,15 @@ function CalendlyModal({ onClose }) {
           </svg>
         </button>
 
-        {/* Calendly iframe */}
+        {/* GHL Calendar embed */}
         <iframe
-          src="https://calendly.com/ascensionfirstai/30min?hide_gdpr_banner=1&background_color=0a0a0a&text_color=ffffff&primary_color=C9A96E"
+          src="https://link.msgsndr.com/widget/booking/strategy-and-demo"
           width="100%"
           height="100%"
           frameBorder="0"
-          title="Book a Strategy Call"
+          title="Book a Strategy & Demo Call"
           className="rounded-3xl"
+          style={{ background: '#0a0a0a' }}
         />
       </div>
     </div>
