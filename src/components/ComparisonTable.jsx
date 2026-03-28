@@ -1,5 +1,5 @@
 import { AnimatedSection } from './AnimatedSection'
-import { useCalendly } from './CalendlyModal'
+import { useBooking } from './BookingModal'
 
 const rows = [
   { feature: 'Answers in < 1 second', ft: true, human: false },
@@ -15,7 +15,7 @@ const rows = [
 ]
 
 export function ComparisonTable() {
-  const calendly = useCalendly()
+  const booking = useBooking()
 
   return (
     <section className="relative py-28 md:py-36 px-6">
@@ -80,7 +80,7 @@ export function ComparisonTable() {
         <AnimatedSection delay={400}>
           <div className="text-center mt-12">
             <button
-              onClick={() => calendly.open()}
+              onClick={() => booking.open()}
               className="px-8 py-4 rounded-full bg-white text-black font-semibold text-[14px] hover:bg-white/90 transition-all btn-press hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]"
             >
               Get First Touch Live in 72 Hours

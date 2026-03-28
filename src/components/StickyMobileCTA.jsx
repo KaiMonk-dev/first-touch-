@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useCalendly } from './CalendlyModal'
+import { useBooking } from './BookingModal'
 import { playCtaChime } from '../hooks/useCtaSound'
 
 export function StickyMobileCTA() {
   const [visible, setVisible] = useState(false)
-  const calendly = useCalendly()
+  const booking = useBooking()
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 600)
@@ -34,7 +34,7 @@ export function StickyMobileCTA() {
           Call Alex
         </a>
         <button
-          onClick={() => { playCtaChime(); calendly.open() }}
+          onClick={() => { playCtaChime(); booking.open() }}
           className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-full bg-white text-black text-[13px] font-semibold hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all"
         >
           Book a Call

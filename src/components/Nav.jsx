@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useCalendly } from './CalendlyModal'
+import { useBooking } from './BookingModal'
 
 const navLinks = [
   { label: 'How It Works', href: '#how-it-works' },
@@ -13,7 +13,7 @@ export function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   const [materialized, setMaterialized] = useState(false)
-  const calendly = useCalendly()
+  const booking = useBooking()
 
   // Nav materializes after portal — delayed entrance
   useEffect(() => {
@@ -95,7 +95,7 @@ export function Nav() {
               Call Alex
             </a>
             <button
-              onClick={() => calendly.open()}
+              onClick={() => booking.open()}
               className="px-5 py-2.5 rounded-full bg-white text-black text-[13px] font-semibold hover:bg-white/90 transition-all btn-press hover:shadow-[0_0_30px_rgba(255,255,255,0.12)]"
             >
               Book a Call
@@ -147,7 +147,7 @@ export function Nav() {
                 Call Alex
               </a>
               <button
-                onClick={() => { setMobileOpen(false); calendly.open() }}
+                onClick={() => { setMobileOpen(false); booking.open() }}
                 className="block w-full text-center px-5 py-3.5 rounded-full bg-white text-black font-semibold text-[14px]"
               >
                 Book a Call

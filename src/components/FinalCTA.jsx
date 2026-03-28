@@ -1,11 +1,11 @@
 import { AnimatedSection } from './AnimatedSection'
-import { useCalendly } from './CalendlyModal'
+import { useBooking } from './BookingModal'
 import { useMagnetic } from '../hooks/useMagnetic'
 import { triggerStarBirth } from './ViewportEffects'
 import { playCtaChime } from '../hooks/useCtaSound'
 
 export function FinalCTA() {
-  const calendly = useCalendly()
+  const booking = useBooking()
   const btn = useMagnetic(0.35, 100)
   return (
     <section className="relative py-28 md:py-36 px-6">
@@ -30,7 +30,7 @@ export function FinalCTA() {
           <div onMouseMove={btn.onMouseMove} onMouseLeave={btn.onMouseLeave}>
             <button
               ref={btn.ref}
-              onClick={() => { playCtaChime(); triggerStarBirth(); calendly.open() }}
+              onClick={() => { playCtaChime(); triggerStarBirth(); booking.open() }}
               className="group inline-flex items-center gap-3 px-10 py-5 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-all hover:shadow-[0_0_60px_rgba(255,255,255,0.15)] btn-press cta-breathe"
               style={btn.style}
             >

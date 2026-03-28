@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { AnimatedSection } from './AnimatedSection'
-import { useCalendly } from './CalendlyModal'
+import { useBooking } from './BookingModal'
 import { useTilt } from '../hooks/useTilt'
 
 const plans = [
@@ -12,7 +12,7 @@ const plans = [
     features: [
       { text: 'Alex — answers every call, 24/7', tip: 'Picks up in under 1 second, handles unlimited concurrent calls' },
       { text: 'Missed call text-back — instant SMS recovery', tip: 'Automatically texts callers you miss within 30 seconds' },
-      { text: 'Real-time calendar booking via voice + SMS', tip: 'Syncs with Google Calendar, Calendly, or any scheduling tool' },
+      { text: 'Real-time calendar booking via voice + SMS', tip: 'Syncs with Google Calendar and your scheduling system' },
       { text: 'SMS follow-ups to every lead — on autopilot', tip: 'Customizable sequences — timing and messaging tailored to you' },
       { text: 'Appointment reminders via SMS', tip: 'Reduces no-shows by up to 60%' },
       { text: 'Google review requests — sent for you', tip: 'Sent after completed jobs to build your reputation' },
@@ -109,7 +109,7 @@ function Tooltip({ text }) {
 }
 
 export function Pricing() {
-  const calendly = useCalendly()
+  const booking = useBooking()
 
   return (
     <section id="pricing" className="relative py-28 md:py-36 px-6">
@@ -128,7 +128,7 @@ export function Pricing() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 group/cards">
           {plans.map((plan, i) => (
-            <PricingCard key={i} plan={plan} delay={i * 150} onBook={() => calendly.open()} />
+            <PricingCard key={i} plan={plan} delay={i * 150} onBook={() => booking.open()} />
           ))}
         </div>
 

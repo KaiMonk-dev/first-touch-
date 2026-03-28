@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useCalendly } from './CalendlyModal'
+import { useBooking } from './BookingModal'
 
 export function ExitIntent() {
   const [show, setShow] = useState(false)
   const [dismissed, setDismissed] = useState(false)
   const [entering, setEntering] = useState(false)
-  const calendly = useCalendly()
+  const booking = useBooking()
 
   const handleMouseLeave = useCallback((e) => {
     if (e.clientY <= 5 && !dismissed && window.scrollY > 400) {
@@ -74,7 +74,7 @@ export function ExitIntent() {
 
           <div className="flex flex-col gap-2.5">
             <button
-              onClick={() => { close(); setTimeout(() => calendly.open(), 600) }}
+              onClick={() => { close(); setTimeout(() => booking.open(), 600) }}
               className="w-full px-7 py-3.5 rounded-full bg-white text-black font-semibold text-[13px] hover:bg-white/90 transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] btn-press"
             >
               Book a Strategy Call

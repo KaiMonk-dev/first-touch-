@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 // useRef still needed for hasWowed
 import { InfiniteSlider } from './InfiniteSlider'
-import { useCalendly } from './CalendlyModal'
+import { useBooking } from './BookingModal'
 import { useMagnetic } from '../hooks/useMagnetic'
 import { useVariant } from '../hooks/useVariant'
 import { triggerStarBirth } from './ViewportEffects'
 import { playCtaChime } from '../hooks/useCtaSound'
 
 export function Hero() {
-  const calendly = useCalendly()
+  const booking = useBooking()
   const primaryBtn = useMagnetic(0.35, 100)
   const secondaryBtn = useMagnetic(0.25, 80)
   const [scrollY, setScrollY] = useState(0)
@@ -72,7 +72,7 @@ export function Hero() {
           >
             <button
               ref={primaryBtn.ref}
-              onClick={() => { playCtaChime(); triggerStarBirth(); calendly.open() }}
+              onClick={() => { playCtaChime(); triggerStarBirth(); booking.open() }}
               className="group px-8 py-4 rounded-full bg-white text-black font-semibold text-[15px] hover:bg-white/90 transition-colors btn-press btn-glow cta-breathe flex items-center gap-3"
               style={primaryBtn.style}
             >

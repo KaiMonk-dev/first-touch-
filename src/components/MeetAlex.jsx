@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Player from '@vimeo/player'
 import { AnimatedSection } from './AnimatedSection'
-import { useCalendly } from './CalendlyModal'
+import { useBooking } from './BookingModal'
 
 const capabilities = [
   {
@@ -27,7 +27,7 @@ const capabilities = [
 ]
 
 export function MeetAlex() {
-  const calendly = useCalendly()
+  const booking = useBooking()
 
   return (
     <section id="meet-alex" className="relative py-28 md:py-36 px-6">
@@ -79,7 +79,7 @@ export function MeetAlex() {
         <AnimatedSection delay={300}>
           <div className="text-center mt-14">
             <button
-              onClick={() => calendly.open()}
+              onClick={() => booking.open()}
               className="px-8 py-4 rounded-full bg-white text-black font-semibold text-[14px] hover:bg-white/90 transition-all btn-press hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]"
             >
               Get Alex for Your Business

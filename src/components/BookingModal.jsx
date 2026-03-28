@@ -1,23 +1,23 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 
-const CalendlyContext = createContext()
+const BookingContext = createContext()
 
-export function useCalendly() {
-  return useContext(CalendlyContext)
+export function useBooking() {
+  return useContext(BookingContext)
 }
 
-export function CalendlyProvider({ children }) {
+export function BookingProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <CalendlyContext.Provider value={{ isOpen, open: () => setIsOpen(true), close: () => setIsOpen(false) }}>
+    <BookingContext.Provider value={{ isOpen, open: () => setIsOpen(true), close: () => setIsOpen(false) }}>
       {children}
-      {isOpen && <CalendlyModal onClose={() => setIsOpen(false)} />}
-    </CalendlyContext.Provider>
+      {isOpen && <BookingModal onClose={() => setIsOpen(false)} />}
+    </BookingContext.Provider>
   )
 }
 
-function CalendlyModal({ onClose }) {
+function BookingModal({ onClose }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
@@ -43,9 +43,9 @@ function CalendlyModal({ onClose }) {
           </svg>
         </button>
 
-        {/* GHL Calendar embed */}
+        {/* Custom branded booking page */}
         <iframe
-          src="https://link.msgsndr.com/widget/bookings/strategy-and-demo"
+          src="/book.html"
           width="100%"
           height="100%"
           frameBorder="0"

@@ -1,4 +1,4 @@
-import { CalendlyProvider } from './components/CalendlyModal'
+import { BookingProvider } from './components/BookingModal'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoadingScreen } from './components/LoadingScreen'
 import { ScrollProgress } from './components/ScrollProgress'
@@ -34,7 +34,7 @@ import { ViewportEffects } from './components/ViewportEffects'
 function App() {
   return (
     <ErrorBoundary>
-      <CalendlyProvider>
+      <BookingProvider>
         <div className="min-h-screen bg-black text-white overflow-x-hidden grain edge-glow">
           <LoadingScreen />
           <GalaxyBackground />
@@ -75,7 +75,7 @@ function App() {
           <EasterEggs />
           <ScrollReward />
         </div>
-      </CalendlyProvider>
+      </BookingProvider>
     </ErrorBoundary>
   )
 }

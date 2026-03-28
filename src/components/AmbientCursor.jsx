@@ -47,7 +47,7 @@ export function AmbientCursor() {
       body { cursor: none; }
       main, main *, nav, nav *, footer, footer *, section, section * { cursor: none; }
       [class*="z-[70]"], [class*="z-[70]"] *, iframe, iframe * { cursor: auto !important; }
-      .calendly-overlay, .calendly-overlay * { cursor: auto !important; }
+      .booking-overlay, .booking-overlay * { cursor: auto !important; }
     `
     document.head.appendChild(styleEl)
 
