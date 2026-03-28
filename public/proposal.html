@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Touch — Ascension First</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#e8e4df;min-height:100vh;padding:24px}
+  body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+  .page{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:48px 0}
+  .accent{width:48px;height:2px;background:#c9a84c;margin-bottom:24px}
+  h1{font-size:32px;font-weight:600;letter-spacing:-0.03em;margin-bottom:8px;background:linear-gradient(to bottom,#fff,rgba(255,255,255,0.6));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .tagline{font-size:14px;color:rgba(232,228,223,0.4);font-weight:300;margin-bottom:40px}
+  h2{font-size:18px;font-weight:500;color:#f5f0e8;margin-bottom:16px;margin-top:40px}
+  .card{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.12);border-radius:14px;padding:28px;margin-bottom:20px}
+  .feature-list{list-style:none;padding:0}
+  .feature-list li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px;font-weight:300;color:rgba(232,228,223,0.7);display:flex;align-items:flex-start;gap:12px}
+  .feature-list li:last-child{border-bottom:none}
+  .check{color:#c9a84c;font-size:16px;flex-shrink:0;margin-top:1px}
+  .pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+  .price-card{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.1);border-radius:14px;padding:24px;text-align:center}
+  .price-card.featured{border-color:rgba(201,168,76,0.35);background:rgba(201,168,76,0.04)}
+  .plan-name{font-size:13px;font-weight:400;letter-spacing:0.08em;text-transform:uppercase;color:rgba(201,168,76,0.6);margin-bottom:8px}
+  .price{font-size:36px;font-weight:600;color:#f5f0e8}
+  .price span{font-size:14px;font-weight:300;color:rgba(255,255,255,0.3)}
+  .plan-desc{font-size:12px;color:rgba(232,228,223,0.35);margin-top:8px;font-weight:300}
+  .guarantee{text-align:center;padding:20px;font-size:13px;color:rgba(201,168,76,0.5);font-weight:300;margin-top:8px}
+  .cta-section{text-align:center;margin-top:48px;padding:40px 24px;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:14px}
+  .cta-section h2{margin-top:0;margin-bottom:12px}
+  .cta-section p{font-size:14px;color:rgba(232,228,223,0.4);font-weight:300;margin-bottom:24px}
+  .cta-btn{display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#c9a84c,#a8893e);color:#0a0a0a;text-decoration:none;border-radius:10px;font-weight:500;font-size:15px;transition:all 0.25s}
+  .cta-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.25)}
+  .footer{text-align:center;margin-top:48px;font-size:11px;font-weight:400;letter-spacing:0.15em;text-transform:uppercase;color:rgba(201,168,76,0.2)}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+  .stat{text-align:center;padding:20px 12px}
+  .stat-num{font-size:28px;font-weight:600;color:#c9a84c}
+  .stat-label{font-size:11px;color:rgba(232,228,223,0.35);margin-top:4px;font-weight:300;letter-spacing:0.03em}
+  @media(max-width:500px){.pricing-grid,.stat-grid{grid-template-columns:1fr}h1{font-size:26px}.page{padding:32px 0}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="accent"></div>
+  <h1>First Touch</h1>
+  <p class="tagline">Your customers deserve a better first impression.</p>
+
+  <div class="card">
+    <h2 style="margin-top:0">What First Touch Does</h2>
+    <ul class="feature-list">
+      <li><span class="check">&#10003;</span> Answers every call to your business — 24/7, 365 days a year</li>
+      <li><span class="check">&#10003;</span> Greets callers naturally, qualifies their needs, books appointments</li>
+      <li><span class="check">&#10003;</span> Follows up with every lead via text and email — automatically</li>
+      <li><span class="check">&#10003;</span> Custom-trained for your business — your services, your hours, your voice</li>
+      <li><span class="check">&#10003;</span> Transfers complex or urgent calls directly to your team</li>
+      <li><span class="check">&#10003;</span> Full dashboard with call recordings, transcripts, and analytics</li>
+    </ul>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="stat-num">72hr</div><div class="stat-label">Setup time</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Availability</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Calls answered</div></div>
+  </div>
+
+  <h2>Investment</h2>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="plan-name">Core</div>
+      <div class="price">$597<span>/mo</span></div>
+      <div class="plan-desc">Everything you need to never miss a call again</div>
+    </div>
+    <div class="price-card featured">
+      <div class="plan-name">Pro</div>
+      <div class="price">$997<span>/mo</span></div>
+      <div class="plan-desc">Advanced features for high-volume businesses</div>
+    </div>
+  </div>
+  <div class="guarantee">No contracts. No setup fees. 30-day money-back guarantee.</div>
+
+  <div class="cta-section">
+    <h2>Ready to get started?</h2>
+    <p>Setup takes 72 hours. We handle everything.</p>
+    <a href="https://calendly.com/ascensionfirstai/30min" class="cta-btn">Book Your Strategy Call</a>
+  </div>
+
+  <div class="footer">Ascension First</div>
+</div>
+</body>
+</html>
