@@ -93,6 +93,25 @@ export default async function handler(req, res) {
       const createData = await createRes.json();
       contactId = createData.contact?.id;
 
+      // Handle GHL "no duplicate contacts" — extract contactId from error meta
+      if (!contactId && createData.meta?.contactId) {
+        contactId = createData.meta.contactId;
+        console.log(`Duplicate detected, using existing contact: ${contactId}`);
+        // Update existing contact with latest info
+        await fetch(`${GHL_BASE}/contacts/${contactId}`, {
+          method: 'PUT',
+          headers: hdrs,
+          body: JSON.stringify({
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+            phone: phone.trim(),
+            companyName: businessName.trim(),
+            tags: ['Website Booking', 'Demo Scheduled'],
+            source: 'Website Booking Page',
+          }),
+        });
+      }
+
       if (!contactId) {
         console.error('Contact creation failed:', createData);
         return res.status(500).json({ error: 'Failed to create contact in CRM' });
