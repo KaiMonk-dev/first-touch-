@@ -17,8 +17,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const GHL_API_KEY  = process.env.GHL_API_KEY;
-  const GHL_LOCATION = process.env.GHL_LOCATION_ID;
+  const GHL_API_KEY  = (process.env.GHL_API_KEY || '').trim();
+  const GHL_LOCATION = (process.env.GHL_LOCATION_ID || '').trim();
   const CALENDAR_ID  = 'rZxC4FfjMwwcl3NAqJJg';
   const ASSIGNED_USER = 'Hx9y67DfhSPvKLyH1P8N'; // Kai
   const DEMO_REMINDER_WORKFLOW = '3a18dff7-1934-418a-8261-d091c837630a'; // Demo Appointment Reminder
@@ -54,13 +54,10 @@ export default async function handler(req, res) {
     // ─── 1. Find or create contact ───
     let contactId = null;
 
-    console.log(`[BOOK] ENV CHECK — API_KEY exists: ${!!GHL_API_KEY}, LOCATION: ${GHL_LOCATION}`);
 
-    const searchUrl = `${GHL_BASE}/contacts/?locationId=${GHL_LOCATION}&email=${encodeURIComponent(email.trim())}&limit=1`;
-    console.log(`[BOOK] Searching contacts: ${searchUrl}`);
+    const searchUrl = `${GHL_BASE}/contacts/?locationId=${GHL_LOCATION}&query=${encodeURIComponent(email.trim())}&limit=1`;
     const searchRes = await fetch(searchUrl, { headers: hdrs });
     const searchData = await searchRes.json();
-    console.log(`[BOOK] Search result: ${searchRes.status}, contacts found: ${searchData.contacts?.length || 0}`);
 
     if (searchData.contacts?.length > 0) {
       contactId = searchData.contacts[0].id;
@@ -93,7 +90,6 @@ export default async function handler(req, res) {
         }),
       });
       const createData = await createRes.json();
-      console.log(`[BOOK] Create response: ${createRes.status}`, JSON.stringify(createData).slice(0, 500));
       contactId = createData.contact?.id;
 
       // Handle GHL "no duplicate contacts" — extract contactId from error meta
@@ -117,7 +113,7 @@ export default async function handler(req, res) {
 
       if (!contactId) {
         console.error('Contact creation failed:', createData);
-        return res.status(500).json({ error: 'Failed to create contact in CRM', debug: createData, searchResult: searchData, envCheck: { hasKey: !!GHL_API_KEY, keyPrefix: GHL_API_KEY?.slice(0,8), location: GHL_LOCATION } });
+        return res.status(500).json({ error: 'Failed to create contact — please call us at (858) 434-7041' });
       }
     }
 
