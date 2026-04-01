@@ -54,11 +54,13 @@ export default async function handler(req, res) {
     // ─── 1. Find or create contact ───
     let contactId = null;
 
-    const searchRes = await fetch(
-      `${GHL_BASE}/contacts/?locationId=${GHL_LOCATION}&email=${encodeURIComponent(email.trim())}&limit=1`,
-      { headers: hdrs }
-    );
+    console.log(`[BOOK] ENV CHECK — API_KEY exists: ${!!GHL_API_KEY}, LOCATION: ${GHL_LOCATION}`);
+
+    const searchUrl = `${GHL_BASE}/contacts/?locationId=${GHL_LOCATION}&email=${encodeURIComponent(email.trim())}&limit=1`;
+    console.log(`[BOOK] Searching contacts: ${searchUrl}`);
+    const searchRes = await fetch(searchUrl, { headers: hdrs });
     const searchData = await searchRes.json();
+    console.log(`[BOOK] Search result: ${searchRes.status}, contacts found: ${searchData.contacts?.length || 0}`);
 
     if (searchData.contacts?.length > 0) {
       contactId = searchData.contacts[0].id;
@@ -91,6 +93,7 @@ export default async function handler(req, res) {
         }),
       });
       const createData = await createRes.json();
+      console.log(`[BOOK] Create response: ${createRes.status}`, JSON.stringify(createData).slice(0, 500));
       contactId = createData.contact?.id;
 
       // Handle GHL "no duplicate contacts" — extract contactId from error meta
