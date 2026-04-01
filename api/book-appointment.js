@@ -117,7 +117,7 @@ export default async function handler(req, res) {
 
       if (!contactId) {
         console.error('Contact creation failed:', createData);
-        return res.status(500).json({ error: 'Failed to create contact in CRM' });
+        return res.status(500).json({ error: 'Failed to create contact in CRM', debug: createData, searchResult: searchData, envCheck: { hasKey: !!GHL_API_KEY, keyPrefix: GHL_API_KEY?.slice(0,8), location: GHL_LOCATION } });
       }
     }
 
