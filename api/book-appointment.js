@@ -21,7 +21,8 @@ export default async function handler(req, res) {
   const GHL_LOCATION = (process.env.GHL_LOCATION_ID || '').trim();
   const CALENDAR_ID  = 'rZxC4FfjMwwcl3NAqJJg';
   const ASSIGNED_USER = 'Hx9y67DfhSPvKLyH1P8N'; // Kai
-  const DEMO_REMINDER_WORKFLOW = '3a18dff7-1934-418a-8261-d091c837630a'; // Demo Appointment Reminder
+  const DEMO_REMINDER_WORKFLOW = '3a18dff7-1934-418a-8261-d091c837630a'; // Demo Appointment Reminder (sends to prospect)
+  const TEAM_NOTIFY_WORKFLOW = 'fb72240a-5a08-453c-b330-6676b7f05698';  // Team Booking Notification (sends to hello@)
 
   if (!GHL_API_KEY || !GHL_LOCATION) {
     console.error('Missing env vars: GHL_API_KEY or GHL_LOCATION_ID');
@@ -177,7 +178,19 @@ export default async function handler(req, res) {
       // Don't fail the booking — appointment is already created
     }
 
-    // ─── 5. Add booking note to contact ───
+    // ─── 5. Trigger team notification workflow (sends to hello@ascensionfirst.com) ───
+    try {
+      await fetch(`${GHL_BASE}/contacts/${contactId}/workflow/${TEAM_NOTIFY_WORKFLOW}`, {
+        method: 'POST',
+        headers: hdrs,
+        body: JSON.stringify({ eventStartTime: startTime.toISOString() }),
+      });
+      console.log(`✅ Team notification workflow triggered for ${contactId}`);
+    } catch (teamErr) {
+      console.error('Team notification failed (non-blocking):', teamErr.message);
+    }
+
+    // ─── 6. Add booking note to contact ───
     try {
       const noteBody = `📅 WEBSITE BOOKING\nDate: ${date}\nTime: ${time} PST\nBusiness: ${businessName.trim()}\nPhone: ${phone.trim()}\nEmail: ${email.trim()}\nAppointment ID: ${appointmentId}`;
       await fetch(`${GHL_BASE}/contacts/${contactId}/notes`, {
