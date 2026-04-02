@@ -46,8 +46,9 @@ export function AmbientCursor() {
     styleEl.textContent = `
       body { cursor: none; }
       main, main *, nav, nav *, footer, footer *, section, section * { cursor: none; }
-      [class*="z-[70]"], [class*="z-[70]"] *, iframe, iframe * { cursor: auto !important; }
-      .booking-overlay, .booking-overlay * { cursor: auto !important; }
+      [class*="z-[70]"], [class*="z-[70]"] *, [class*="z-[80]"], [class*="z-[80]"] *, iframe, iframe * { cursor: auto !important; }
+      .booking-overlay, .booking-overlay *, .booking-overlay input, .booking-overlay textarea, .booking-overlay button, .booking-overlay a { cursor: auto !important; }
+      .fixed[class*="z-[80]"], .fixed[class*="z-[80]"] * { cursor: auto !important; }
     `
     document.head.appendChild(styleEl)
 

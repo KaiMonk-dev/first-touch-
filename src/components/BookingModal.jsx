@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, createContext, useContext } from 'react'
+import { useState, useEffect, useRef, useCallback, createContext, useContext } from 'react'
 
 const BookingContext = createContext()
 
@@ -20,6 +20,11 @@ export function BookingProvider({ children }) {
 /* ─────────────────────────────────────────────────
    Stage 1: Branded pre-screen (Business + Goals)
    Stage 2: GHL native widget (date/time/contact)
+
+   The GHL widget handles Google Calendar sync natively.
+   After the modal closes from Step 2, we call /api/update-contact
+   which adds business info AND triggers notification workflows
+   (because the GHL calendar has notifications: [] — empty).
    ───────────────────────────────────────────────── */
 
 function BookingModal({ onClose }) {
@@ -27,71 +32,51 @@ function BookingModal({ onClose }) {
   const [businessName, setBusinessName] = useState('')
   const [goals, setGoals] = useState('')
   const [errors, setErrors] = useState({})
-  const iframeRef = useRef(null)
-  const pollingRef = useRef(null)
   const hasUpdatedRef = useRef(false)
 
+  // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = ''
-      // When modal unmounts (closes), fire the update if we were on step 2
-      // This catches the case where user booked and then closed the modal
-      if (step === 2 && !hasUpdatedRef.current && businessName.trim()) {
-        hasUpdatedRef.current = true
-        updateContactWithBusinessInfo()
-      }
-    }
-  }, [step, businessName])
+    return () => { document.body.style.overflow = '' }
+  }, [])
 
-  // When step 2 loads, listen for booking completion
-  // GHL widget doesn't reliably send postMessage, so we use multiple strategies:
-  // 1. Listen for any postMessage from the widget
-  // 2. Fire update when modal closes (user likely just booked)
-  // 3. Fire update on beforeunload as a safety net
+  // Fire contact update + workflow triggers when closing from step 2
+  const fireUpdate = useCallback(() => {
+    if (hasUpdatedRef.current || !businessName.trim()) return
+    hasUpdatedRef.current = true
 
-  useEffect(() => {
-    if (step !== 2) return
-
-    const handleMessage = (e) => {
-      // Catch any GHL widget messages that might indicate completion
-      if (e.data && typeof e.data === 'object') {
-        console.log('GHL widget message:', e.data)
-      }
-      if (
-        e.data === 'booking_confirmed' ||
-        e.data?.type === 'booking_confirmed' ||
-        e.data?.action === 'booking_confirmed' ||
-        (typeof e.data === 'string' && e.data.includes('confirm'))
-      ) {
-        if (!hasUpdatedRef.current) {
-          hasUpdatedRef.current = true
-          updateContactWithBusinessInfo()
-        }
-      }
-    }
-    window.addEventListener('message', handleMessage)
-
-    return () => {
-      window.removeEventListener('message', handleMessage)
-      if (pollingRef.current) clearInterval(pollingRef.current)
-    }
-  }, [step])
-
-  async function updateContactWithBusinessInfo() {
-    if (!businessName.trim()) return
-    try {
-      await fetch('/api/update-contact', {
+    // Small delay to let GHL widget finish creating the contact
+    setTimeout(() => {
+      fetch('/api/update-contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           businessName: businessName.trim(),
           goals: goals.trim(),
         }),
-      })
-    } catch (err) {
-      console.error('Failed to update contact with business info:', err)
+      }).catch(err => console.error('Contact update failed:', err))
+    }, 3000) // 3s delay — GHL widget needs time to create the contact
+  }, [businessName, goals])
+
+  // Listen for GHL widget messages (booking completion)
+  useEffect(() => {
+    if (step !== 2) return
+
+    const handleMessage = (e) => {
+      // Log all messages from iframe for debugging
+      if (e.origin?.includes('leadconnectorhq')) {
+        console.log('GHL widget message:', e.data)
+        fireUpdate()
+      }
     }
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [step, fireUpdate])
+
+  // Handle close — fire update if we were on step 2
+  function handleClose() {
+    if (step === 2) fireUpdate()
+    onClose()
   }
 
   function handleContinue(e) {
@@ -104,30 +89,50 @@ function BookingModal({ onClose }) {
       return
     }
     setErrors({})
-    // Store in sessionStorage so we can retrieve after GHL widget completes
-    sessionStorage.setItem('af_booking_business', businessName.trim())
-    sessionStorage.setItem('af_booking_goals', goals.trim())
     setStep(2)
   }
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center px-4 booking-overlay"
+      style={{ cursor: 'auto' }}
+    >
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/80 backdrop-blur-md animate-fade-in"
-        onClick={onClose}
+        onClick={handleClose}
+        style={{ cursor: 'auto' }}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-lg rounded-3xl overflow-hidden glass-strong animate-fade-up shadow-[0_40px_100px_rgba(0,0,0,0.6)]"
-        style={{ height: step === 1 ? 'auto' : '700px', maxHeight: '90vh' }}
+      <div
+        className="relative w-full max-w-lg rounded-3xl overflow-hidden glass-strong animate-fade-up shadow-[0_40px_100px_rgba(0,0,0,0.6)]"
+        style={{
+          height: step === 1 ? 'auto' : '700px',
+          maxHeight: '90vh',
+          cursor: 'auto',
+        }}
       >
-        {/* Close */}
+        {/* Close button — always visible, prominent */}
         <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full glass flex items-center justify-center text-white/40 hover:text-white/70 hover:bg-white/10 transition-all"
+          onClick={handleClose}
+          className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200"
+          style={{
+            cursor: 'pointer',
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            backdropFilter: 'blur(8px)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.15)'
+            e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'
+          }}
+          aria-label="Close booking modal"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.7 }}>
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
@@ -142,12 +147,13 @@ function BookingModal({ onClose }) {
             onContinue={handleContinue}
           />
         ) : (
-          <div className="w-full h-full flex flex-col">
+          <div className="w-full h-full flex flex-col" style={{ cursor: 'auto' }}>
             {/* Back button */}
             <div className="px-6 pt-5 pb-2 flex items-center gap-2">
               <button
                 onClick={() => setStep(1)}
                 className="text-[#c9a84c]/60 hover:text-[#c9a84c] text-xs flex items-center gap-1 transition-colors"
+                style={{ cursor: 'pointer' }}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -157,12 +163,11 @@ function BookingModal({ onClose }) {
               <span className="text-white/20 text-xs">|</span>
               <span className="text-white/30 text-xs">Select a date & time</span>
             </div>
-            {/* GHL native calendar widget — handles booking + notifications + Google Calendar sync */}
+            {/* GHL native calendar widget — handles booking + Google Calendar sync */}
             <iframe
-              ref={iframeRef}
               src="https://api.leadconnectorhq.com/widget/bookings/strategy-and-demo"
               width="100%"
-              style={{ flex: 1, border: 'none', background: '#0a0a0a' }}
+              style={{ flex: 1, border: 'none', background: '#0a0a0a', cursor: 'auto' }}
               title="Book a Strategy & Demo Call"
               className="rounded-b-3xl"
             />
@@ -176,7 +181,7 @@ function BookingModal({ onClose }) {
 /* ─── Pre-Screen Form (Step 1) ─── */
 function PreScreen({ businessName, setBusinessName, goals, setGoals, errors, onContinue }) {
   return (
-    <div className="p-8 sm:p-10" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="p-8 sm:p-10" style={{ fontFamily: "'Inter', sans-serif", cursor: 'auto' }}>
       {/* Gold accent line */}
       <div className="w-12 h-0.5 bg-[#c9a84c] mb-6" />
 
@@ -203,7 +208,7 @@ function PreScreen({ businessName, setBusinessName, goals, setGoals, errors, onC
                 ? 'bg-red-500/5 border border-red-500/30 focus:border-red-400/50'
                 : 'bg-white/[0.03] border border-[#c9a84c]/15 focus:border-[#c9a84c]/40 focus:bg-white/[0.05]'
             }`}
-            style={{ fontFamily: "'Inter', sans-serif" }}
+            style={{ fontFamily: "'Inter', sans-serif", cursor: 'text' }}
           />
           {errors.businessName && (
             <p className="mt-1 text-xs text-red-400/80">Please enter your business name</p>
@@ -225,7 +230,7 @@ function PreScreen({ businessName, setBusinessName, goals, setGoals, errors, onC
                 ? 'bg-red-500/5 border border-red-500/30 focus:border-red-400/50'
                 : 'bg-white/[0.03] border border-[#c9a84c]/15 focus:border-[#c9a84c]/40 focus:bg-white/[0.05]'
             }`}
-            style={{ fontFamily: "'Inter', sans-serif" }}
+            style={{ fontFamily: "'Inter', sans-serif", cursor: 'text' }}
           />
           {errors.goals && (
             <p className="mt-1 text-xs text-red-400/80">Please share what you're looking to achieve</p>
@@ -259,6 +264,7 @@ function PreScreen({ businessName, setBusinessName, goals, setGoals, errors, onC
             background: 'linear-gradient(135deg, #c9a84c 0%, #a8893d 100%)',
             color: '#0a0a0a',
             letterSpacing: '0.02em',
+            cursor: 'pointer',
           }}
           onMouseEnter={(e) => e.target.style.opacity = '0.9'}
           onMouseLeave={(e) => e.target.style.opacity = '1'}
