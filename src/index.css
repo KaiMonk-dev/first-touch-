@@ -708,10 +708,24 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
 }
 [data-theme="light"] .cta-breathe-gold { animation-name: ctaBreathGoldLight; }
 
-/* Live indicator dot — concierge-style availability pulse */
-@keyframes livePulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(201, 169, 110, 0); }
+/* Live indicator — nebula star with celestial color shift + trail */
+@keyframes nebulaShift {
+  0%, 100% {
+    background: radial-gradient(circle, #C9A96E 0%, #8B6EC7 40%, transparent 70%);
+    box-shadow: 0 0 4px rgba(201, 169, 110, 0.6), 0 0 8px rgba(139, 110, 199, 0.3);
+  }
+  33% {
+    background: radial-gradient(circle, #E8D5A8 0%, #5B8DEF 40%, transparent 70%);
+    box-shadow: 0 0 5px rgba(91, 141, 239, 0.5), 0 0 12px rgba(201, 169, 110, 0.2);
+  }
+  66% {
+    background: radial-gradient(circle, #C9A96E 0%, #A855F7 40%, transparent 70%);
+    box-shadow: 0 0 4px rgba(168, 85, 247, 0.4), 0 0 10px rgba(201, 169, 110, 0.3);
+  }
+}
+@keyframes starOrbit {
+  0% { transform: rotate(0deg) translateX(1px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(1px) rotate(-360deg); }
 }
 .live-dot {
   width: 6px;
@@ -722,9 +736,63 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   display: inline-block;
   flex-shrink: 0;
 }
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(201, 169, 110, 0); }
+}
+/* Nebula star — replaces basic dot on CTA buttons */
+.nebula-star {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.nebula-star::before {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: nebulaShift 6s ease-in-out infinite;
+}
+.nebula-star::after {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(201, 169, 110, 0.5);
+  animation: starOrbit 4s linear infinite;
+}
 [data-theme="light"] .live-dot { background: #B08A45; }
+[data-theme="light"] .nebula-star::before {
+  animation-name: nebulaShiftLight;
+}
+@keyframes nebulaShiftLight {
+  0%, 100% {
+    background: radial-gradient(circle, #B08A45 0%, #7C5BAD 40%, transparent 70%);
+    box-shadow: 0 0 3px rgba(176, 138, 69, 0.5), 0 0 6px rgba(124, 91, 173, 0.2);
+  }
+  33% {
+    background: radial-gradient(circle, #C9A96E 0%, #4A7AD9 40%, transparent 70%);
+    box-shadow: 0 0 4px rgba(74, 122, 217, 0.4);
+  }
+  66% {
+    background: radial-gradient(circle, #B08A45 0%, #9333EA 40%, transparent 70%);
+    box-shadow: 0 0 3px rgba(147, 51, 234, 0.3);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .live-dot { animation: none; }
+  .nebula-star::before {
+    animation: none;
+    background: radial-gradient(circle, #C9A96E 0%, #8B6EC7 40%, transparent 70%);
+    box-shadow: 0 0 4px rgba(201, 169, 110, 0.5);
+  }
+  .nebula-star::after { animation: none; opacity: 0; }
 }
 
 .tabular-nums {

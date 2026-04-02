@@ -224,7 +224,7 @@ function AlexLivePrompt() {
     <div className="max-w-lg mx-auto mt-14 p-8 md:p-10 rounded-2xl liquid-glass-strong liquid-shimmer text-center">
       {/* Live badge */}
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A96E]/10 mb-6">
-        <span className="live-dot" />
+        <span className="nebula-star" />
         <span className="text-[11px] font-medium text-[#C9A96E]/70 tracking-wider uppercase">Live right now</span>
       </div>
 
@@ -243,7 +243,7 @@ function AlexLivePrompt() {
           className="px-7 py-3.5 rounded-2xl liquid-glass text-white/80 font-medium text-[14px] hover:text-white hover:bg-white/[0.08] transition-colors flex items-center gap-2.5 cta-breathe-gold"
           style={btn.style}
         >
-          <span className="live-dot" />
+          <span className="nebula-star" />
           Talk to Alex Live
         </button>
       </div>

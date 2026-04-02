@@ -87,7 +87,7 @@ export function ExitIntent() {
               onClick={() => { close(); setTimeout(triggerGHLWidget, 600) }}
               className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full liquid-glass text-[#C9A96E]/60 text-[13px] font-light hover:text-[#C9A96E] transition-all"
             >
-              <span className="live-dot" style={{ width: 5, height: 5 }} />
+              <span className="nebula-star" />
               Talk to Alex first — zero commitment
             </button>
 

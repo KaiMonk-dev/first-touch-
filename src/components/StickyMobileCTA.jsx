@@ -29,7 +29,7 @@ export function StickyMobileCTA() {
           onClick={triggerGHLWidget}
           className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-full liquid-glass text-white/60 text-[13px] font-medium hover:text-white/80 transition-colors"
         >
-          <span className="live-dot" style={{ width: 5, height: 5 }} />
+          <span className="nebula-star" />
           Talk to Alex
         </button>
         <button

@@ -89,7 +89,7 @@ export function Hero() {
               className="px-8 py-4 rounded-2xl liquid-glass text-white/80 font-medium text-[15px] hover:text-white hover:bg-white/[0.08] transition-colors flex items-center gap-2.5 liquid-shimmer cta-breathe-gold"
               style={secondaryBtn.style}
             >
-              <span className="live-dot" />
+              <span className="nebula-star" />
               {variant.heroSecondaryCTA}
             </button>
           </div>

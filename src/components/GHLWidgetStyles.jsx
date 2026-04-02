@@ -114,6 +114,17 @@ const PREMIUM_STYLES = `
     transform: translateY(-1px) !important;
   }
 
+  /* Force dark text on ALL call button children (fixes gold-on-gold) */
+  .lc_text-widget--voice-start-call,
+  .lc_text-widget--voice-start-call * {
+    color: #0a0a0a !important;
+  }
+  .lc_text-widget--voice-start-call svg,
+  .lc_text-widget--voice-start-call svg * {
+    stroke: #0a0a0a !important;
+    fill: #0a0a0a !important;
+  }
+
   /* ── Agency Branding Footer ── */
   .lc_text-widget--agency-branding {
     background: #0a0908 !important;
@@ -129,26 +140,78 @@ const PREMIUM_STYLES = `
     color: rgba(201, 169, 110, 0.4) !important;
   }
 
-  /* ── Trigger Button (floating circle) ── */
+  /* Galaxy glow cycle for trigger button */
+  @keyframes galaxyGlow {
+    0%, 100% {
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(201, 169, 110, 0.2),
+        0 0 40px rgba(139, 110, 199, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    33% {
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(91, 141, 239, 0.2),
+        0 0 40px rgba(201, 169, 110, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    66% {
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(168, 85, 247, 0.2),
+        0 0 40px rgba(91, 141, 239, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  /* ── Trigger Button (floating circle) — Galaxy Glass ── */
   .lc_text-widget--bubble {
-    background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.25), rgba(10, 10, 10, 0.95)) !important;
-    border: 1px solid rgba(201, 169, 110, 0.2) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.5),
-      0 0 40px rgba(201, 169, 110, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    background: radial-gradient(circle at 30% 30%, rgba(201, 169, 110, 0.3), rgba(139, 110, 199, 0.08) 50%, rgba(10, 10, 10, 0.95)) !important;
+    border: 1.5px solid rgba(201, 169, 110, 0.3) !important;
+    backdrop-filter: blur(24px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+    animation: galaxyGlow 6s ease-in-out infinite !important;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
   .lc_text-widget--bubble:hover {
     transform: scale(1.08) !important;
+    border-color: rgba(201, 169, 110, 0.5) !important;
     box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.6),
-      0 0 60px rgba(201, 169, 110, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(201, 169, 110, 0.35) !important;
+      0 0 30px rgba(201, 169, 110, 0.3),
+      0 0 60px rgba(139, 110, 199, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  }
+
+  /* ── Starfield background for voice screens ── */
+  @keyframes starfieldTwinkle {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  .lc_text-widget--voice-initial-screen,
+  .lc_text-widget--voice-active-screen {
+    position: relative !important;
+  }
+
+  .lc_text-widget--voice-initial-screen::before,
+  .lc_text-widget--voice-active-screen::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background-image:
+      radial-gradient(1px 1px at 15% 25%, rgba(201, 169, 110, 0.18) 50%, transparent 100%),
+      radial-gradient(1px 1px at 55% 8%, rgba(139, 110, 199, 0.14) 50%, transparent 100%),
+      radial-gradient(1px 1px at 82% 65%, rgba(91, 141, 239, 0.12) 50%, transparent 100%),
+      radial-gradient(1px 1px at 38% 78%, rgba(201, 169, 110, 0.1) 50%, transparent 100%),
+      radial-gradient(1px 1px at 8% 55%, rgba(168, 85, 247, 0.1) 50%, transparent 100%),
+      radial-gradient(1px 1px at 70% 40%, rgba(232, 213, 168, 0.08) 50%, transparent 100%),
+      radial-gradient(1px 1px at 25% 90%, rgba(91, 141, 239, 0.06) 50%, transparent 100%) !important;
+    pointer-events: none !important;
+    animation: starfieldTwinkle 8s ease-in-out infinite alternate !important;
+    z-index: 0 !important;
   }
 
   /* ── In-call / Active State ── */
@@ -166,6 +229,14 @@ const PREMIUM_STYLES = `
       animation: none !important;
       background: linear-gradient(135deg, #B8965A, #C9A96E) !important;
       background-size: 100% 100% !important;
+    }
+    .lc_text-widget--bubble {
+      animation: none !important;
+    }
+    .lc_text-widget--voice-initial-screen::before,
+    .lc_text-widget--voice-active-screen::before {
+      animation: none !important;
+      opacity: 0.8 !important;
     }
   }
 `
