@@ -2,6 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import Player from '@vimeo/player'
 import { AnimatedSection } from './AnimatedSection'
 import { useBooking } from './BookingModal'
+import { useMagnetic } from '../hooks/useMagnetic'
+import { triggerGHLWidget } from '../utils/ghl'
+import { triggerStarBirth } from './ViewportEffects'
+import { playCtaChime } from '../hooks/useCtaSound'
 
 const capabilities = [
   {
@@ -73,6 +77,11 @@ export function MeetAlex() {
           <div className="max-w-3xl mx-auto">
             <VimeoPlayer />
           </div>
+        </AnimatedSection>
+
+        {/* Try Alex Live — curiosity prompt card */}
+        <AnimatedSection delay={250}>
+          <AlexLivePrompt />
         </AnimatedSection>
 
         {/* CTA */}
@@ -182,7 +191,7 @@ function VimeoPlayer() {
       />
 
       {ended && (
-        <div className="absolute inset-0 bg-black flex flex-col items-center justify-center">
+        <div className="absolute inset-0 bg-black flex flex-col items-center justify-center gap-1">
           <button
             onClick={replay}
             className="group flex flex-col items-center gap-4"
@@ -195,8 +204,53 @@ function VimeoPlayer() {
             </div>
             <span className="text-[11px] text-white/35 font-light">Watch again</span>
           </button>
+          <button
+            onClick={triggerGHLWidget}
+            className="text-[11px] text-[#C9A96E]/60 font-light hover:text-[#C9A96E] transition-colors flex items-center gap-1.5 mt-2"
+          >
+            <span className="live-dot" style={{ width: 5, height: 5 }} />
+            Now talk to her yourself
+          </button>
         </div>
       )}
+    </div>
+  )
+}
+
+function AlexLivePrompt() {
+  const btn = useMagnetic(0.25, 80)
+
+  return (
+    <div className="max-w-lg mx-auto mt-14 p-8 md:p-10 rounded-2xl liquid-glass-strong liquid-shimmer text-center">
+      {/* Live badge */}
+      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A96E]/10 mb-6">
+        <span className="live-dot" />
+        <span className="text-[11px] font-medium text-[#C9A96E]/70 tracking-wider uppercase">Live right now</span>
+      </div>
+
+      <h3 className="text-xl md:text-2xl font-bold tracking-[-0.02em] leading-tight mb-3">
+        <span className="text-white">Don't take our word for it.</span>
+      </h3>
+
+      <p className="text-[13px] text-white/45 font-light leading-relaxed mb-8 max-w-sm mx-auto">
+        Ask Alex about your business. She'll answer in under a second.
+      </p>
+
+      <div onMouseMove={btn.onMouseMove} onMouseLeave={btn.onMouseLeave} className="inline-block">
+        <button
+          ref={btn.ref}
+          onClick={() => { playCtaChime(); triggerStarBirth(); triggerGHLWidget() }}
+          className="px-7 py-3.5 rounded-2xl liquid-glass text-white/80 font-medium text-[14px] hover:text-white hover:bg-white/[0.08] transition-colors flex items-center gap-2.5 cta-breathe-gold"
+          style={btn.style}
+        >
+          <span className="live-dot" />
+          Talk to Alex Live
+        </button>
+      </div>
+
+      <p className="text-[10px] text-white/25 font-light mt-5 tracking-wide">
+        No signup. No email. Just ask.
+      </p>
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { useMagnetic } from '../hooks/useMagnetic'
 import { useVariant } from '../hooks/useVariant'
 import { triggerStarBirth } from './ViewportEffects'
 import { playCtaChime } from '../hooks/useCtaSound'
+import { triggerGHLWidget } from '../utils/ghl'
 
 export function Hero() {
   const booking = useBooking()
@@ -84,23 +85,23 @@ export function Hero() {
           <div onMouseMove={secondaryBtn.onMouseMove} onMouseLeave={secondaryBtn.onMouseLeave}>
             <button
               ref={secondaryBtn.ref}
-              onClick={() => {
-                const trigger = document.querySelector('chat-widget')?.shadowRoot?.querySelector('button')
-                  || document.querySelector('[class*="chat-widget"] button')
-                  || document.querySelector('iframe[src*="leadconnectorhq"]')?.parentElement?.querySelector('button')
-                if (trigger) trigger.click()
-              }}
+              onClick={triggerGHLWidget}
               className="px-8 py-4 rounded-2xl liquid-glass text-white/80 font-medium text-[15px] hover:text-white hover:bg-white/[0.08] transition-colors flex items-center gap-2.5 liquid-shimmer cta-breathe-gold"
               style={secondaryBtn.style}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z" />
-              </svg>
-              Speak with Alex
+              <span className="live-dot" />
+              {variant.heroSecondaryCTA}
             </button>
           </div>
         </div>
+
+        {/* Curiosity micro-copy */}
+        <p
+          className="text-[11px] text-white/30 font-light tracking-wide animate-fade-up"
+          style={{ animationDelay: '0.85s', animationFillMode: 'both' }}
+        >
+          She's live right now — ask her anything about your business.
+        </p>
 
         {/* Trust */}
         <p

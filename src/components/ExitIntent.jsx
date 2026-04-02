@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useBooking } from './BookingModal'
 import { useTheme } from '../hooks/useTheme'
+import { triggerGHLWidget } from '../utils/ghl'
 
 export function ExitIntent() {
   const [show, setShow] = useState(false)
@@ -82,11 +83,19 @@ export function ExitIntent() {
               Book a Strategy Call
             </button>
 
+            <button
+              onClick={() => { close(); setTimeout(triggerGHLWidget, 600) }}
+              className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full liquid-glass text-[#C9A96E]/60 text-[13px] font-light hover:text-[#C9A96E] transition-all"
+            >
+              <span className="live-dot" style={{ width: 5, height: 5 }} />
+              Talk to Alex first — zero commitment
+            </button>
+
             <a
               href="tel:+18584347041"
-              className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full liquid-glass text-white/50 text-[13px] font-light hover:text-white/80 transition-all"
+              className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-white/30 text-[12px] font-light hover:text-white/60 transition-all"
             >
-              Call Alex — 30 seconds
+              Or call directly — (858) 434-7041
             </a>
           </div>
         </div>

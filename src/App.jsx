@@ -24,6 +24,7 @@ import { StarRain } from './components/StarRain'
 import { DebugOverlay } from './components/DebugOverlay'
 import { GalaxyBackground } from './components/GalaxyBackground'
 import { EasterEggs } from './components/EasterEggs'
+import { GHLWidgetLabel } from './components/GHLWidgetLabel'
 import { SectionBurst } from './components/SectionBurst'
 import { ScrollReward } from './components/ScrollReward'
 import { LiquidGlassEffects } from './components/LiquidGlassEffects'
@@ -72,6 +73,7 @@ function App() {
           <PortalEcho />
           <StarRain targetId="pricing" />
           <DebugOverlay />
+          <GHLWidgetLabel />
           <EasterEggs />
           <ScrollReward />
         </div>

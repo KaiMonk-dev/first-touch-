@@ -9,16 +9,19 @@ const variants = {
     heroHeadline: ['Every Call Answered.', 'Every Lead Booked.'],
     heroSubtext: 'Alex picks up in under one second, books 3–5 extra jobs per week, and follows up while the moment is still warm.',
     heroCTA: 'Book a Free Strategy Call',
+    heroSecondaryCTA: 'Talk to Alex Live',
   },
   b: {
     heroHeadline: ['Your Customers Deserve', 'A Better First Impression.'],
     heroSubtext: 'First Touch answers every call instantly, books appointments live, and follows up in under 60 seconds — 24/7, 365 days a year.',
     heroCTA: 'See How It Works',
+    heroSecondaryCTA: 'Experience Alex Now',
   },
   c: {
     heroHeadline: ['Your Phone Rings.', 'Alex Answers.'],
     heroSubtext: 'A dedicated team member trained for your business, booking jobs in real-time, and making every caller feel like your most important customer.',
     heroCTA: 'Meet Alex',
+    heroSecondaryCTA: 'Ask Alex Anything',
   },
 }
 
