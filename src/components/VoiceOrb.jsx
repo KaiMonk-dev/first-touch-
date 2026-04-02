@@ -1,29 +1,13 @@
 /**
- * VoiceOrb — Premium floating "Talk to Alex" button.
- * Gold-accented pulsing orb that opens the First Touch Live voice widget.
+ * VoiceOrb — Premium floating "Talk to Alex" visual mask.
+ * Sits directly on top of the GHL Voice AI widget trigger.
+ * pointer-events: none lets clicks pass through to the real GHL button.
  */
 export function VoiceOrb() {
-  const handleClick = () => {
-    // Try to open the GHL Voice AI widget
-    const widgetButton = document.querySelector('[class*="chat-widget"] button')
-      || document.querySelector('.lc_text-widget--trigger')
-      || document.querySelector('[data-widget-id] button')
-    if (widgetButton) {
-      widgetButton.click()
-    } else {
-      // Fallback: direct call
-      window.location.href = 'tel:+18587326535'
-    }
-  }
-
   return (
     <div
       className="voice-orb"
-      onClick={handleClick}
-      role="button"
-      tabIndex={0}
-      aria-label="Talk to Alex"
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleClick() }}
+      aria-hidden="true"
     >
       <div className="voice-orb-button">
         <span className="voice-orb-ring" />

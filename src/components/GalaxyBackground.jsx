@@ -178,6 +178,8 @@ export function GalaxyBackground() {
     let weatherIntensity = 0
     let weatherTarget = 0.15
     let weatherTimer = 0
+    let lightGrainData = null
+    let frameCount = 0
 
     // Track cursor velocity — galaxy is "idle" when velocity is near zero
     let mouseVelocity = 0
@@ -220,6 +222,7 @@ export function GalaxyBackground() {
 
       const time = timestamp || 0
       const W = canvas.width, H = canvas.height
+      frameCount++
 
       // Report frame time to adaptive tier system
       if (lastFrameTime > 0) reportFrameTime(time - lastFrameTime)
@@ -235,69 +238,113 @@ export function GalaxyBackground() {
 
       ctx.clearRect(0, 0, W, H)
 
-      // ── LIGHT MODE: Ink wash background ──
+      // ── LIGHT MODE: Ink & Gold Zen Canvas ──
       const isLight = document.documentElement.getAttribute('data-theme') === 'light'
       if (isLight) {
-        // Subtle ink wash clouds — slow-drifting organic shapes
         const inkT = time * 0.0001
-        for (let i = 0; i < 5; i++) {
-          const cx = W * (0.15 + 0.7 * Math.sin(inkT * (0.3 + i * 0.07) + i * 1.8))
-          const cy = H * (0.2 + 0.6 * Math.cos(inkT * (0.2 + i * 0.05) + i * 2.4))
-          const r = 120 + 80 * Math.sin(inkT * 0.5 + i * 1.2)
+
+        // ── 1. Watercolor wash clouds — large, slow, organic ink washes ──
+        for (let i = 0; i < 7; i++) {
+          const cx = W * (0.1 + 0.8 * Math.sin(inkT * (0.2 + i * 0.05) + i * 1.8))
+          const cy = H * (0.1 + 0.8 * Math.cos(inkT * (0.15 + i * 0.04) + i * 2.4))
+          const r = 150 + 100 * Math.sin(inkT * 0.4 + i * 0.9)
+          const intensity = 0.008 + 0.006 * Math.sin(inkT * 0.3 + i * 1.5)
           const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
-          grad.addColorStop(0, `rgba(30, 25, 20, 0.012)`)
-          grad.addColorStop(0.6, `rgba(30, 25, 20, 0.005)`)
+          // Alternate ink and gold washes
+          if (i % 3 === 0) {
+            grad.addColorStop(0, `rgba(201, 169, 110, ${intensity * 1.5})`)
+            grad.addColorStop(0.5, `rgba(201, 169, 110, ${intensity * 0.4})`)
+          } else {
+            grad.addColorStop(0, `rgba(30, 25, 20, ${intensity})`)
+            grad.addColorStop(0.5, `rgba(30, 25, 20, ${intensity * 0.3})`)
+          }
           grad.addColorStop(1, 'transparent')
           ctx.fillStyle = grad
           ctx.fillRect(cx - r, cy - r, r * 2, r * 2)
         }
 
-        // Floating ink motes — tiny dots that drift like dust in water
-        if (!this._inkMotes) {
-          // won't work with 'this' in a closure — use a stable ref
-        }
-        // Use stars array as motes in light mode (reuse existing data, minimal overhead)
+        // ── 2. Floating ink motes — reuse star data as zen particles ──
         if (stars && stars.length > 0) {
-          const moteCount = Math.min(80, stars.length)
+          const moteCount = Math.min(100, stars.length)
           for (let i = 0; i < moteCount; i++) {
             const s = stars[i]
-            const screenY = s.y - scrollY * (0.3 + (i % 3) * 0.15)
-            if (screenY < -20 || screenY > H + 20) continue
-            const drift = Math.sin(time * 0.0008 + i * 0.7) * 15
-            const mx = s.x + drift
-            const pulse = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(time * s.tw1 + s.phase))
-            const r = s.r * 0.6 * pulse
-            const isGold = i % 12 === 0
+            const parallax = 0.2 + (i % 4) * 0.1
+            const screenY = s.y - scrollY * parallax
+            if (screenY < -30 || screenY > H + 30) continue
+
+            // Organic drift — each mote on its own path
+            const driftX = Math.sin(time * 0.0006 + i * 0.7) * 20 + Math.cos(time * 0.0003 + i * 1.3) * 8
+            const driftY = Math.cos(time * 0.0005 + i * 0.9) * 6
+            const mx = s.x + driftX
+            const my = screenY + driftY
+            const pulse = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(time * s.tw1 + s.phase))
+            const r = s.r * 0.5 * pulse
+
+            const isGold = i % 8 === 0
+            const isLargeInk = i % 15 === 0
+
             if (isGold) {
+              // Gold leaf particle — shimmering fleck
+              const shimmer = 0.5 + 0.5 * Math.sin(time * 0.003 + i * 2.1)
               ctx.beginPath()
-              ctx.arc(mx, screenY, r * 1.2, 0, Math.PI * 2)
-              ctx.fillStyle = `rgba(201, 169, 110, ${0.12 * pulse})`
+              ctx.arc(mx, my, r * 1.5, 0, Math.PI * 2)
+              ctx.fillStyle = `rgba(201, 169, 110, ${0.15 * pulse * shimmer})`
               ctx.fill()
-              // Gold glow
-              const gGrad = ctx.createRadialGradient(mx, screenY, 0, mx, screenY, r * 4)
-              gGrad.addColorStop(0, `rgba(201, 169, 110, ${0.04 * pulse})`)
+              // Warm glow
+              const gGrad = ctx.createRadialGradient(mx, my, 0, mx, my, r * 5)
+              gGrad.addColorStop(0, `rgba(201, 169, 110, ${0.05 * pulse * shimmer})`)
               gGrad.addColorStop(1, 'transparent')
               ctx.fillStyle = gGrad
-              ctx.fillRect(mx - r * 4, screenY - r * 4, r * 8, r * 8)
-            } else {
+              ctx.fillRect(mx - r * 5, my - r * 5, r * 10, r * 10)
+            } else if (isLargeInk) {
+              // Larger ink blot — watercolor spot
               ctx.beginPath()
-              ctx.arc(mx, screenY, r, 0, Math.PI * 2)
-              ctx.fillStyle = `rgba(30, 25, 20, ${0.08 * pulse})`
+              ctx.arc(mx, my, r * 2, 0, Math.PI * 2)
+              ctx.fillStyle = `rgba(30, 25, 20, ${0.04 * pulse})`
+              ctx.fill()
+              const bGrad = ctx.createRadialGradient(mx, my, r, mx, my, r * 4)
+              bGrad.addColorStop(0, `rgba(30, 25, 20, ${0.015 * pulse})`)
+              bGrad.addColorStop(1, 'transparent')
+              ctx.fillStyle = bGrad
+              ctx.fillRect(mx - r * 4, my - r * 4, r * 8, r * 8)
+            } else {
+              // Small ink mote
+              ctx.beginPath()
+              ctx.arc(mx, my, r, 0, Math.PI * 2)
+              ctx.fillStyle = `rgba(30, 25, 20, ${0.06 * pulse})`
               ctx.fill()
             }
           }
         }
 
-        // Subtle gold accent wash — one drifting warm spot
-        const gx = W * (0.4 + 0.2 * Math.sin(inkT * 0.4))
-        const gy = H * (0.3 + 0.2 * Math.cos(inkT * 0.3))
-        const gr = 200 + 50 * Math.sin(inkT * 0.6)
-        const goldGrad = ctx.createRadialGradient(gx, gy, 0, gx, gy, gr)
-        goldGrad.addColorStop(0, `rgba(201, 169, 110, 0.015)`)
-        goldGrad.addColorStop(0.5, `rgba(201, 169, 110, 0.005)`)
-        goldGrad.addColorStop(1, 'transparent')
-        ctx.fillStyle = goldGrad
-        ctx.fillRect(gx - gr, gy - gr, gr * 2, gr * 2)
+        // ── 3. Gold accent washes — two drifting warm zones ──
+        for (let g = 0; g < 2; g++) {
+          const gx = W * (0.3 + 0.4 * Math.sin(inkT * (0.3 + g * 0.2) + g * 3))
+          const gy = H * (0.25 + 0.5 * Math.cos(inkT * (0.25 + g * 0.15) + g * 2))
+          const gr = 180 + 70 * Math.sin(inkT * 0.5 + g * 1.8)
+          const gGrad = ctx.createRadialGradient(gx, gy, 0, gx, gy, gr)
+          gGrad.addColorStop(0, `rgba(201, 169, 110, 0.018)`)
+          gGrad.addColorStop(0.4, `rgba(201, 169, 110, 0.008)`)
+          gGrad.addColorStop(1, 'transparent')
+          ctx.fillStyle = gGrad
+          ctx.fillRect(gx - gr, gy - gr, gr * 2, gr * 2)
+        }
+
+        // ── 4. Subtle paper grain — faint noise texture (drawn every ~30 frames for perf) ──
+        if (frameCount % 30 === 0 || !lightGrainData) {
+          lightGrainData = ctx.createImageData(W, H)
+          const d = lightGrainData.data
+          for (let p = 0; p < d.length; p += 16) { // skip pixels for performance
+            const v = Math.random() * 8
+            d[p] = 30; d[p + 1] = 25; d[p + 2] = 20
+            d[p + 3] = v
+          }
+        }
+        if (lightGrainData) {
+          ctx.globalAlpha = 0.3
+          ctx.putImageData(lightGrainData, 0, 0)
+          ctx.globalAlpha = 1
+        }
 
         animId = requestAnimationFrame(draw)
         return

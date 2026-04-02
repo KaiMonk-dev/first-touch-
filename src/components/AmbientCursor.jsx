@@ -182,91 +182,135 @@ export function AmbientCursor() {
       // ── LIGHT MODE: Ink brush cursor ──
       const isLight = document.documentElement.getAttribute('data-theme') === 'light'
       if (isLight) {
-        // Smooth ink position with organic inertia
-        const dx = target.current.x - pos.current.x
-        const dy = target.current.y - pos.current.y
-        pos.current.x += dx * 0.18
-        pos.current.y += dy * 0.18
-        const ix = pos.current.x, iy = pos.current.y
+        // Use raw target for tip (responsive), smoothed pos for ambient effects
+        const ix = sx, iy = sy
+        const dx = sx - pos.current.x
+        const dy = sy - pos.current.y
+        pos.current.x += dx * 0.12
+        pos.current.y += dy * 0.12
+
+        // Detect interactive elements (same as dark mode, throttled)
+        if (frameCount % 20 === 0) {
+          const hoverEl = document.elementFromPoint(ix, iy)
+          isOverInteractive.current = !!(hoverEl && (hoverEl.closest('button') || hoverEl.closest('a[href]') || hoverEl.closest('.liquid-glass')))
+        }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-        // Spawn ink drops on movement
+        // ── Calligraphy trail — speed = brush pressure ──
+        const brushSpeed = Math.min(smoothVel.current, 30)
         const inkDist = Math.sqrt((ix - lastInkX) ** 2 + (iy - lastInkY) ** 2)
-        if (inkDist > 8 && inkDrops.length < 40) {
+        const spawnThreshold = brushSpeed > 15 ? 4 : brushSpeed > 5 ? 6 : 10
+
+        if (inkDist > spawnThreshold && inkDrops.length < 60) {
+          // Calligraphy: stroke width varies with speed
+          const pressure = Math.min(1, brushSpeed / 20)
+          const baseR = 1 + pressure * 3
           inkDrops.push({
-            x: ix + (Math.random() - 0.5) * 3,
-            y: iy + (Math.random() - 0.5) * 3,
-            r: 1.5 + Math.random() * 2,
+            x: ix + (Math.random() - 0.5) * (2 + pressure * 4),
+            y: iy + (Math.random() - 0.5) * (2 + pressure * 4),
+            r: baseR,
             life: 1,
             spread: 0,
-            gold: Math.random() > 0.85, // occasional gold glint
+            gold: Math.random() > 0.88,
+            pressure,
           })
+          // Fast movement spawns extra splatter drops
+          if (brushSpeed > 12 && Math.random() > 0.5) {
+            const angle = Math.atan2(iy - lastInkY, ix - lastInkX) + (Math.random() - 0.5) * 1.5
+            const dist = 4 + Math.random() * 8
+            inkDrops.push({
+              x: ix + Math.cos(angle) * dist,
+              y: iy + Math.sin(angle) * dist,
+              r: 0.5 + Math.random() * 1.5,
+              life: 0.8,
+              spread: 0,
+              gold: Math.random() > 0.7,
+              pressure: 0.3,
+            })
+          }
           lastInkX = ix; lastInkY = iy
         }
 
-        // Draw ink trail drops
+        // Draw ink trail drops — calligraphic bleed
         for (let i = inkDrops.length - 1; i >= 0; i--) {
           const d = inkDrops[i]
-          d.life -= 0.012
-          d.spread += 0.08 * d.life
+          d.life -= 0.014
+          d.spread += 0.06 * d.life
           if (d.life <= 0) { inkDrops.splice(i, 1); continue }
-          const dr = d.r + d.spread * 0.5
-          const alpha = d.life * 0.25
+          const dr = d.r + d.spread * 0.4
+          const alpha = d.life * 0.3
           if (d.gold) {
             ctx.beginPath()
-            ctx.arc(d.x, d.y, dr * 0.8, 0, Math.PI * 2)
-            ctx.fillStyle = `rgba(201, 169, 110, ${alpha * 0.6})`
+            ctx.arc(d.x, d.y, dr, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(201, 169, 110, ${alpha * 0.5})`
             ctx.fill()
+            // Gold shimmer halo
+            const gGrad = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, dr * 3)
+            gGrad.addColorStop(0, `rgba(201, 169, 110, ${alpha * 0.12})`)
+            gGrad.addColorStop(1, 'transparent')
+            ctx.fillStyle = gGrad
+            ctx.fillRect(d.x - dr * 3, d.y - dr * 3, dr * 6, dr * 6)
           } else {
+            // Watercolor edge — slightly irregular
             ctx.beginPath()
             ctx.arc(d.x, d.y, dr, 0, Math.PI * 2)
             ctx.fillStyle = `rgba(30, 25, 20, ${alpha})`
             ctx.fill()
-            // Soft bleed edge
-            const grad = ctx.createRadialGradient(d.x, d.y, dr * 0.5, d.x, d.y, dr * 2)
-            grad.addColorStop(0, `rgba(30, 25, 20, ${alpha * 0.15})`)
-            grad.addColorStop(1, 'transparent')
-            ctx.fillStyle = grad
-            ctx.fillRect(d.x - dr * 2, d.y - dr * 2, dr * 4, dr * 4)
+            // Bleed ring
+            const bGrad = ctx.createRadialGradient(d.x, d.y, dr * 0.6, d.x, d.y, dr * 2.5)
+            bGrad.addColorStop(0, `rgba(30, 25, 20, ${alpha * 0.1})`)
+            bGrad.addColorStop(1, 'transparent')
+            ctx.fillStyle = bGrad
+            ctx.fillRect(d.x - dr * 2.5, d.y - dr * 2.5, dr * 5, dr * 5)
           }
         }
 
-        // Draw ink click blooms
+        // ── Ink click blooms ──
         for (let i = inkBlooms.length - 1; i >= 0; i--) {
           const b = inkBlooms[i]
-          b.life -= 0.015
-          b.radius += 1.5 * b.life
+          b.life -= 0.013
+          b.radius += 2 * b.life
           if (b.life <= 0) { inkBlooms.splice(i, 1); continue }
-          // Organic bloom — multiple overlapping circles
-          for (let j = 0; j < 5; j++) {
-            const ox = b.x + Math.cos(j * 1.26 + b.seed) * b.radius * 0.3
-            const oy = b.y + Math.sin(j * 1.26 + b.seed) * b.radius * 0.3
-            const br = b.radius * (0.4 + j * 0.12)
+          // Organic bloom — overlapping circles with ink bleed
+          for (let j = 0; j < 6; j++) {
+            const ox = b.x + Math.cos(j * 1.05 + b.seed) * b.radius * 0.35
+            const oy = b.y + Math.sin(j * 1.05 + b.seed) * b.radius * 0.35
+            const br = b.radius * (0.3 + j * 0.1)
             ctx.beginPath()
             ctx.arc(ox, oy, br, 0, Math.PI * 2)
-            ctx.fillStyle = `rgba(30, 25, 20, ${b.life * 0.06})`
+            ctx.fillStyle = `rgba(30, 25, 20, ${b.life * 0.05})`
             ctx.fill()
           }
-          // Gold center flash
-          if (b.life > 0.7) {
+          // Gold ink splash center
+          if (b.life > 0.6) {
+            const goldAlpha = (b.life - 0.6) * 0.8
             ctx.beginPath()
-            ctx.arc(b.x, b.y, b.radius * 0.15, 0, Math.PI * 2)
-            ctx.fillStyle = `rgba(201, 169, 110, ${(b.life - 0.7) * 0.5})`
+            ctx.arc(b.x, b.y, b.radius * 0.2, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(201, 169, 110, ${goldAlpha})`
             ctx.fill()
+            // Gold ring
+            ctx.beginPath()
+            ctx.arc(b.x, b.y, b.radius * 0.6, 0, Math.PI * 2)
+            ctx.strokeStyle = `rgba(201, 169, 110, ${goldAlpha * 0.3})`
+            ctx.lineWidth = 0.8
+            ctx.stroke()
           }
         }
 
-        // Ink brush tip — the main cursor
+        // ── Ink brush tip — the main cursor (drawn at raw position for responsiveness) ──
         const isHover = isOverInteractive.current
-        const tipSize = isHover ? 5 : 3.5
-        const pulse = 1 + Math.sin(coronaPulse.current * 1.5) * 0.08
+        const pulse = 1 + Math.sin(coronaPulse.current * 1.5) * 0.06
 
-        // Soft ink wash halo
-        const haloR = 20 * pulse
+        // Hover state: larger, gold-tinted
+        const tipSize = isHover ? 6 : 3.5
+        const hoverGold = isHover ? 0.15 : 0
+
+        // Ambient ink wash around cursor
+        const haloR = (isHover ? 30 : 22) * pulse
         const hGrad = ctx.createRadialGradient(ix, iy, 0, ix, iy, haloR)
-        hGrad.addColorStop(0, `rgba(30, 25, 20, 0.06)`)
-        hGrad.addColorStop(0.5, `rgba(30, 25, 20, 0.02)`)
+        hGrad.addColorStop(0, `rgba(30, 25, 20, ${0.05 + hoverGold})`)
+        hGrad.addColorStop(0.4, `rgba(201, 169, 110, ${0.01 + hoverGold * 0.3})`)
         hGrad.addColorStop(1, 'transparent')
         ctx.fillStyle = hGrad
         ctx.fillRect(ix - haloR, iy - haloR, haloR * 2, haloR * 2)
@@ -274,14 +318,28 @@ export function AmbientCursor() {
         // Core ink dot
         ctx.beginPath()
         ctx.arc(ix, iy, tipSize * pulse, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(30, 25, 20, 0.7)'
+        ctx.fillStyle = isHover ? 'rgba(30, 25, 20, 0.85)' : 'rgba(30, 25, 20, 0.7)'
         ctx.fill()
 
         // Gold inner glint
+        const glintAlpha = isHover ? 0.6 : 0.3 + Math.sin(coronaPulse.current * 2) * 0.1
         ctx.beginPath()
-        ctx.arc(ix - 0.5, iy - 0.5, 1.2, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(201, 169, 110, ${0.3 + Math.sin(coronaPulse.current * 2) * 0.1})`
+        ctx.arc(ix - 0.5, iy - 0.5, isHover ? 1.8 : 1.2, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(201, 169, 110, ${glintAlpha})`
         ctx.fill()
+
+        // Crosshair whiskers on hover
+        if (isHover) {
+          ctx.globalAlpha = 0.2
+          ctx.strokeStyle = 'rgba(201, 169, 110, 1)'
+          ctx.lineWidth = 0.5
+          const wLen = 8 * pulse
+          ctx.beginPath(); ctx.moveTo(ix - wLen, iy); ctx.lineTo(ix - tipSize * pulse - 2, iy); ctx.stroke()
+          ctx.beginPath(); ctx.moveTo(ix + tipSize * pulse + 2, iy); ctx.lineTo(ix + wLen, iy); ctx.stroke()
+          ctx.beginPath(); ctx.moveTo(ix, iy - wLen); ctx.lineTo(ix, iy - tipSize * pulse - 2); ctx.stroke()
+          ctx.beginPath(); ctx.moveTo(ix, iy + tipSize * pulse + 2); ctx.lineTo(ix, iy + wLen); ctx.stroke()
+          ctx.globalAlpha = 1
+        }
 
         prevX = sx; prevY = sy
         animId = requestAnimationFrame(animate)
