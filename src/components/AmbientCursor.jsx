@@ -89,6 +89,31 @@ export function AmbientCursor() {
     }
 
     const onClick = (e) => {
+      // Light mode: ink bloom on click
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+      if (isLight) {
+        inkBlooms.push({
+          x: e.clientX, y: e.clientY,
+          radius: 0, life: 1,
+          seed: Math.random() * Math.PI * 2,
+        })
+        if (inkBlooms.length > 8) inkBlooms.splice(0, 3)
+        // Also spawn a burst of ink drops around click
+        for (let i = 0; i < 6; i++) {
+          const angle = (i / 6) * Math.PI * 2 + Math.random() * 0.5
+          const dist = 5 + Math.random() * 12
+          inkDrops.push({
+            x: e.clientX + Math.cos(angle) * dist,
+            y: e.clientY + Math.sin(angle) * dist,
+            r: 1.5 + Math.random() * 2.5,
+            life: 1,
+            spread: 0,
+            gold: Math.random() > 0.6,
+          })
+        }
+        return
+      }
+
       const config = getTierConfig()
       const pm = getParticleMultiplier()
 
@@ -140,6 +165,11 @@ export function AmbientCursor() {
     let driftX = 0, driftY = 0
     let frameCount = 0
 
+    // ── Ink cursor state (light mode) ──
+    const inkDrops = []
+    const inkBlooms = []
+    let lastInkX = -300, lastInkY = -300
+
     const animate = () => {
       frameCount++
       coronaPulse.current += 0.03
@@ -148,6 +178,115 @@ export function AmbientCursor() {
       let sy = target.current.y
       const speed = Math.sqrt((sx - prevX) ** 2 + (sy - prevY) ** 2)
       smoothVel.current += (speed - smoothVel.current) * 0.1
+
+      // ── LIGHT MODE: Ink brush cursor ──
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+      if (isLight) {
+        // Smooth ink position with organic inertia
+        const dx = target.current.x - pos.current.x
+        const dy = target.current.y - pos.current.y
+        pos.current.x += dx * 0.18
+        pos.current.y += dy * 0.18
+        const ix = pos.current.x, iy = pos.current.y
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        // Spawn ink drops on movement
+        const inkDist = Math.sqrt((ix - lastInkX) ** 2 + (iy - lastInkY) ** 2)
+        if (inkDist > 8 && inkDrops.length < 40) {
+          inkDrops.push({
+            x: ix + (Math.random() - 0.5) * 3,
+            y: iy + (Math.random() - 0.5) * 3,
+            r: 1.5 + Math.random() * 2,
+            life: 1,
+            spread: 0,
+            gold: Math.random() > 0.85, // occasional gold glint
+          })
+          lastInkX = ix; lastInkY = iy
+        }
+
+        // Draw ink trail drops
+        for (let i = inkDrops.length - 1; i >= 0; i--) {
+          const d = inkDrops[i]
+          d.life -= 0.012
+          d.spread += 0.08 * d.life
+          if (d.life <= 0) { inkDrops.splice(i, 1); continue }
+          const dr = d.r + d.spread * 0.5
+          const alpha = d.life * 0.25
+          if (d.gold) {
+            ctx.beginPath()
+            ctx.arc(d.x, d.y, dr * 0.8, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(201, 169, 110, ${alpha * 0.6})`
+            ctx.fill()
+          } else {
+            ctx.beginPath()
+            ctx.arc(d.x, d.y, dr, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(30, 25, 20, ${alpha})`
+            ctx.fill()
+            // Soft bleed edge
+            const grad = ctx.createRadialGradient(d.x, d.y, dr * 0.5, d.x, d.y, dr * 2)
+            grad.addColorStop(0, `rgba(30, 25, 20, ${alpha * 0.15})`)
+            grad.addColorStop(1, 'transparent')
+            ctx.fillStyle = grad
+            ctx.fillRect(d.x - dr * 2, d.y - dr * 2, dr * 4, dr * 4)
+          }
+        }
+
+        // Draw ink click blooms
+        for (let i = inkBlooms.length - 1; i >= 0; i--) {
+          const b = inkBlooms[i]
+          b.life -= 0.015
+          b.radius += 1.5 * b.life
+          if (b.life <= 0) { inkBlooms.splice(i, 1); continue }
+          // Organic bloom — multiple overlapping circles
+          for (let j = 0; j < 5; j++) {
+            const ox = b.x + Math.cos(j * 1.26 + b.seed) * b.radius * 0.3
+            const oy = b.y + Math.sin(j * 1.26 + b.seed) * b.radius * 0.3
+            const br = b.radius * (0.4 + j * 0.12)
+            ctx.beginPath()
+            ctx.arc(ox, oy, br, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(30, 25, 20, ${b.life * 0.06})`
+            ctx.fill()
+          }
+          // Gold center flash
+          if (b.life > 0.7) {
+            ctx.beginPath()
+            ctx.arc(b.x, b.y, b.radius * 0.15, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(201, 169, 110, ${(b.life - 0.7) * 0.5})`
+            ctx.fill()
+          }
+        }
+
+        // Ink brush tip — the main cursor
+        const isHover = isOverInteractive.current
+        const tipSize = isHover ? 5 : 3.5
+        const pulse = 1 + Math.sin(coronaPulse.current * 1.5) * 0.08
+
+        // Soft ink wash halo
+        const haloR = 20 * pulse
+        const hGrad = ctx.createRadialGradient(ix, iy, 0, ix, iy, haloR)
+        hGrad.addColorStop(0, `rgba(30, 25, 20, 0.06)`)
+        hGrad.addColorStop(0.5, `rgba(30, 25, 20, 0.02)`)
+        hGrad.addColorStop(1, 'transparent')
+        ctx.fillStyle = hGrad
+        ctx.fillRect(ix - haloR, iy - haloR, haloR * 2, haloR * 2)
+
+        // Core ink dot
+        ctx.beginPath()
+        ctx.arc(ix, iy, tipSize * pulse, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(30, 25, 20, 0.7)'
+        ctx.fill()
+
+        // Gold inner glint
+        ctx.beginPath()
+        ctx.arc(ix - 0.5, iy - 0.5, 1.2, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(201, 169, 110, ${0.3 + Math.sin(coronaPulse.current * 2) * 0.1})`
+        ctx.fill()
+
+        prevX = sx; prevY = sy
+        animId = requestAnimationFrame(animate)
+        return // skip dark mode rendering
+      }
 
       // CTA gravity drift
       if (speed < 1) idleFrames++

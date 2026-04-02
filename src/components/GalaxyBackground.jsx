@@ -235,6 +235,74 @@ export function GalaxyBackground() {
 
       ctx.clearRect(0, 0, W, H)
 
+      // ── LIGHT MODE: Ink wash background ──
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+      if (isLight) {
+        // Subtle ink wash clouds — slow-drifting organic shapes
+        const inkT = time * 0.0001
+        for (let i = 0; i < 5; i++) {
+          const cx = W * (0.15 + 0.7 * Math.sin(inkT * (0.3 + i * 0.07) + i * 1.8))
+          const cy = H * (0.2 + 0.6 * Math.cos(inkT * (0.2 + i * 0.05) + i * 2.4))
+          const r = 120 + 80 * Math.sin(inkT * 0.5 + i * 1.2)
+          const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
+          grad.addColorStop(0, `rgba(30, 25, 20, 0.012)`)
+          grad.addColorStop(0.6, `rgba(30, 25, 20, 0.005)`)
+          grad.addColorStop(1, 'transparent')
+          ctx.fillStyle = grad
+          ctx.fillRect(cx - r, cy - r, r * 2, r * 2)
+        }
+
+        // Floating ink motes — tiny dots that drift like dust in water
+        if (!this._inkMotes) {
+          // won't work with 'this' in a closure — use a stable ref
+        }
+        // Use stars array as motes in light mode (reuse existing data, minimal overhead)
+        if (stars && stars.length > 0) {
+          const moteCount = Math.min(80, stars.length)
+          for (let i = 0; i < moteCount; i++) {
+            const s = stars[i]
+            const screenY = s.y - scrollY * (0.3 + (i % 3) * 0.15)
+            if (screenY < -20 || screenY > H + 20) continue
+            const drift = Math.sin(time * 0.0008 + i * 0.7) * 15
+            const mx = s.x + drift
+            const pulse = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(time * s.tw1 + s.phase))
+            const r = s.r * 0.6 * pulse
+            const isGold = i % 12 === 0
+            if (isGold) {
+              ctx.beginPath()
+              ctx.arc(mx, screenY, r * 1.2, 0, Math.PI * 2)
+              ctx.fillStyle = `rgba(201, 169, 110, ${0.12 * pulse})`
+              ctx.fill()
+              // Gold glow
+              const gGrad = ctx.createRadialGradient(mx, screenY, 0, mx, screenY, r * 4)
+              gGrad.addColorStop(0, `rgba(201, 169, 110, ${0.04 * pulse})`)
+              gGrad.addColorStop(1, 'transparent')
+              ctx.fillStyle = gGrad
+              ctx.fillRect(mx - r * 4, screenY - r * 4, r * 8, r * 8)
+            } else {
+              ctx.beginPath()
+              ctx.arc(mx, screenY, r, 0, Math.PI * 2)
+              ctx.fillStyle = `rgba(30, 25, 20, ${0.08 * pulse})`
+              ctx.fill()
+            }
+          }
+        }
+
+        // Subtle gold accent wash — one drifting warm spot
+        const gx = W * (0.4 + 0.2 * Math.sin(inkT * 0.4))
+        const gy = H * (0.3 + 0.2 * Math.cos(inkT * 0.3))
+        const gr = 200 + 50 * Math.sin(inkT * 0.6)
+        const goldGrad = ctx.createRadialGradient(gx, gy, 0, gx, gy, gr)
+        goldGrad.addColorStop(0, `rgba(201, 169, 110, 0.015)`)
+        goldGrad.addColorStop(0.5, `rgba(201, 169, 110, 0.005)`)
+        goldGrad.addColorStop(1, 'transparent')
+        ctx.fillStyle = goldGrad
+        ctx.fillRect(gx - gr, gy - gr, gr * 2, gr * 2)
+
+        animId = requestAnimationFrame(draw)
+        return
+      }
+
       // Post-portal arrival settling
       if (arrivalBoost > 1.005) arrivalBoost *= 0.9995
       else arrivalBoost = 1

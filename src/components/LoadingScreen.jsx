@@ -19,9 +19,12 @@ export function LoadingScreen() {
   }, [])
 
   useEffect(() => {
-    // Returning visitors get to 'ready' faster but still must click to enter
-    const delay = isReturn.current ? 200 : 700
-    const t = setTimeout(() => setPhase('ready'), delay)
+    if (isReturn.current) {
+      // Returning visitors skip the portal entirely
+      setRemoved(true)
+      return
+    }
+    const t = setTimeout(() => setPhase('ready'), 700)
     return () => clearTimeout(t)
   }, [])
 

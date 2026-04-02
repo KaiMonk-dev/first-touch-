@@ -96,11 +96,23 @@ function VimeoPlayer() {
   const playerRef = useRef(null)
   const [ended, setEnded] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [inView, setInView] = useState(false)
   const durationRef = useRef(0)
   const cutoffTriggered = useRef(false)
 
+  // Lazy-load: only init Vimeo when section scrolls into view
   useEffect(() => {
-    if (!containerRef.current) return
+    const el = containerRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setInView(true); obs.disconnect() }
+    }, { rootMargin: '200px' })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!inView || !containerRef.current) return
 
     const player = new Player(containerRef.current, {
       id: 1156355064,
@@ -138,7 +150,7 @@ function VimeoPlayer() {
       clearInterval(pollInterval)
       player.destroy()
     }
-  }, [])
+  }, [inView])
 
   const replay = () => {
     if (playerRef.current) {
