@@ -169,6 +169,9 @@ export function AmbientCursor() {
     const inkDrops = []
     const inkBlooms = []
     let lastInkX = -300, lastInkY = -300
+    let inkIdleFrames = 0
+    let inkPoolRadius = 0
+    let inkPoolActive = false
 
     const animate = () => {
       frameCount++
@@ -339,6 +342,41 @@ export function AmbientCursor() {
           ctx.beginPath(); ctx.moveTo(ix, iy - wLen); ctx.lineTo(ix, iy - tipSize * pulse - 2); ctx.stroke()
           ctx.beginPath(); ctx.moveTo(ix, iy + tipSize * pulse + 2); ctx.lineTo(ix, iy + wLen); ctx.stroke()
           ctx.globalAlpha = 1
+        }
+
+        // ── 8. Idle ink pool — cursor still for 3+ seconds, ink slowly bleeds outward ──
+        if (speed < 0.5) {
+          inkIdleFrames++
+          if (inkIdleFrames > 180) { // ~3 seconds at 60fps
+            inkPoolActive = true
+            inkPoolRadius += 0.15 * Math.max(0, 1 - inkPoolRadius / 60)
+            // Growing ink pool
+            const poolAlpha = Math.min(0.08, (inkIdleFrames - 180) * 0.0003)
+            const pGrad = ctx.createRadialGradient(ix, iy, tipSize * pulse, ix, iy, inkPoolRadius)
+            pGrad.addColorStop(0, `rgba(30, 25, 20, ${poolAlpha})`)
+            pGrad.addColorStop(0.5, `rgba(30, 25, 20, ${poolAlpha * 0.4})`)
+            pGrad.addColorStop(0.8, `rgba(201, 169, 110, ${poolAlpha * 0.3})`)
+            pGrad.addColorStop(1, 'transparent')
+            ctx.fillStyle = pGrad
+            ctx.fillRect(ix - inkPoolRadius, iy - inkPoolRadius, inkPoolRadius * 2, inkPoolRadius * 2)
+            // Organic bleed edges
+            for (let p = 0; p < 4; p++) {
+              const angle = coronaPulse.current * 0.3 + p * Math.PI / 2
+              const bx = ix + Math.cos(angle) * inkPoolRadius * 0.7
+              const by = iy + Math.sin(angle) * inkPoolRadius * 0.7
+              const br = 3 + Math.sin(coronaPulse.current + p) * 1.5
+              ctx.beginPath()
+              ctx.arc(bx, by, br, 0, Math.PI * 2)
+              ctx.fillStyle = `rgba(30, 25, 20, ${poolAlpha * 0.6})`
+              ctx.fill()
+            }
+          }
+        } else {
+          if (inkPoolActive) {
+            inkPoolRadius *= 0.92 // fade out when moving again
+            if (inkPoolRadius < 1) { inkPoolActive = false; inkPoolRadius = 0 }
+          }
+          inkIdleFrames = 0
         }
 
         prevX = sx; prevY = sy

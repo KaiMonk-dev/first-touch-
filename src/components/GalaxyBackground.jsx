@@ -330,6 +330,40 @@ export function GalaxyBackground() {
           ctx.fillRect(gx - gr, gy - gr, gr * 2, gr * 2)
         }
 
+        // ── 5. Gold thread tethers — thin gold lines between nearby gold motes ──
+        if (stars && stars.length > 0) {
+          const goldMotes = []
+          const moteCount = Math.min(100, stars.length)
+          for (let i = 0; i < moteCount; i++) {
+            if (i % 8 !== 0) continue // only gold motes
+            const s = stars[i]
+            const parallax = 0.2 + (i % 4) * 0.1
+            const screenY = s.y - scrollY * parallax
+            if (screenY < -30 || screenY > H + 30) continue
+            const driftX = Math.sin(time * 0.0006 + i * 0.7) * 20 + Math.cos(time * 0.0003 + i * 1.3) * 8
+            const driftY = Math.cos(time * 0.0005 + i * 0.9) * 6
+            goldMotes.push({ x: s.x + driftX, y: screenY + driftY })
+          }
+          ctx.lineWidth = 0.4
+          for (let i = 0; i < goldMotes.length; i++) {
+            for (let j = i + 1; j < goldMotes.length; j++) {
+              const a = goldMotes[i], b = goldMotes[j]
+              const dist = Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
+              if (dist < 200 && dist > 20) {
+                const opacity = (1 - dist / 200) * 0.08
+                ctx.beginPath()
+                ctx.moveTo(a.x, a.y)
+                // Slight curve for organic feel
+                const midX = (a.x + b.x) / 2 + Math.sin(time * 0.0004 + i + j) * 8
+                const midY = (a.y + b.y) / 2 + Math.cos(time * 0.0003 + i * j) * 5
+                ctx.quadraticCurveTo(midX, midY, b.x, b.y)
+                ctx.strokeStyle = `rgba(201, 169, 110, ${opacity})`
+                ctx.stroke()
+              }
+            }
+          }
+        }
+
         // ── 4. Subtle paper grain — faint noise texture (drawn every ~30 frames for perf) ──
         if (frameCount % 30 === 0 || !lightGrainData) {
           lightGrainData = ctx.createImageData(W, H)

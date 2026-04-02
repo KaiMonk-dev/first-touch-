@@ -744,141 +744,47 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
 }
 
 /* ═══════════════════════════════════════
-   VOICE ORB — Premium floating trigger
+   GHL WIDGET — Premium trigger styling
    ═══════════════════════════════════════ */
 
-.voice-orb {
-  position: fixed;
-  bottom: 6px;
-  right: 6px;
-  z-index: 2147483647;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  pointer-events: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.voice-orb-button {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.25), rgba(10, 10, 10, 0.95));
-  border: 1px solid rgba(201, 169, 110, 0.2);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+/* Style the GHL trigger button itself (no VoiceOrb overlay needed) */
+[class*="chat-widget-trigger"],
+.lc_text-widget--trigger {
+  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.25), rgba(10, 10, 10, 0.95)) !important;
+  border: 1px solid rgba(201, 169, 110, 0.2) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.5),
     0 0 40px rgba(201, 169, 110, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.voice-orb-button:hover {
-  transform: scale(1.08);
+[class*="chat-widget-trigger"]:hover,
+.lc_text-widget--trigger:hover {
+  transform: scale(1.08) !important;
   box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.6),
     0 0 60px rgba(201, 169, 110, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  border-color: rgba(201, 169, 110, 0.35);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(201, 169, 110, 0.35) !important;
 }
 
-.voice-orb-button:active {
-  transform: scale(0.95);
-}
-
-/* Pulsing ring */
-.voice-orb-ring {
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  border: 1px solid rgba(201, 169, 110, 0.15);
-  animation: orbPulse 3s ease-in-out infinite;
-}
-
-.voice-orb-ring-inner {
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  border: 1px solid rgba(201, 169, 110, 0.08);
-  animation: orbPulse 3s ease-in-out 0.5s infinite;
-}
-
-@keyframes orbPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.25); opacity: 0; }
-}
-
-/* Active state — faster pulse */
-.voice-orb.active .voice-orb-ring {
-  animation-duration: 1.2s;
-  border-color: rgba(201, 169, 110, 0.3);
-}
-
-.voice-orb.active .voice-orb-button {
-  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.35), rgba(10, 10, 10, 0.95));
-  border-color: rgba(201, 169, 110, 0.4);
+/* Light mode GHL trigger */
+[data-theme="light"] [class*="chat-widget-trigger"],
+[data-theme="light"] .lc_text-widget--trigger {
+  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.2), rgba(255, 255, 255, 0.95)) !important;
+  border-color: rgba(201, 169, 110, 0.25) !important;
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.5),
-    0 0 60px rgba(201, 169, 110, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 0 40px rgba(201, 169, 110, 0.1) !important;
 }
 
-/* Waveform bars inside orb during active call */
-.voice-orb-waveform {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  height: 20px;
-}
-
-.voice-orb-waveform .bar {
-  width: 2px;
-  border-radius: 1px;
-  background: linear-gradient(to top, rgba(201, 169, 110, 0.4), rgba(201, 169, 110, 0.8));
-  animation: waveIdle 1.2s ease-in-out infinite alternate;
-}
-
-/* Label */
-.voice-orb-label {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  white-space: nowrap;
-  transition: color 0.3s;
-}
-
-.voice-orb:hover .voice-orb-label {
-  color: rgba(201, 169, 110, 0.7);
-}
-
-/* Mobile — above StickyMobileCTA */
-@media (max-width: 639px) {
-  .voice-orb {
-    bottom: 72px;
-    right: 6px;
-  }
-  .voice-orb-button {
-    width: 52px;
-    height: 52px;
-  }
-}
-
-/* ── First Touch Live — GHL Voice AI Widget Overrides ── */
-
-/* GHL widget trigger — invisible but clickable (VoiceOrb is the visual mask) */
-[class*="chat-widget-trigger"],
-.lc_text-widget--trigger {
-  opacity: 0 !important;
+/* Hide GHL default greeting/bubble text */
+[class*="chat-widget"] [class*="prompt-bubble"],
+[class*="chat-widget"] [class*="greeting-bubble"] {
+  display: none !important;
 }
 
 /* Hide the "AI" badge next to Alex's name */
@@ -1076,28 +982,179 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   opacity: 1 !important;
 }
 
-/* Voice orb — light variant */
-[data-theme="light"] .voice-orb-button {
-  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.2), rgba(255, 255, 255, 0.95));
-  border-color: rgba(201, 169, 110, 0.25);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.08),
-    0 0 40px rgba(201, 169, 110, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-
-[data-theme="light"] .voice-orb-label {
-  color: rgba(26, 26, 26, 0.4);
-}
-
-/* Scroll progress bar */
+/* ── 1. Ink ribbon scroll progress ── */
 [data-theme="light"] .scroll-progress {
-  background: rgba(0, 0, 0, 0.06);
+  height: 3px !important;
+  background: rgba(30, 25, 20, 0.03);
+}
+[data-theme="light"] .scroll-progress-bar {
+  height: 3px !important;
+  background: linear-gradient(
+    90deg,
+    rgba(201, 169, 110, 0.1),
+    rgba(30, 25, 20, 0.35),
+    rgba(201, 169, 110, 0.5),
+    rgba(30, 25, 20, 0.3),
+    rgba(201, 169, 110, 0.15)
+  ) !important;
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 1px 4px rgba(30, 25, 20, 0.1), 0 0 12px rgba(201, 169, 110, 0.08);
+  position: relative;
+}
+[data-theme="light"] .scroll-progress-bar::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -1px;
+  width: 6px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(201, 169, 110, 0.6);
+  box-shadow: 0 0 6px rgba(201, 169, 110, 0.3);
 }
 
-/* Divider lines */
+/* ── 2. Hover ink pools on glass cards ── */
+[data-theme="light"] .liquid-glass {
+  position: relative;
+  overflow: visible;
+}
+[data-theme="light"] .liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at center, rgba(30, 25, 20, 0.03), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: scale(0.95);
+  pointer-events: none;
+  z-index: -1;
+}
+[data-theme="light"] .liquid-glass:hover::after {
+  opacity: 1;
+  transform: scale(1.02);
+}
+/* Gold bleed ring on hover */
+[data-theme="light"] .liquid-glass::before {
+  background: radial-gradient(ellipse at center, rgba(201, 169, 110, 0.05), transparent 70%) !important;
+  opacity: 0 !important;
+  transition: opacity 0.5s ease !important;
+}
+[data-theme="light"] .liquid-glass:hover::before {
+  opacity: 1 !important;
+}
+
+/* ── 3. Section divider brush strokes ── */
 [data-theme="light"] .divider-line {
-  background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.25), transparent);
+  background: none;
+  height: 6px;
+  position: relative;
+  overflow: visible;
+}
+[data-theme="light"] .divider-line::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 3px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(201, 169, 110, 0.15) 15%,
+    rgba(30, 25, 20, 0.12) 30%,
+    rgba(201, 169, 110, 0.25) 50%,
+    rgba(30, 25, 20, 0.12) 70%,
+    rgba(201, 169, 110, 0.15) 85%,
+    transparent 100%
+  );
+  border-radius: 2px;
+  filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeTurbulence baseFrequency='0.03' numOctaves='2'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='3'/%3E%3C/filter%3E%3C/svg%3E#r");
+}
+[data-theme="light"] .divider-line::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(201, 169, 110, 0.3);
+  box-shadow: 0 0 8px rgba(201, 169, 110, 0.15);
+}
+
+/* ── 4. Watercolor section washes ── */
+[data-theme="light"] section {
+  position: relative;
+}
+[data-theme="light"] section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+[data-theme="light"] section#hero::before {
+  background: radial-gradient(ellipse at 20% 30%, rgba(201, 169, 110, 0.06), transparent 50%),
+              radial-gradient(ellipse at 80% 70%, rgba(201, 169, 110, 0.04), transparent 50%);
+}
+[data-theme="light"] section#meet-alex::before {
+  background: radial-gradient(ellipse at 70% 20%, rgba(140, 120, 200, 0.04), transparent 50%),
+              radial-gradient(ellipse at 30% 80%, rgba(201, 169, 110, 0.03), transparent 50%);
+}
+[data-theme="light"] section#how-it-works::before {
+  background: radial-gradient(ellipse at 50% 30%, rgba(100, 160, 200, 0.04), transparent 50%),
+              radial-gradient(ellipse at 20% 70%, rgba(201, 169, 110, 0.03), transparent 50%);
+}
+[data-theme="light"] section#pricing::before {
+  background: radial-gradient(ellipse at 40% 40%, rgba(201, 169, 110, 0.06), transparent 50%),
+              radial-gradient(ellipse at 80% 60%, rgba(180, 160, 120, 0.04), transparent 50%);
+}
+[data-theme="light"] section#faq::before {
+  background: radial-gradient(ellipse at 60% 50%, rgba(140, 100, 180, 0.03), transparent 50%),
+              radial-gradient(ellipse at 20% 30%, rgba(201, 169, 110, 0.03), transparent 50%);
+}
+
+/* ── 6. Paper/washi texture on glass cards ── */
+[data-theme="light"] .liquid-glass,
+[data-theme="light"] .liquid-glass-strong {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E") !important;
+  background-size: 100px 100px !important;
+  background-blend-mode: multiply;
+}
+
+/* ── 7. Ink stamp section markers ── */
+[data-theme="light"] .label {
+  color: rgba(26, 26, 26, 0.4);
+  position: relative;
+  display: inline-block;
+}
+[data-theme="light"] .label::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(201, 169, 110, 0.3);
+  background: rgba(201, 169, 110, 0.06);
+}
+[data-theme="light"] .label::after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(201, 169, 110, 0.3);
+  background: rgba(201, 169, 110, 0.06);
 }
 
 /* Selection */
@@ -1105,12 +1162,13 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   background: rgba(201, 169, 110, 0.2);
 }
 
-/* Label text */
-[data-theme="light"] .label {
-  color: rgba(26, 26, 26, 0.4);
-}
-
 /* Shimmer — subtle in light mode */
 [data-theme="light"] .liquid-shimmer::after {
-  opacity: 0.3;
+  opacity: 0.15;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(201, 169, 110, 0.08) 50%,
+    transparent 70%
+  ) !important;
 }

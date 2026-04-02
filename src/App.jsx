@@ -17,7 +17,6 @@ import { Footer } from './components/Footer'
 import { StickyMobileCTA } from './components/StickyMobileCTA'
 import { ExitIntent } from './components/ExitIntent'
 import { BackToTop } from './components/BackToTop'
-import { VoiceOrb } from './components/VoiceOrb'
 import { AmbientCursor } from './components/AmbientCursor'
 import { MobileRipple } from './components/MobileRipple'
 import { PortalEcho } from './components/PortalEcho'
@@ -66,7 +65,6 @@ function App() {
           <StickyMobileCTA />
           <ExitIntent />
           <BackToTop />
-          <VoiceOrb />
           <AmbientCursor />
           <AmbientSound />
           <ViewportEffects />
