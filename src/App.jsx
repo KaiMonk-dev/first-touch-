@@ -1,4 +1,5 @@
 import { BookingProvider } from './components/BookingModal'
+import { ThemeProvider } from './hooks/useTheme'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoadingScreen } from './components/LoadingScreen'
 import { ScrollProgress } from './components/ScrollProgress'
@@ -8,7 +9,6 @@ import { SpeedProof } from './components/SpeedProof'
 import { MeetAlex } from './components/MeetAlex'
 import { HowItWorks } from './components/HowItWorks'
 import { DashboardPreview } from './components/DashboardPreview'
-import { TryAlex } from './components/TryAlex'
 import { Pricing } from './components/Pricing'
 import { WhoWeAre } from './components/WhoWeAre'
 import { FAQ } from './components/FAQ'
@@ -17,6 +17,7 @@ import { Footer } from './components/Footer'
 import { StickyMobileCTA } from './components/StickyMobileCTA'
 import { ExitIntent } from './components/ExitIntent'
 import { BackToTop } from './components/BackToTop'
+import { VoiceOrb } from './components/VoiceOrb'
 import { AmbientCursor } from './components/AmbientCursor'
 import { MobileRipple } from './components/MobileRipple'
 import { PortalEcho } from './components/PortalEcho'
@@ -34,6 +35,7 @@ import { ViewportEffects } from './components/ViewportEffects'
 function App() {
   return (
     <ErrorBoundary>
+      <ThemeProvider>
       <BookingProvider>
         <div className="min-h-screen bg-black text-white overflow-x-hidden grain edge-glow">
           <LoadingScreen />
@@ -52,7 +54,6 @@ function App() {
             <LiquidDripDivider />
             <SectionBurst />
             <DashboardPreview />
-            <TryAlex />
             <LiquidDripDivider />
             <Pricing />
             <LiquidDripDivider />
@@ -65,6 +66,7 @@ function App() {
           <StickyMobileCTA />
           <ExitIntent />
           <BackToTop />
+          <VoiceOrb />
           <AmbientCursor />
           <AmbientSound />
           <ViewportEffects />
@@ -76,6 +78,7 @@ function App() {
           <ScrollReward />
         </div>
       </BookingProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   )
 }

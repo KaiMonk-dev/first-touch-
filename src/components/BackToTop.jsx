@@ -25,7 +25,7 @@ export function BackToTop() {
   return (
     <button
       onClick={handleClick}
-      className={`fixed bottom-20 md:bottom-8 right-6 z-40 w-10 h-10 rounded-full glass-strong flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/[0.08] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] btn-press ${
+      className={`fixed bottom-8 right-24 md:right-6 z-40 w-10 h-10 rounded-full glass-strong flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/[0.08] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] btn-press ${
         visible
           ? 'opacity-100 translate-y-0'
           : 'opacity-0 translate-y-4 pointer-events-none'

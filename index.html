@@ -7,13 +7,15 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>First Touch by Ascension First — Never Miss Another Customer</title>
-    <meta name="description" content="First Touch answers every call, books every lead, and follows up in under 60 seconds. Your always-on customer experience platform by Ascension First." />
+    <meta name="description" content="First Touch answers every call, books every lead, and follows up in under 60 seconds. Your always-on customer experience solution by Ascension First." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://player.vimeo.com" />
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" />
     <link rel="dns-prefetch" href="https://f.vimeocdn.com" />
     <meta name="theme-color" content="#000000" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://ascensionfirst.com/" />
     <link rel="manifest" href="/manifest.json" />
 
     <!-- Open Graph -->
@@ -22,6 +24,8 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://ascensionfirst.com" />
     <meta property="og:image" content="https://ascensionfirst.com/logo.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://ascensionfirst.com/logo.png" />
     <meta name="twitter:title" content="First Touch — Every Call Answered. Every Lead Booked." />
@@ -31,24 +35,13 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
-    <!-- GoHighLevel Chat Widget — delayed 15s for clean first impression -->
-    <script>
-      setTimeout(function() {
-        var s = document.createElement('script');
-        s.src = 'https://widgets.leadconnectorhq.com/loader.js';
-        s.setAttribute('data-resources-url', 'https://widgets.leadconnectorhq.com/chat-widget/loader.js');
-        s.setAttribute('data-widget-id', '69bf9d6d633c7409931925b6');
-        document.body.appendChild(s);
-      }, 15000);
+    <!-- First Touch Live Widget -->
+    <script
+      src="https://widgets.leadconnectorhq.com/loader.js"
+      data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
+      data-widget-id="69ce1bce1707aa56e917f3dc" >
     </script>
 
-    <!-- Google Analytics — Replace G-XXXXXXXXXX with your real Measurement ID -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
-    </script>
+    <!-- Google Analytics — add gtag script when Measurement ID is ready -->
   </body>
 </html>

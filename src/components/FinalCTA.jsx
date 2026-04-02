@@ -16,15 +16,15 @@ export function FinalCTA() {
         <AnimatedSection>
           <div className="divider-line mb-16" />
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9] mb-8">
-            <span className="text-white">Ready to Never Miss</span>
+            <span className="text-white">Your Next Customer</span>
             <br />
             <span className="bg-gradient-to-b from-white/90 to-white/50 bg-clip-text text-transparent">
-              Another Customer?
+              Is Already Calling.
             </span>
           </h2>
           <p className="text-base text-white/50 mb-14 max-w-md mx-auto font-light leading-relaxed">
-            Book a free 30-minute strategy call. We'll show you exactly how
-            First Touch works for your business.
+            Let's make sure someone's there to answer. We'll walk you through
+            exactly what First Touch looks like for your business.
           </p>
 
           <div onMouseMove={btn.onMouseMove} onMouseLeave={btn.onMouseLeave}>
@@ -42,7 +42,7 @@ export function FinalCTA() {
           </div>
 
           <p className="text-[13px] text-white/25 mt-10 mb-8 max-w-sm mx-auto font-light leading-relaxed italic">
-            No high-pressure pitch. No spam. If First Touch is right for your business, you'll know. And when you're ready, we'll be here.
+            No pressure. No obligation. Just a conversation about what's possible.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-[12px] text-white/35 font-light">

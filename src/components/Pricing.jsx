@@ -12,7 +12,7 @@ const plans = [
     features: [
       { text: 'Alex — answers every call, 24/7', tip: 'Picks up in under 1 second, handles unlimited concurrent calls' },
       { text: 'Missed call text-back — instant SMS recovery', tip: 'Automatically texts callers you miss within 30 seconds' },
-      { text: 'Real-time calendar booking via voice + SMS', tip: 'Syncs with Google Calendar and your scheduling system' },
+      { text: 'Real-time calendar booking via voice + SMS', tip: 'Syncs with Google Calendar and your scheduling software' },
       { text: 'SMS follow-ups to every lead — on autopilot', tip: 'Customizable sequences — timing and messaging tailored to you' },
       { text: 'Appointment reminders via SMS', tip: 'Reduces no-shows by up to 60%' },
       { text: 'Google review requests — sent for you', tip: 'Sent after completed jobs to build your reputation' },
@@ -29,12 +29,12 @@ const plans = [
     period: '/mo',
     features: [
       { text: 'Everything in Core, plus:' },
+      { text: 'First Touch Live — talk to Alex on your website', tip: 'Your website\'s personal welcome desk — visitors speak directly with Alex the moment they arrive' },
       { text: 'Custom-designed premium website — built and maintained', tip: 'Fully managed, conversion-optimized, mobile-first design' },
       { text: '60-second speed-to-lead callbacks', tip: 'Form fills trigger an immediate call from Alex' },
-      { text: 'No-show prevention system — reminders + call', tip: 'Calls and texts sent before every appointment — handled for you' },
+      { text: 'No-show prevention — reminders + follow-up call', tip: 'Calls and texts sent before every appointment — handled for you' },
       { text: 'Dead lead reactivation campaigns', tip: 'Monthly outreach to cold leads — avg. 5-10 recovered' },
       { text: 'Intelligent review generation — sentiment-filtered', tip: 'Only asks happy customers, routes unhappy ones to you privately' },
-      { text: 'Website chat widget with lead capture', tip: 'Converts visitors into leads while they browse' },
       { text: 'Priority support — 2hr response', tip: 'Direct line to your account team' },
     ],
     cta: 'Go Pro',
@@ -138,7 +138,7 @@ export function Pricing() {
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             <p className="text-[13px] text-white/40 font-light">
-              30-day money-back guarantee. No contracts. Cancel anytime.
+              14-day money-back guarantee. No contracts. Cancel anytime.
             </p>
           </div>
         </AnimatedSection>

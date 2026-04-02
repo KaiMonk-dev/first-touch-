@@ -4,11 +4,11 @@ import { AnimatedSection } from './AnimatedSection'
 const faqs = [
   {
     q: 'What is First Touch?',
-    a: 'First Touch is a premium customer experience platform by Ascension First. We build Alex — a dedicated team member trained specifically for your business. Alex answers calls, qualifies leads, books appointments, and follows up with customers, 24/7. Your customers feel cared for from their very first interaction.',
+    a: 'First Touch is a premium customer experience solution by Ascension First. We build Alex — a dedicated team member trained specifically for your business. Alex answers calls, qualifies leads, books appointments, and follows up with customers, 24/7. Your customers feel cared for from their very first interaction.',
   },
   {
-    q: 'Will my customers know they\'re not talking to a person?',
-    a: 'Alex is designed to sound natural and conversational — warm, not robotic. Most callers don\'t realize the difference. If a caller asks directly, Alex will be transparent and can transfer to your team at any time.',
+    q: 'What does Alex sound like?',
+    a: 'Alex is warm, natural, and conversational — trained to match the tone and personality of your brand. Customers feel like they\'re speaking with someone who genuinely knows your business. And if a conversation ever needs a personal touch, Alex hands off to your team seamlessly, with full context.',
   },
   {
     q: 'How long does setup take?',
@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: 'How much does it cost?',
-    a: 'Core starts at $597/mo, Pro at $997/mo, and Enterprise is custom-priced based on your operation. No contracts, no setup fees, and a 30-day money-back guarantee. You can see the full breakdown in our pricing section above.',
+    a: 'Core starts at $597/mo, Pro at $997/mo, and Enterprise is custom-priced based on your operation. No contracts, no setup fees, and a 14-day money-back guarantee. You can see the full breakdown in our pricing section above.',
   },
   {
     q: 'Can Alex handle multiple languages?',

@@ -744,77 +744,373 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
 }
 
 /* ═══════════════════════════════════════
-   GHL CHAT WIDGET — Dark premium overrides
+   VOICE ORB — Premium floating trigger
    ═══════════════════════════════════════ */
 
-/* Force widget button dark */
-[class*="chat-widget"] button,
-[class*="chat-widget"] [class*="launcher"],
-[class*="ChatWidget"] button,
-.lc_text_widget_open,
-iframe[title*="chat"] + div,
-#lc_chat_layout [class*="launcher"],
-#lc_chat_layout [class*="open-btn"] {
-  background: rgba(20, 20, 20, 0.9) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+.voice-orb {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Greeting bubble — smaller, darker, premium */
-.lc_text_bubble,
-[class*="chat-bubble"],
-[class*="ChatBubble"],
-[class*="greeting"],
-[class*="proactive"],
-[class*="Proactive"] {
-  font-size: 11px !important;
-  max-width: 200px !important;
-  padding: 10px 14px !important;
-  background: rgba(20, 20, 20, 0.95) !important;
-  color: rgba(255, 255, 255, 0.7) !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+.voice-orb-button {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.25), rgba(10, 10, 10, 0.95));
+  border: 1px solid rgba(201, 169, 110, 0.2);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(201, 169, 110, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.voice-orb-button:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(201, 169, 110, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-color: rgba(201, 169, 110, 0.35);
+}
+
+.voice-orb-button:active {
+  transform: scale(0.95);
+}
+
+/* Pulsing ring */
+.voice-orb-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 110, 0.15);
+  animation: orbPulse 3s ease-in-out infinite;
+}
+
+.voice-orb-ring-inner {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 110, 0.08);
+  animation: orbPulse 3s ease-in-out 0.5s infinite;
+}
+
+@keyframes orbPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: 0; }
+}
+
+/* Active state — faster pulse */
+.voice-orb.active .voice-orb-ring {
+  animation-duration: 1.2s;
+  border-color: rgba(201, 169, 110, 0.3);
+}
+
+.voice-orb.active .voice-orb-button {
+  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.35), rgba(10, 10, 10, 0.95));
+  border-color: rgba(201, 169, 110, 0.4);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 60px rgba(201, 169, 110, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Waveform bars inside orb during active call */
+.voice-orb-waveform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 20px;
+}
+
+.voice-orb-waveform .bar {
+  width: 2px;
+  border-radius: 1px;
+  background: linear-gradient(to top, rgba(201, 169, 110, 0.4), rgba(201, 169, 110, 0.8));
+  animation: waveIdle 1.2s ease-in-out infinite alternate;
+}
+
+/* Label */
+.voice-orb-label {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.voice-orb:hover .voice-orb-label {
+  color: rgba(201, 169, 110, 0.7);
+}
+
+/* Mobile — above StickyMobileCTA */
+@media (max-width: 639px) {
+  .voice-orb {
+    bottom: 80px;
+    right: 16px;
+  }
+  .voice-orb-button {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* ── First Touch Live — GHL Voice AI Widget Overrides ── */
+
+/* Hide default GHL widget trigger (we use VoiceOrb instead) */
+[class*="chat-widget-trigger"],
+.lc_text-widget--trigger {
+  display: none !important;
+}
+
+/* Hide the "AI" badge next to Alex's name */
+[class*="chat-widget"] [class*="ai-badge"],
+[class*="chat-widget"] [class*="ai_badge"],
+[class*="chat-widget"] .badge,
+[class*="chat-widget"] span[style*="background"][style*="border-radius"] {
+  display: none !important;
+}
+
+/* Dark theme for the widget conversation window */
+[class*="chat-widget-container"],
+[class*="chat-widget"] [class*="container"] {
+  background: #010101 !important;
+  border: 1px solid rgba(201, 169, 110, 0.15) !important;
   border-radius: 16px !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(201, 169, 110, 0.05) !important;
 }
 
-/* Chat window itself — dark theme */
-[class*="chat-widget"] [class*="container"],
-[class*="ChatWidget"] [class*="container"],
-#lc_chat_layout,
-#lc_chat_layout [class*="chat-container"] {
-  background: rgba(10, 10, 10, 0.95) !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
-}
-
-/* Header */
-#lc_chat_layout [class*="header"],
+/* Widget header */
 [class*="chat-widget"] [class*="header"] {
-  background: rgba(15, 15, 15, 0.95) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-  font-size: 12px !important;
+  background: linear-gradient(135deg, #0a0a0a, #111) !important;
+  border-bottom: 1px solid rgba(201, 169, 110, 0.12) !important;
+  color: #fff !important;
 }
 
-/* Input area */
-#lc_chat_layout [class*="input"],
-#lc_chat_layout textarea,
-#lc_chat_layout input[type="text"] {
-  background: rgba(20, 20, 20, 0.8) !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  color: white !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
-  font-size: 13px !important;
+/* Widget body/content area */
+[class*="chat-widget"] [class*="body"],
+[class*="chat-widget"] [class*="content"] {
+  background: #010101 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* Send button */
-#lc_chat_layout [class*="send"],
-#lc_chat_layout button[type="submit"] {
-  background: rgba(201, 169, 110, 0.8) !important;
+/* Call button styling */
+[class*="chat-widget"] button[class*="call"],
+[class*="chat-widget"] button[class*="voice"] {
+  background: linear-gradient(135deg, #B8965A, #C9A96E) !important;
+  color: #000 !important;
   border: none !important;
+  border-radius: 9999px !important;
+  font-weight: 600 !important;
+}
+
+/* Agent name and description */
+[class*="chat-widget"] [class*="agent-name"],
+[class*="chat-widget"] [class*="name"] {
+  color: #fff !important;
+}
+
+[class*="chat-widget"] [class*="description"],
+[class*="chat-widget"] [class*="subtitle"] {
+  color: rgba(201, 169, 110, 0.7) !important;
+}
+
+/* Footer branding */
+[class*="chat-widget"] [class*="footer"],
+[class*="chat-widget"] [class*="powered"] {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Welcome bubble override */
+[class*="chat-widget"] [class*="prompt"],
+[class*="chat-widget"] [class*="greeting"] {
+  background: rgba(10, 10, 10, 0.95) !important;
+  border: 1px solid rgba(201, 169, 110, 0.15) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+/* ═══════════════════════════════════════
+   LIGHT MODE — premium warm light theme
+   ═══════════════════════════════════════ */
+
+[data-theme="light"] {
+  --glass-border-opacity: 0.12;
+}
+
+[data-theme="light"] body,
+[data-theme="light"] html {
+  background: #FAFAF8;
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .min-h-screen.bg-black {
+  background: #FAFAF8 !important;
+  color: #1a1a1a !important;
+}
+
+/* Grain overlay — softer in light mode */
+[data-theme="light"] .grain::after {
+  opacity: 0.02;
+}
+
+/* Edge glow — warm gold on light */
+[data-theme="light"] .edge-glow::before {
+  background: radial-gradient(ellipse at top, rgba(201, 169, 110, 0.06), transparent 60%);
+}
+
+/* Typography overrides */
+[data-theme="light"] .text-white { color: #1a1a1a; }
+[data-theme="light"] .text-white\/90 { color: rgba(26, 26, 26, 0.9); }
+[data-theme="light"] .text-white\/80 { color: rgba(26, 26, 26, 0.8); }
+[data-theme="light"] .text-white\/70 { color: rgba(26, 26, 26, 0.7); }
+[data-theme="light"] .text-white\/60 { color: rgba(26, 26, 26, 0.55); }
+[data-theme="light"] .text-white\/50 { color: rgba(26, 26, 26, 0.5); }
+[data-theme="light"] .text-white\/40 { color: rgba(26, 26, 26, 0.4); }
+[data-theme="light"] .text-white\/35 { color: rgba(26, 26, 26, 0.35); }
+[data-theme="light"] .text-white\/30 { color: rgba(26, 26, 26, 0.3); }
+[data-theme="light"] .text-white\/25 { color: rgba(26, 26, 26, 0.25); }
+[data-theme="light"] .text-white\/15 { color: rgba(26, 26, 26, 0.15); }
+
+/* Gradient text — dark on light */
+[data-theme="light"] .bg-gradient-to-b.from-white.to-white\/50,
+[data-theme="light"] .bg-gradient-to-b.from-white\/90.to-white\/50,
+[data-theme="light"] .bg-gradient-to-b.from-white\/90.to-white\/60,
+[data-theme="light"] .bg-gradient-to-b.from-white.to-white\/30 {
+  --tw-gradient-from: #1a1a1a;
+  --tw-gradient-to: rgba(26, 26, 26, 0.5);
+}
+
+/* Liquid glass — light variant */
+[data-theme="light"] .liquid-glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .liquid-glass:hover {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .liquid-glass::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.2) 25%,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(255, 255, 255, 0.2) 75%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+}
+
+[data-theme="light"] .liquid-glass-strong {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    0 8px 40px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .liquid-glass-nav {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Border overrides */
+[data-theme="light"] .border-white\/\[0\.06\],
+[data-theme="light"] .border-white\/\[0\.08\],
+[data-theme="light"] .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Background accents */
+[data-theme="light"] .bg-white\/\[0\.04\],
+[data-theme="light"] .bg-white\/\[0\.06\] {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* CTA buttons — stay the same (white on dark = dark on light) */
+[data-theme="light"] .bg-white.text-black,
+[data-theme="light"] button.bg-white {
+  background: #1a1a1a !important;
+  color: #fff !important;
+}
+
+[data-theme="light"] .bg-white.text-black:hover,
+[data-theme="light"] button.bg-white:hover {
+  background: #2a2a2a !important;
+}
+
+/* Galaxy background — hidden in light */
+[data-theme="light"] canvas.fixed,
+[data-theme="light"] canvas[class*="fixed"] {
+  opacity: 0 !important;
+}
+
+/* Voice orb — light variant */
+[data-theme="light"] .voice-orb-button {
+  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.2), rgba(255, 255, 255, 0.95));
+  border-color: rgba(201, 169, 110, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 0 40px rgba(201, 169, 110, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .voice-orb-label {
+  color: rgba(26, 26, 26, 0.4);
+}
+
+/* Scroll progress bar */
+[data-theme="light"] .scroll-progress {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* Divider lines */
+[data-theme="light"] .divider-line {
+  background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.25), transparent);
+}
+
+/* Selection */
+[data-theme="light"] ::selection {
+  background: rgba(201, 169, 110, 0.2);
+}
+
+/* Label text */
+[data-theme="light"] .label {
+  color: rgba(26, 26, 26, 0.4);
+}
+
+/* Shimmer — subtle in light mode */
+[data-theme="light"] .liquid-shimmer::after {
+  opacity: 0.3;
 }
