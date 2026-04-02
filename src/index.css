@@ -749,13 +749,13 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
 
 .voice-orb {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 6px;
+  right: 6px;
   z-index: 2147483647;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   pointer-events: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -864,8 +864,8 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
 /* Mobile — above StickyMobileCTA */
 @media (max-width: 639px) {
   .voice-orb {
-    bottom: 80px;
-    right: 16px;
+    bottom: 72px;
+    right: 6px;
   }
   .voice-orb-button {
     width: 52px;
@@ -879,22 +879,6 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
 [class*="chat-widget-trigger"],
 .lc_text-widget--trigger {
   opacity: 0 !important;
-  position: fixed !important;
-  bottom: 24px !important;
-  right: 24px !important;
-  width: 60px !important;
-  height: 60px !important;
-  z-index: 2147483646 !important;
-  cursor: pointer !important;
-}
-@media (max-width: 639px) {
-  [class*="chat-widget-trigger"],
-  .lc_text-widget--trigger {
-    bottom: 80px !important;
-    right: 16px !important;
-    width: 52px !important;
-    height: 52px !important;
-  }
 }
 
 /* Hide the "AI" badge next to Alex's name */
