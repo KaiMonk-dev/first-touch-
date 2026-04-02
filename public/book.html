@@ -297,6 +297,66 @@
     transform: translateY(-1px);
     box-shadow: 0 8px 32px rgba(201,168,76,0.25);
   }
+  textarea {
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    color: #e8e4df;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 72px;
+    transition: border-color 0.2s;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: rgba(201,168,76,0.4);
+  }
+  textarea::placeholder { color: rgba(232,228,223,0.2); }
+  .consent-group {
+    margin: 20px 0 24px;
+  }
+  .consent-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgba(232,228,223,0.45);
+  }
+  .consent-label input[type="checkbox"] {
+    display: none;
+  }
+  .consent-check {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid rgba(201,168,76,0.35);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-top: 1px;
+  }
+  .consent-label input[type="checkbox"]:checked + .consent-check {
+    background: rgba(201,168,76,0.2);
+    border-color: #c9a84c;
+  }
+  .consent-label input[type="checkbox"]:checked + .consent-check::after {
+    content: '✓';
+    color: #c9a84c;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .consent-text .required {
+    color: rgba(201,168,76,0.6);
+    font-weight: 500;
+  }
   .cta-btn:active { transform: translateY(0); }
   .cta-btn:disabled {
     opacity: 0.4;
@@ -437,6 +497,17 @@
           <div class="form-group">
             <label for="business">Business Name <span class="required">*</span></label>
             <input type="text" id="business" placeholder="Acme Corp" required />
+          </div>
+          <div class="form-group">
+            <label for="goals">What are you hoping to achieve? <span class="required">*</span></label>
+            <textarea id="goals" placeholder="e.g. Never miss another call, book more appointments, improve response time..." rows="3" required></textarea>
+          </div>
+          <div class="consent-group">
+            <label class="consent-label">
+              <input type="checkbox" id="consent" required />
+              <span class="consent-check"></span>
+              <span class="consent-text">I agree to receive communications from Ascension First regarding my appointment and related services. <span class="required">Required</span></span>
+            </label>
           </div>
           <button class="cta-btn" id="bookBtn" onclick="submitBooking()" disabled>Book Your Call</button>
         </div>
@@ -652,8 +723,10 @@
     var em = document.getElementById('email').value.trim();
     var ph = document.getElementById('phone').value.trim();
     var bz = document.getElementById('business').value.trim();
+    var gl = document.getElementById('goals').value.trim();
+    var cn = document.getElementById('consent').checked;
 
-    var valid = selectedDate && selectedTime && fn && ln && em && ph && bz;
+    var valid = selectedDate && selectedTime && fn && ln && em && ph && bz && gl && cn;
     btn.disabled = !valid;
   }
 
@@ -685,10 +758,12 @@
     var email = document.getElementById('email').value.trim();
     var phone = document.getElementById('phone').value.trim();
     var businessName = document.getElementById('business').value.trim();
+    var goals = document.getElementById('goals').value.trim();
+    var consent = document.getElementById('consent').checked;
 
     // Client-side validation
-    if (!firstName || !lastName || !email || !phone || !businessName || !selectedDate || !selectedTime) {
-      showError('Please fill in all fields and select a date and time.');
+    if (!firstName || !lastName || !email || !phone || !businessName || !goals || !consent || !selectedDate || !selectedTime) {
+      showError('Please fill in all fields, agree to communications, and select a date and time.');
       btn.disabled = false;
       btn.textContent = 'Book Your Call';
       return;
@@ -708,7 +783,8 @@
       lastName: lastName,
       email: email,
       phone: phone,
-      businessName: businessName
+      businessName: businessName,
+      goals: goals
     };
 
     try {
@@ -753,9 +829,10 @@
     renderCalendar();
     fetchSlots();
 
-    ['firstName', 'lastName', 'email', 'phone', 'business'].forEach(function(id) {
+    ['firstName', 'lastName', 'email', 'phone', 'business', 'goals'].forEach(function(id) {
       document.getElementById(id).addEventListener('input', updateBtn);
     });
+    document.getElementById('consent').addEventListener('change', updateBtn);
   });
 </script>
 </body>

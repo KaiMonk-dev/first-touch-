@@ -43,9 +43,9 @@ function BookingModal({ onClose }) {
           </svg>
         </button>
 
-        {/* GHL Calendar Widget */}
+        {/* Custom branded booking page */}
         <iframe
-          src="https://api.leadconnectorhq.com/widget/bookings/strategy-and-demo"
+          src="/book.html"
           width="100%"
           height="100%"
           frameBorder="0"

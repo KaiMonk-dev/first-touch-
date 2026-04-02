@@ -36,7 +36,7 @@ export default async function handler(req, res) {
   };
 
   try {
-    const { firstName, lastName, email, phone, businessName, date, time } = req.body;
+    const { firstName, lastName, email, phone, businessName, goals, date, time } = req.body;
 
     // Strict validation — all fields required
     const missing = [];
@@ -45,6 +45,7 @@ export default async function handler(req, res) {
     if (!email?.trim()) missing.push('email');
     if (!phone?.trim()) missing.push('phone');
     if (!businessName?.trim()) missing.push('businessName');
+    if (!goals?.trim()) missing.push('goals');
     if (!date) missing.push('date');
     if (!time) missing.push('time');
 
@@ -73,6 +74,9 @@ export default async function handler(req, res) {
           companyName: businessName.trim(),
           tags: ['Website Booking', 'Demo Scheduled'],
           source: 'Website Booking Page',
+          customFields: [
+            { id: 'Nq2GRdlOmKDw4jbpfLM3', value: businessName.trim() },
+          ],
         }),
       });
     } else {
@@ -88,6 +92,9 @@ export default async function handler(req, res) {
           companyName: businessName.trim(),
           tags: ['Website Booking', 'Demo Scheduled'],
           source: 'Website Booking Page',
+          customFields: [
+            { id: 'Nq2GRdlOmKDw4jbpfLM3', value: businessName.trim() },
+          ],
         }),
       });
       const createData = await createRes.json();
@@ -108,6 +115,9 @@ export default async function handler(req, res) {
             companyName: businessName.trim(),
             tags: ['Website Booking', 'Demo Scheduled'],
             source: 'Website Booking Page',
+            customFields: [
+              { id: 'Nq2GRdlOmKDw4jbpfLM3', value: businessName.trim() },
+            ],
           }),
         });
       }
@@ -192,7 +202,7 @@ export default async function handler(req, res) {
 
     // ─── 6. Add booking note to contact ───
     try {
-      const noteBody = `📅 WEBSITE BOOKING\nDate: ${date}\nTime: ${time} PST\nBusiness: ${businessName.trim()}\nPhone: ${phone.trim()}\nEmail: ${email.trim()}\nAppointment ID: ${appointmentId}`;
+      const noteBody = `📅 WEBSITE BOOKING\nDate: ${date}\nTime: ${time} PST\nBusiness: ${businessName.trim()}\nPhone: ${phone.trim()}\nEmail: ${email.trim()}\n\n🎯 GOALS:\n${(goals || '').trim()}\n\nAppointment ID: ${appointmentId}`;
       await fetch(`${GHL_BASE}/contacts/${contactId}/notes`, {
         method: 'POST',
         headers: hdrs,
