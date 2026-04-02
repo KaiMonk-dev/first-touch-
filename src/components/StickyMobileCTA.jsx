@@ -23,7 +23,7 @@ export function StickyMobileCTA() {
       {/* Top accent line */}
       <div className="h-px bg-gradient-to-r from-transparent via-[#C9A96E]/20 to-transparent" />
 
-      <div className="bg-black/90 backdrop-blur-2xl px-4 py-3.5 flex items-center gap-3">
+      <div className="sticky-mobile-cta bg-black/90 backdrop-blur-2xl px-4 py-3.5 flex items-center gap-3">
         <a
           href="tel:+18584347041"
           className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-full liquid-glass text-white/60 text-[13px] font-medium hover:text-white/80 transition-colors"

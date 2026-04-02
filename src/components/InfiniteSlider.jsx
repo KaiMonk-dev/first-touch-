@@ -14,8 +14,8 @@ export function InfiniteSlider() {
 
   return (
     <div className="overflow-hidden relative w-full">
-      <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10" />
-      <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10" />
+      <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10 slider-fade-left" />
+      <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10 slider-fade-right" />
       <motion.div
         className="flex gap-12 items-center"
         animate={{ x: ['0%', '-50%'] }}

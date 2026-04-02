@@ -21,7 +21,7 @@ export function Hero() {
   }, [])
 
   return (
-    <section className="relative min-h-screen overflow-hidden flex flex-col">
+    <section id="hero" className="relative min-h-screen overflow-hidden flex flex-col">
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6 pt-40 pb-20 text-center">
         <h1
@@ -82,17 +82,23 @@ export function Hero() {
             </button>
           </div>
           <div onMouseMove={secondaryBtn.onMouseMove} onMouseLeave={secondaryBtn.onMouseLeave}>
-            <a
+            <button
               ref={secondaryBtn.ref}
-              href="tel:+18584347041"
-              className="px-8 py-4 rounded-2xl liquid-glass text-white/80 font-medium text-[15px] hover:text-white hover:bg-white/[0.08] transition-colors flex items-center gap-2.5 liquid-shimmer"
+              onClick={() => {
+                const trigger = document.querySelector('chat-widget')?.shadowRoot?.querySelector('button')
+                  || document.querySelector('[class*="chat-widget"] button')
+                  || document.querySelector('iframe[src*="leadconnectorhq"]')?.parentElement?.querySelector('button')
+                if (trigger) trigger.click()
+              }}
+              className="px-8 py-4 rounded-2xl liquid-glass text-white/80 font-medium text-[15px] hover:text-white hover:bg-white/[0.08] transition-colors flex items-center gap-2.5 liquid-shimmer cta-breathe-gold"
               style={secondaryBtn.style}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z" />
               </svg>
-              Call Alex Now
-            </a>
+              Speak with Alex
+            </button>
           </div>
         </div>
 

@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useBooking } from './BookingModal'
+import { useTheme } from '../hooks/useTheme'
 
 export function ExitIntent() {
   const [show, setShow] = useState(false)
   const [dismissed, setDismissed] = useState(false)
   const [entering, setEntering] = useState(false)
   const booking = useBooking()
+  const { theme } = useTheme()
 
   const handleMouseLeave = useCallback((e) => {
     if (e.clientY <= 5 && !dismissed && window.scrollY > 400) {
@@ -32,7 +34,7 @@ export function ExitIntent() {
       <div
         className="absolute inset-0 transition-all duration-700"
         style={{
-          background: 'rgba(0,0,0,0.92)',
+          background: theme === 'light' ? 'rgba(250,250,248,0.92)' : 'rgba(0,0,0,0.92)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           opacity: entering ? 1 : 0,

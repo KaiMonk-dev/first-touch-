@@ -19,12 +19,9 @@ export function LoadingScreen() {
   }, [])
 
   useEffect(() => {
-    if (isReturn.current) {
-      // Returning visitors skip the portal entirely
-      setRemoved(true)
-      return
-    }
-    const t = setTimeout(() => setPhase('ready'), 700)
+    // All visitors see the portal — returning visitors get a faster experience
+    const delay = isReturn.current ? 350 : 700
+    const t = setTimeout(() => setPhase('ready'), delay)
     return () => clearTimeout(t)
   }, [])
 
@@ -210,9 +207,10 @@ export function LoadingScreen() {
       })
 
       // --- Vortex particles ---
+      const returnBoost = isReturn.current ? 1.6 : 1
       vortex.forEach((v) => {
-        v.angle += v.speed * (isEntering ? -2 - ep * 10 : 1)
-        v.dist = isEntering ? v.baseDist + ep * 600 : v.baseDist - time * 0.04 + Math.sin(time * 0.008 + v.wobble) * 18
+        v.angle += v.speed * (isEntering ? (-2 - ep * 10) * returnBoost : 1)
+        v.dist = isEntering ? v.baseDist + ep * 600 * returnBoost : v.baseDist - time * 0.04 + Math.sin(time * 0.008 + v.wobble) * 18
         if (v.dist < 3 && !isEntering) { v.dist = v.baseDist; v.angle += Math.PI * 0.4 }
 
         const ds = 0.5 + v.z * 0.5
@@ -401,8 +399,8 @@ export function LoadingScreen() {
         const tp = Math.min(1, (ep - 0.2) / 0.8)
         for (let s = 0; s < 45; s++) {
           const angle = (s / 45) * Math.PI * 2 + Math.sin(s * 1.6) * 0.35
-          const innerR = 3 + tp * 30
-          const outerR = innerR + 50 + tp * 650
+          const innerR = 3 + tp * 30 * returnBoost
+          const outerR = innerR + 50 + tp * 650 * returnBoost
           const sx = cx + Math.cos(angle) * innerR, sy = cy + Math.sin(angle) * innerR
           const ex = cx + Math.cos(angle) * outerR, ey = cy + Math.sin(angle) * outerR
           const so = tp * (1 - tp * 0.3) * 0.22
@@ -430,10 +428,20 @@ export function LoadingScreen() {
     playHum()
     setPhase('entering')
     try { localStorage.setItem('ft_visited', '1') } catch {}
-    setTimeout(() => setPhase('traveling'), 700)
-    setTimeout(() => setPhase('approaching'), 1800) // galaxy approaching
-    setTimeout(() => setPhase('arrived'), 2800)
-    setTimeout(() => setRemoved(true), 3600)
+
+    if (isReturn.current) {
+      // Returning visitors — faster wormhole (roughly 60% speed)
+      setTimeout(() => setPhase('traveling'), 400)
+      setTimeout(() => setPhase('approaching'), 1000)
+      setTimeout(() => setPhase('arrived'), 1600)
+      setTimeout(() => setRemoved(true), 2100)
+    } else {
+      // First-time visitors — full cinematic experience
+      setTimeout(() => setPhase('traveling'), 700)
+      setTimeout(() => setPhase('approaching'), 1800)
+      setTimeout(() => setPhase('arrived'), 2800)
+      setTimeout(() => setRemoved(true), 3600)
+    }
   }
 
   if (removed) return null

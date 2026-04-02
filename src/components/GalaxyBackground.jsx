@@ -241,10 +241,25 @@ export function GalaxyBackground() {
       // ── LIGHT MODE: Ink & Gold Zen Canvas ──
       const isLight = document.documentElement.getAttribute('data-theme') === 'light'
       if (isLight) {
+        // Respect reduced motion — show static washes only
+        if (prefersReducedMotion) {
+          // Single static warm wash
+          const grad = ctx.createRadialGradient(W * 0.5, H * 0.4, 0, W * 0.5, H * 0.4, W * 0.4)
+          grad.addColorStop(0, 'rgba(201, 169, 110, 0.012)')
+          grad.addColorStop(1, 'transparent')
+          ctx.fillStyle = grad
+          ctx.fillRect(0, 0, W, H)
+          animId = requestAnimationFrame(draw)
+          return
+        }
+
+        const tierCfg = getTierConfig()
+        const lightMoteCount = tierCfg.maxStars ? Math.min(100, Math.round(tierCfg.maxStars * 0.3)) : 100
+        const lightWashCount = tierCfg.maxStars ? Math.min(7, Math.max(3, Math.round(7 * (tierCfg.maxStars / 800)))) : 7
         const inkT = time * 0.0001
 
         // ── 1. Watercolor wash clouds — large, slow, organic ink washes ──
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < lightWashCount; i++) {
           const cx = W * (0.1 + 0.8 * Math.sin(inkT * (0.2 + i * 0.05) + i * 1.8))
           const cy = H * (0.1 + 0.8 * Math.cos(inkT * (0.15 + i * 0.04) + i * 2.4))
           const r = 150 + 100 * Math.sin(inkT * 0.4 + i * 0.9)
@@ -265,7 +280,7 @@ export function GalaxyBackground() {
 
         // ── 2. Floating ink motes — reuse star data as zen particles ──
         if (stars && stars.length > 0) {
-          const moteCount = Math.min(100, stars.length)
+          const moteCount = Math.min(lightMoteCount, stars.length)
           for (let i = 0; i < moteCount; i++) {
             const s = stars[i]
             const parallax = 0.2 + (i % 4) * 0.1
@@ -364,8 +379,9 @@ export function GalaxyBackground() {
           }
         }
 
-        // ── 4. Subtle paper grain — faint noise texture (drawn every ~30 frames for perf) ──
-        if (frameCount % 30 === 0 || !lightGrainData) {
+        // ── 4. Subtle paper grain — faint noise texture (cached, redrawn periodically) ──
+        const grainInterval = tierCfg.maxStars && tierCfg.maxStars < 400 ? 60 : 30
+        if (frameCount % grainInterval === 0 || !lightGrainData) {
           lightGrainData = ctx.createImageData(W, H)
           const d = lightGrainData.data
           for (let p = 0; p < d.length; p += 16) { // skip pixels for performance

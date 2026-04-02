@@ -9,7 +9,14 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
+    // Update meta theme-color for browser chrome
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#000000' : '#FAFAF8')
+    // Smooth transition class — add briefly during toggle
+    document.documentElement.classList.add('theme-transitioning')
+    const t = setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 600)
     try { localStorage.setItem('ft-theme', theme) } catch {}
+    return () => clearTimeout(t)
   }, [theme])
 
   const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))

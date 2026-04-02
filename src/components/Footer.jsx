@@ -46,6 +46,8 @@ export function Footer() {
     let animId
     const draw = () => {
       ctx.clearRect(0, 0, W, H)
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+      const goldR = isLight ? 150 : 201, goldG = isLight ? 120 : 169, goldB = isLight ? 60 : 110
 
       // Lines — brighten near cursor
       lines.forEach(([a, b]) => {
@@ -58,7 +60,7 @@ export function Footer() {
         ctx.beginPath()
         ctx.moveTo(points[a].x, points[a].y)
         ctx.lineTo(points[b].x, points[b].y)
-        ctx.strokeStyle = `rgba(201, 169, 110, ${baseO})`
+        ctx.strokeStyle = `rgba(${goldR}, ${goldG}, ${goldB}, ${baseO})`
         ctx.lineWidth = 0.4 + prox * 0.6
         ctx.stroke()
       })
@@ -72,7 +74,7 @@ export function Footer() {
 
         if (prox > 0.1) {
           const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(1, dotR * 4))
-          grad.addColorStop(0, `rgba(201, 169, 110, ${dotO * 0.3})`)
+          grad.addColorStop(0, `rgba(${goldR}, ${goldG}, ${goldB}, ${dotO * 0.3})`)
           grad.addColorStop(1, 'transparent')
           ctx.fillStyle = grad
           ctx.fillRect(p.x - dotR * 4, p.y - dotR * 4, dotR * 8, dotR * 8)
@@ -80,7 +82,7 @@ export function Footer() {
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, dotR, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(201, 169, 110, ${dotO})`
+        ctx.fillStyle = `rgba(${goldR}, ${goldG}, ${goldB}, ${dotO})`
         ctx.fill()
       })
 

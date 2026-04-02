@@ -184,7 +184,19 @@ export function AmbientCursor() {
 
       // ── LIGHT MODE: Ink brush cursor ──
       const isLight = document.documentElement.getAttribute('data-theme') === 'light'
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       if (isLight) {
+        if (prefersReducedMotion) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          // Simple static cursor dot — no trails or animations
+          ctx.beginPath()
+          ctx.arc(sx, sy, 3, 0, Math.PI * 2)
+          ctx.fillStyle = 'rgba(30, 25, 20, 0.3)'
+          ctx.fill()
+          prevX = sx; prevY = sy
+          animId = requestAnimationFrame(animate)
+          return
+        }
         // Use raw target for tip (responsive), smoothed pos for ambient effects
         const ix = sx, iy = sy
         const dx = sx - pos.current.x

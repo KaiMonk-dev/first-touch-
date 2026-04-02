@@ -77,7 +77,7 @@ function TimelineStep({ step, index, fillPct, total }) {
               className={`w-3 h-3 rounded-full border-2 transition-all duration-700 relative z-10 ${
                 isActive
                   ? 'bg-[#C9A96E] border-[#C9A96E] shadow-[0_0_12px_rgba(201,169,110,0.5)]'
-                  : 'bg-transparent border-white/15'
+                  : 'bg-transparent border-white/15 timeline-dot-inactive'
               }`}
             />
           </div>

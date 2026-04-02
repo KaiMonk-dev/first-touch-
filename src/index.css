@@ -695,6 +695,19 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   animation: ctaBreath 4s ease-in-out infinite;
 }
 
+/* Gold-tinted CTA pulse — for the "Speak with Alex" button */
+@keyframes ctaBreathGold {
+  0%, 100% { box-shadow: 0 0 20px rgba(201, 169, 110, 0.1), 0 0 6px rgba(201, 169, 110, 0.05); }
+  50% { box-shadow: 0 0 40px rgba(201, 169, 110, 0.22), 0 0 12px rgba(201, 169, 110, 0.1); }
+}
+.cta-breathe-gold { animation: ctaBreathGold 4s ease-in-out infinite; }
+
+@keyframes ctaBreathGoldLight {
+  0%, 100% { box-shadow: 0 0 15px rgba(201, 169, 110, 0.08); }
+  50% { box-shadow: 0 0 30px rgba(201, 169, 110, 0.15); }
+}
+[data-theme="light"] .cta-breathe-gold { animation-name: ctaBreathGoldLight; }
+
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
@@ -795,13 +808,18 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   display: none !important;
 }
 
-/* Dark theme for the widget conversation window */
+/* Dark theme for the widget conversation window — frosted glass */
 [class*="chat-widget-container"],
 [class*="chat-widget"] [class*="container"] {
-  background: #010101 !important;
-  border: 1px solid rgba(201, 169, 110, 0.15) !important;
+  background: rgba(1, 1, 1, 0.85) !important;
+  border: 1px solid rgba(201, 169, 110, 0.18) !important;
   border-radius: 16px !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(201, 169, 110, 0.05) !important;
+  backdrop-filter: blur(12px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(201, 169, 110, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
 }
 
 /* Widget header */
@@ -1171,4 +1189,106 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
     rgba(201, 169, 110, 0.08) 50%,
     transparent 70%
   ) !important;
+}
+
+/* Light mode GHL widget conversation window — frosted glass */
+[data-theme="light"] [class*="chat-widget-container"],
+[data-theme="light"] [class*="chat-widget"] [class*="container"] {
+  background: rgba(250, 250, 248, 0.85) !important;
+  border: 1px solid rgba(201, 169, 110, 0.22) !important;
+  backdrop-filter: blur(12px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.08),
+    0 0 40px rgba(201, 169, 110, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+[data-theme="light"] [class*="chat-widget"] [class*="header"] {
+  background: linear-gradient(135deg, #F5F0E8, #FAFAF8) !important;
+  border-bottom: 1px solid rgba(201, 169, 110, 0.15) !important;
+  color: #1a1a1a !important;
+}
+
+[data-theme="light"] [class*="chat-widget"] [class*="body"],
+[data-theme="light"] [class*="chat-widget"] [class*="content"] {
+  background: #FAFAF8 !important;
+  color: rgba(30, 30, 30, 0.85) !important;
+}
+
+[data-theme="light"] [class*="chat-widget"] [class*="agent-name"],
+[data-theme="light"] [class*="chat-widget"] [class*="name"] {
+  color: #1a1a1a !important;
+}
+
+[data-theme="light"] [class*="chat-widget"] [class*="description"],
+[data-theme="light"] [class*="chat-widget"] [class*="subtitle"] {
+  color: rgba(139, 115, 70, 0.8) !important;
+}
+
+[data-theme="light"] [class*="chat-widget"] [class*="footer"],
+[data-theme="light"] [class*="chat-widget"] [class*="powered"] {
+  color: rgba(30, 30, 30, 0.3) !important;
+}
+
+[data-theme="light"] [class*="chat-widget"] [class*="prompt"],
+[data-theme="light"] [class*="chat-widget"] [class*="greeting"] {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(201, 169, 110, 0.15) !important;
+  color: rgba(30, 30, 30, 0.85) !important;
+}
+
+/* ═══════════════════════════════════════
+   LIGHT MODE — component-specific fixes
+   ═══════════════════════════════════════ */
+
+/* InfiniteSlider fade edges — cream instead of black */
+[data-theme="light"] .slider-fade-left {
+  background: linear-gradient(to right, #FAFAF8, transparent) !important;
+}
+[data-theme="light"] .slider-fade-right {
+  background: linear-gradient(to left, #FAFAF8, transparent) !important;
+}
+
+/* StickyMobileCTA — cream bar */
+[data-theme="light"] .sticky-mobile-cta {
+  background: rgba(250, 250, 248, 0.92) !important;
+  border-top: 1px solid rgba(201, 169, 110, 0.12);
+}
+
+/* Pricing tooltip — light glass */
+[data-theme="light"] .pricing-tooltip {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(201, 169, 110, 0.15) !important;
+  color: rgba(30, 30, 30, 0.75) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Nav logo — stronger "Touch" contrast */
+[data-theme="light"] .nav-logo-secondary {
+  color: rgba(26, 26, 26, 0.65) !important;
+}
+
+/* HowItWorks inactive timeline dots — visible on light bg */
+[data-theme="light"] .timeline-dot-inactive {
+  border-color: rgba(26, 26, 26, 0.2) !important;
+}
+
+/* ═══════════════════════════════════════
+   SMOOTH THEME TRANSITION
+   ═══════════════════════════════════════ */
+
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease,
+    box-shadow 0.4s ease, opacity 0.4s ease !important;
+}
+
+/* Exclude canvases and performance-sensitive elements from transition */
+html.theme-transitioning canvas,
+html.theme-transitioning video,
+html.theme-transitioning iframe {
+  transition: none !important;
 }

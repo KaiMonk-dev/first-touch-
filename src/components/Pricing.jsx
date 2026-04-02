@@ -101,7 +101,7 @@ function Tooltip({ text }) {
         <circle cx="12" cy="12" r="10" />
         <path d="M12 16v-4M12 8h.01" />
       </svg>
-      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-lg bg-black/95 border border-white/10 text-[10px] text-white/70 font-light leading-relaxed whitespace-nowrap opacity-0 group-hover/tip:opacity-100 transition-opacity duration-300 pointer-events-none z-50 max-w-[220px] whitespace-normal text-center">
+      <span className="pricing-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-lg bg-black/95 border border-white/10 text-[10px] text-white/70 font-light leading-relaxed whitespace-nowrap opacity-0 group-hover/tip:opacity-100 transition-opacity duration-300 pointer-events-none z-50 max-w-[220px] whitespace-normal text-center">
         {text}
       </span>
     </span>
