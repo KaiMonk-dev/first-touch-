@@ -8,6 +8,7 @@ import { Hero } from './components/Hero'
 import { SpeedProof } from './components/SpeedProof'
 import { MeetAlex } from './components/MeetAlex'
 import { HowItWorks } from './components/HowItWorks'
+import { RevenueCalculator } from './components/RevenueCalculator'
 import { DashboardPreview } from './components/DashboardPreview'
 import { Pricing } from './components/Pricing'
 import { WhoWeAre } from './components/WhoWeAre'
@@ -50,6 +51,8 @@ function App() {
             <LiquidDripDivider />
             <SectionBurst />
             <MeetAlex />
+            <LiquidDripDivider />
+            <RevenueCalculator />
             <LiquidDripDivider />
             <HowItWorks />
             <LiquidDripDivider />

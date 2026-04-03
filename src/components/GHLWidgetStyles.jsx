@@ -259,6 +259,83 @@ const PREMIUM_STYLES = `
     transition: opacity 0.3s ease, background 0.3s ease !important;
   }
 
+  /* ── Voice Controls Container ── */
+  .lc_text-widget--voice-controls {
+    display: flex !important;
+    gap: 16px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 16px 0 !important;
+  }
+
+  /* ── Mute Button — Frosted Glass Pill ── */
+  ion-button.lc_text-widget--voice-mute-btn,
+  ion-button[aria-label*="mute"],
+  ion-button[aria-label*="Mute"] {
+    --background: rgba(255, 255, 255, 0.08) !important;
+    --background-hover: rgba(255, 255, 255, 0.12) !important;
+    --border-radius: 9999px !important;
+    --border-width: 1px !important;
+    --border-style: solid !important;
+    --border-color: rgba(201, 169, 110, 0.35) !important;
+    --box-shadow: 0 0 16px rgba(201, 169, 110, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    --color: #fff !important;
+    --padding-start: 20px !important;
+    --padding-end: 20px !important;
+    --padding-top: 12px !important;
+    --padding-bottom: 12px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  ion-button.lc_text-widget--voice-mute-btn:hover {
+    --border-color: rgba(201, 169, 110, 0.5) !important;
+    --box-shadow: 0 0 24px rgba(201, 169, 110, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  }
+
+  /* ── End Call Button — Red/Coral Pill ── */
+  ion-button.lc_text-widget--voice-end-call-btn,
+  ion-button[aria-label*="end"],
+  ion-button[aria-label*="End"],
+  ion-button.ion-color-danger {
+    --background: rgba(248, 113, 113, 0.18) !important;
+    --background-hover: rgba(248, 113, 113, 0.3) !important;
+    --border-radius: 9999px !important;
+    --border-width: 1px !important;
+    --border-style: solid !important;
+    --border-color: rgba(248, 113, 113, 0.4) !important;
+    --box-shadow: 0 0 20px rgba(248, 113, 113, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    --color: #fff !important;
+    --padding-start: 20px !important;
+    --padding-end: 20px !important;
+    --padding-top: 12px !important;
+    --padding-bottom: 12px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  ion-button.lc_text-widget--voice-end-call-btn:hover,
+  ion-button.ion-color-danger:hover {
+    --background: rgba(248, 113, 113, 0.3) !important;
+    --border-color: rgba(248, 113, 113, 0.55) !important;
+    --box-shadow: 0 0 30px rgba(248, 113, 113, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    transform: scale(1.05) !important;
+  }
+
+  /* ── Mute/End label text ── */
+  .lc_text-widget--voice-controls span,
+  .lc_text-widget--voice-controls div[class*="label"] {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 11px !important;
+    letter-spacing: 0.05em !important;
+  }
+
   /* ── Reduced Motion ── */
   @media (prefers-reduced-motion: reduce) {
     .lc_text-widget--voice-start-call {
@@ -288,20 +365,63 @@ function fixIonButtonBorders(shadow) {
     const ionSR = btn.shadowRoot
     if (!ionSR) return
     if (ionSR.querySelector('#ft-ion-fix')) return // Already fixed
+
+    const isMute = btn.classList.contains('lc_text-widget--voice-mute-btn')
+    const isEnd = btn.classList.contains('lc_text-widget--voice-end-call-btn') || btn.classList.contains('ion-color-danger')
+
     const fix = document.createElement('style')
     fix.id = 'ft-ion-fix'
-    fix.textContent = `
-      .button-native {
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-        background: transparent !important;
-        color: #2C1810 !important;
-      }
-      .button-native::after {
-        display: none !important;
-      }
-    `
+
+    if (isMute) {
+      fix.textContent = `
+        .button-native {
+          border: 1px solid rgba(201, 169, 110, 0.35) !important;
+          border-radius: 9999px !important;
+          background: rgba(255, 255, 255, 0.08) !important;
+          backdrop-filter: blur(12px) !important;
+          box-shadow: 0 0 16px rgba(201, 169, 110, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+          color: #fff !important;
+          transition: all 0.3s ease !important;
+        }
+        .button-native:hover {
+          border-color: rgba(201, 169, 110, 0.5) !important;
+          box-shadow: 0 0 24px rgba(201, 169, 110, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+        }
+        .button-native::after { display: none !important; }
+      `
+    } else if (isEnd) {
+      fix.textContent = `
+        .button-native {
+          border: 1px solid rgba(248, 113, 113, 0.4) !important;
+          border-radius: 9999px !important;
+          background: rgba(248, 113, 113, 0.18) !important;
+          backdrop-filter: blur(12px) !important;
+          box-shadow: 0 0 20px rgba(248, 113, 113, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+          color: #fff !important;
+          transition: all 0.3s ease !important;
+        }
+        .button-native:hover {
+          background: rgba(248, 113, 113, 0.3) !important;
+          border-color: rgba(248, 113, 113, 0.55) !important;
+          box-shadow: 0 0 30px rgba(248, 113, 113, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+          transform: scale(1.05) !important;
+        }
+        .button-native::after { display: none !important; }
+      `
+    } else {
+      // Start-call button and others — transparent, no border
+      fix.textContent = `
+        .button-native {
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+          background: transparent !important;
+          color: #2C1810 !important;
+        }
+        .button-native::after { display: none !important; }
+      `
+    }
+
     ionSR.appendChild(fix)
   })
 }

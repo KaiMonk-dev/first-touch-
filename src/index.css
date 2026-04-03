@@ -1027,6 +1027,83 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
 }
 
 /* ═══════════════════════════════════════
+   REVENUE CALCULATOR — custom slider
+   ═══════════════════════════════════════ */
+
+.revenue-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #C9A96E var(--fill, 0%), rgba(255, 255, 255, 0.08) var(--fill, 0%));
+  outline: none;
+  cursor: pointer;
+}
+
+.revenue-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.15), rgba(10, 10, 10, 0.9));
+  border: 2px solid rgba(201, 169, 110, 0.5);
+  box-shadow:
+    0 0 12px rgba(201, 169, 110, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  cursor: grab;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.revenue-slider::-webkit-slider-thumb:hover {
+  border-color: rgba(201, 169, 110, 0.8);
+  box-shadow:
+    0 0 20px rgba(201, 169, 110, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: scale(1.15);
+}
+
+.revenue-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+.revenue-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.15), rgba(10, 10, 10, 0.9));
+  border: 2px solid rgba(201, 169, 110, 0.5);
+  box-shadow:
+    0 0 12px rgba(201, 169, 110, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  cursor: grab;
+}
+
+.revenue-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.revenue-slider::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: #C9A96E;
+}
+
+.revenue-slider:focus-visible {
+  outline: 2px solid rgba(201, 169, 110, 0.4);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+@media (max-width: 640px) {
+  .revenue-slider::-webkit-slider-thumb { width: 24px; height: 24px; }
+  .revenue-slider::-moz-range-thumb { width: 24px; height: 24px; }
+}
+
+/* ═══════════════════════════════════════
    LIGHT MODE — premium warm light theme
    ═══════════════════════════════════════ */
 
@@ -1430,6 +1507,26 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   box-shadow: none !important;
   color: #2C1810 !important;
   -webkit-text-fill-color: #2C1810 !important;
+}
+
+/* Light mode revenue slider */
+[data-theme="light"] .revenue-slider {
+  background: linear-gradient(to right, rgba(184, 150, 90, 0.6) var(--fill, 0%), rgba(0, 0, 0, 0.06) var(--fill, 0%));
+}
+
+[data-theme="light"] .revenue-slider::-webkit-slider-thumb {
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(240, 235, 224, 0.95));
+  border-color: rgba(184, 150, 90, 0.5);
+  box-shadow: 0 0 10px rgba(184, 150, 90, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .revenue-slider::-moz-range-thumb {
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(240, 235, 224, 0.95));
+  border-color: rgba(184, 150, 90, 0.5);
+}
+
+[data-theme="light"] .revenue-slider::-moz-range-progress {
+  background: rgba(184, 150, 90, 0.6);
 }
 
 /* ═══════════════════════════════════════
