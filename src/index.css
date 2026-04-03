@@ -968,7 +968,8 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   ) !important;
   background-size: 300% 300% !important;
   animation: liquidGoldFlow 6s ease-in-out infinite !important;
-  color: #0a0a0a !important;
+  color: #2C1810 !important;
+  -webkit-text-fill-color: #2C1810 !important;
   border: none !important;
   border-radius: 9999px !important;
   font-weight: 600 !important;
@@ -1381,7 +1382,8 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
     #9C7D45 100%
   ) !important;
   background-size: 300% 300% !important;
-  color: #1a1a1a !important;
+  color: #2C1810 !important;
+  -webkit-text-fill-color: #2C1810 !important;
   box-shadow:
     0 4px 20px rgba(156, 125, 69, 0.2),
     0 1px 3px rgba(0, 0, 0, 0.08),
@@ -1408,6 +1410,26 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   background: rgba(255, 255, 255, 0.95) !important;
   border: 1px solid rgba(201, 169, 110, 0.15) !important;
   color: rgba(30, 30, 30, 0.85) !important;
+}
+
+/* CRITICAL: Widget voice screens must ALWAYS be dark, even in light mode */
+[data-theme="light"] [class*="chat-widget"] *[class*="voice"],
+[data-theme="light"] [class*="chat-widget"] *[class*="screen"],
+[data-theme="light"] [class*="chat-widget"] *[class*="ended"],
+[data-theme="light"] [class*="chat-widget"] *[class*="call-end"],
+[data-theme="light"] [class*="chat-widget"] *[class*="active-screen"] {
+  background: #0a0908 !important;
+  color: #fff !important;
+}
+
+/* Kill inner borders on call button children (external selector) */
+[class*="chat-widget"] button[class*="call"] *,
+[class*="chat-widget"] button[class*="voice"] * {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: #2C1810 !important;
+  -webkit-text-fill-color: #2C1810 !important;
 }
 
 /* ═══════════════════════════════════════

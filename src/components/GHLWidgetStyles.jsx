@@ -91,7 +91,8 @@ const PREMIUM_STYLES = `
     ) !important;
     background-size: 300% 300% !important;
     animation: liquidGoldFlow 6s ease-in-out infinite !important;
-    color: #0a0a0a !important;
+    color: #2C1810 !important;
+    -webkit-text-fill-color: #2C1810 !important;
     font-weight: 600 !important;
     border: none !important;
     border-radius: 9999px !important;
@@ -104,6 +105,48 @@ const PREMIUM_STYLES = `
       inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
     cursor: pointer !important;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  /* Kill inner rectangular border/outline on button children */
+  .lc_text-widget--voice-start-call *,
+  .lc_text-widget--voice-start-call span,
+  .lc_text-widget--voice-start-call div {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    color: #2C1810 !important;
+    -webkit-text-fill-color: #2C1810 !important;
+  }
+
+  /* Ion-button inside voice start — kill outline variant border */
+  ion-button.lc_text-widget--voice-talk-button,
+  .lc_text-widget--voice-talk-button {
+    --border-width: 0 !important;
+    --border-style: none !important;
+    --border-color: transparent !important;
+    --background: transparent !important;
+    --box-shadow: none !important;
+    --color: #2C1810 !important;
+    border: none !important;
+    outline: none !important;
+  }
+
+  /* Penetrate ion-button shadow DOM via ::part */
+  ion-button.lc_text-widget--voice-talk-button::part(native) {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    color: #2C1810 !important;
+  }
+
+  /* Also target ion-button call-ended variants */
+  ion-button[class*="voice-talk"]::part(native),
+  ion-button[class*="call"]::part(native) {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
 
   .lc_text-widget--voice-start-call:hover {
@@ -160,6 +203,62 @@ const PREMIUM_STYLES = `
     color: #fff !important;
   }
 
+  /* ── Call-Ended State — MUST stay dark ── */
+  .lc_text-widget--voice-call-ended-screen,
+  .lc_text-widget--voice-end-screen,
+  *[class*="call-ended"],
+  *[class*="call-end"] {
+    background: linear-gradient(180deg, #080706 0%, #0c0a08 50%, #0a0908 100%) !important;
+    color: #fff !important;
+  }
+
+  /* Catch-all: force dark on every possible screen/container */
+  .lc_text-widget--box *[class*="screen"],
+  .lc_text-widget--box *[class*="wrapper"],
+  .lc_text-widget--box *[class*="ended"],
+  .lc_text-widget--box *[class*="call-end"] {
+    background: #0a0908 !important;
+    color: #fff !important;
+  }
+
+  /* ── Call-Ended Button — same liquid gold as initial ── */
+  *[class*="call-ended"] button,
+  *[class*="call-end"] button,
+  *[class*="end"] button[class*="again"],
+  *[class*="end"] button[class*="call"] {
+    background: linear-gradient(
+      135deg,
+      #8B6D3F 0%,
+      #C9A96E 25%,
+      #E8D5A8 50%,
+      #C9A96E 75%,
+      #8B6D3F 100%
+    ) !important;
+    background-size: 300% 300% !important;
+    animation: liquidGoldFlow 6s ease-in-out infinite !important;
+    color: #2C1810 !important;
+    -webkit-text-fill-color: #2C1810 !important;
+    font-weight: 600 !important;
+    border: none !important;
+    border-radius: 9999px !important;
+    padding: 14px 32px !important;
+    font-size: 14px !important;
+    letter-spacing: 0.02em !important;
+    box-shadow:
+      0 4px 20px rgba(201, 169, 110, 0.3),
+      0 1px 3px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    cursor: pointer !important;
+  }
+
+  /* ── Smooth State Transitions ── */
+  .lc_text-widget--voice-initial-screen,
+  .lc_text-widget--voice-active-screen,
+  *[class*="call-ended"],
+  *[class*="screen"] {
+    transition: opacity 0.3s ease, background 0.3s ease !important;
+  }
+
   /* ── Reduced Motion ── */
   @media (prefers-reduced-motion: reduce) {
     .lc_text-widget--voice-start-call {
@@ -178,6 +277,33 @@ function injectStyles(shadow) {
   style.id = STYLE_ID
   style.textContent = PREMIUM_STYLES
   shadow.appendChild(style)
+
+  // Penetrate ion-button's nested shadow DOM to kill the outline border
+  fixIonButtonBorders(shadow)
+}
+
+function fixIonButtonBorders(shadow) {
+  const ionButtons = shadow.querySelectorAll('ion-button')
+  ionButtons.forEach(btn => {
+    const ionSR = btn.shadowRoot
+    if (!ionSR) return
+    if (ionSR.querySelector('#ft-ion-fix')) return // Already fixed
+    const fix = document.createElement('style')
+    fix.id = 'ft-ion-fix'
+    fix.textContent = `
+      .button-native {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        color: #2C1810 !important;
+      }
+      .button-native::after {
+        display: none !important;
+      }
+    `
+    ionSR.appendChild(fix)
+  })
 }
 
 export function GHLWidgetStyles() {
@@ -194,7 +320,10 @@ export function GHLWidgetStyles() {
       if (w?.shadowRoot) {
         injectStyles(w.shadowRoot)
         // Also watch for shadow DOM mutations (widget rebuilds internal DOM)
-        const shadowObserver = new MutationObserver(() => injectStyles(w.shadowRoot))
+        const shadowObserver = new MutationObserver(() => {
+          injectStyles(w.shadowRoot)
+          fixIonButtonBorders(w.shadowRoot)
+        })
         shadowObserver.observe(w.shadowRoot, { childList: true, subtree: true })
       }
     })
@@ -206,7 +335,10 @@ export function GHLWidgetStyles() {
     const timers = checks.map(ms =>
       setTimeout(() => {
         const w = document.querySelector('chat-widget')
-        if (w?.shadowRoot) injectStyles(w.shadowRoot)
+        if (w?.shadowRoot) {
+          injectStyles(w.shadowRoot)
+          fixIonButtonBorders(w.shadowRoot)
+        }
       }, ms)
     )
 
