@@ -106,11 +106,6 @@ const PREMIUM_STYLES = `
     animation: avatarPulse 3s ease-in-out infinite !important;
   }
 
-  /* ── Call-ended screen: hide the start-call duplicate, keep only talk-button ── */
-  .lc_text-widget--voice-call-ended-screen .lc_text-widget--voice-start-call {
-    display: none !important;
-  }
-
   /* ── Call Button — Liquid Gold Pour (initial + call-ended screens) ── */
   .lc_text-widget--voice-start-call,
   .lc_text-widget--voice-talk-button {
@@ -313,7 +308,7 @@ const PREMIUM_STYLES = `
     letter-spacing: 0.1em !important;
   }
 
-  /* ── Voice Controls — premium, sleek ── */
+  /* ── Voice Controls — premium, sleek, fully black bg ── */
   .lc_text-widget--voice-controls {
     position: relative !important;
     z-index: 20 !important;
@@ -323,6 +318,13 @@ const PREMIUM_STYLES = `
     justify-content: center !important;
     margin-top: auto !important;
     padding: 28px 0 !important;
+    background: #000 !important;
+  }
+
+  /* Kill any non-black bg on wrappers inside active/ended screens */
+  .lc_text-widget--voice-active-screen > *,
+  .lc_text-widget--voice-call-ended-screen > * {
+    background: transparent !important;
   }
 
   /* Mute — frosted glass circle */
