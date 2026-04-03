@@ -41,7 +41,7 @@ const PREMIUM_STYLES = `
 
   /* ── Widget Container ── */
   .lc_text-widget--box {
-    background: linear-gradient(180deg, #0d0b08 0%, #0a0908 100%) !important;
+    background: #000 !important;
     border: 1px solid rgba(201, 169, 110, 0.2) !important;
     border-radius: 16px !important;
     backdrop-filter: blur(16px) saturate(150%) !important;
@@ -55,19 +55,19 @@ const PREMIUM_STYLES = `
 
   /* ── Header ── */
   .lc_text-widget--header-wrapper {
-    background: linear-gradient(180deg, #151210 0%, #0d0b08 100%) !important;
-    border-bottom: 1px solid rgba(201, 169, 110, 0.15) !important;
+    background: #000 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
   }
 
   .lc_text-widget_heading--content {
     color: #fff !important;
   }
 
-  /* ── Voice Screen Body ── */
+  /* ── Voice Screen Body — solid black, clean ── */
   .lc_text-widget--voice-initial-screen,
   .lc_text-widget--voice-active-screen,
   .lc_text-widget--voice-call-ended-screen {
-    background: linear-gradient(180deg, #080706 0%, #0c0a08 50%, #0a0908 100%) !important;
+    background: #000 !important;
     color: #fff !important;
   }
 
@@ -104,6 +104,11 @@ const PREMIUM_STYLES = `
     border: 2px solid rgba(201, 169, 110, 0.35) !important;
     border-radius: 50% !important;
     animation: avatarPulse 3s ease-in-out infinite !important;
+  }
+
+  /* ── Call-ended screen: hide the start-call duplicate, keep only talk-button ── */
+  .lc_text-widget--voice-call-ended-screen .lc_text-widget--voice-start-call {
+    display: none !important;
   }
 
   /* ── Call Button — Liquid Gold Pour (initial + call-ended screens) ── */
@@ -182,15 +187,15 @@ const PREMIUM_STYLES = `
     stroke-width: 2.5px !important;
   }
 
-  /* ── Catch-all: force dark on screen containers — NOT ion-button elements ── */
+  /* ── Catch-all: force black on screen containers — NOT ion-button elements ── */
   [class*="lc_text-widget--voice"]:not(ion-button) {
-    background-color: #0a0908 !important;
+    background-color: #000 !important;
     color: #fff !important;
   }
 
   /* ── Agency Branding Footer ── */
   .lc_text-widget--agency-branding {
-    background: #0a0908 !important;
+    background: #000 !important;
     border-top: 1px solid rgba(201, 169, 110, 0.1) !important;
   }
 
@@ -277,7 +282,7 @@ const PREMIUM_STYLES = `
 
   /* ── In-call / Active State ── */
   .lc_text-widget--voice-active-screen {
-    background: linear-gradient(180deg, #080706 0%, #0c0a08 50%, #0a0908 100%) !important;
+    background: #000 !important;
     position: absolute !important;
     inset: 0 !important;
     z-index: 10 !important;
