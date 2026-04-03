@@ -138,7 +138,7 @@ export function Pricing() {
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             <p className="text-[13px] text-white/40 font-light">
-              14-day money-back guarantee. No contracts. Cancel anytime.
+              30-day satisfaction guarantee. No contracts. Cancel anytime.
             </p>
           </div>
         </AnimatedSection>

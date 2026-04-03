@@ -108,7 +108,7 @@ export function Hero() {
           className="text-[12px] text-white/35 tracking-wider animate-fade-up"
           style={{ animationDelay: '0.9s', animationFillMode: 'both' }}
         >
-          No contracts &middot; 14-day guarantee &middot; Live in 72 hours
+          No contracts &middot; 30-day satisfaction guarantee &middot; Live in 72 hours
         </p>
 
       </div>
