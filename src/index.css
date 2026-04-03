@@ -712,20 +712,20 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
 @keyframes nebulaShift {
   0%, 100% {
     background: radial-gradient(circle, #C9A96E 0%, #8B6EC7 40%, transparent 70%);
-    box-shadow: 0 0 4px rgba(201, 169, 110, 0.6), 0 0 8px rgba(139, 110, 199, 0.3);
+    box-shadow: 0 0 6px rgba(201, 169, 110, 0.8), 0 0 12px rgba(139, 110, 199, 0.4);
   }
   33% {
     background: radial-gradient(circle, #E8D5A8 0%, #5B8DEF 40%, transparent 70%);
-    box-shadow: 0 0 5px rgba(91, 141, 239, 0.5), 0 0 12px rgba(201, 169, 110, 0.2);
+    box-shadow: 0 0 8px rgba(91, 141, 239, 0.7), 0 0 16px rgba(201, 169, 110, 0.3);
   }
   66% {
     background: radial-gradient(circle, #C9A96E 0%, #A855F7 40%, transparent 70%);
-    box-shadow: 0 0 4px rgba(168, 85, 247, 0.4), 0 0 10px rgba(201, 169, 110, 0.3);
+    box-shadow: 0 0 6px rgba(168, 85, 247, 0.6), 0 0 14px rgba(201, 169, 110, 0.4);
   }
 }
 @keyframes starOrbit {
-  0% { transform: rotate(0deg) translateX(1px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(1px) rotate(-360deg); }
+  0% { transform: rotate(0deg) translateX(2px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(2px) rotate(-360deg); }
 }
 .live-dot {
   width: 6px;
@@ -740,36 +740,58 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.4); }
   50% { box-shadow: 0 0 0 6px rgba(201, 169, 110, 0); }
 }
-/* Nebula star — replaces basic dot on CTA buttons */
+/* Nebula star — sparkling animated star icon */
 .nebula-star {
   position: relative;
-  width: 10px;
-  height: 10px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  filter: drop-shadow(0 0 4px rgba(201, 169, 110, 0.6));
 }
+/* Four-point star shape via clip-path */
 .nebula-star::before {
   content: '';
   position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  animation: nebulaShift 6s ease-in-out infinite;
+  width: 14px;
+  height: 14px;
+  clip-path: polygon(
+    50% 0%, 61% 35%, 100% 50%, 61% 65%,
+    50% 100%, 39% 65%, 0% 50%, 39% 35%
+  );
+  animation: nebulaShift 8s ease-in-out infinite, starSparkle 5s ease-in-out infinite;
 }
+/* Orbiting satellite particle */
 .nebula-star::after {
   content: '';
   position: absolute;
-  width: 3px;
-  height: 3px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: rgba(201, 169, 110, 0.5);
-  animation: starOrbit 4s linear infinite;
+  background: rgba(201, 169, 110, 0.7);
+  animation: starOrbit 6s linear infinite;
+}
+@keyframes starSparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  30% { transform: scale(1.15) rotate(8deg); opacity: 0.85; }
+  60% { transform: scale(0.92) rotate(-5deg); opacity: 1; }
+  85% { transform: scale(1.1) rotate(4deg); opacity: 0.9; }
 }
 [data-theme="light"] .live-dot { background: #B08A45; }
 [data-theme="light"] .nebula-star::before {
-  animation-name: nebulaShiftLight;
+  animation-name: nebulaShiftLight, starSparkle;
+}
+/* Light mode: ensure phone icons don't wash out */
+[data-theme="light"] .phone-icon-bold {
+  stroke-width: 2.5;
+  stroke: #1a1a1a;
+  filter: none;
+}
+[data-theme="light"] button svg[data-phone] {
+  stroke-width: 2.5;
+  stroke: #1a1a1a;
 }
 @keyframes nebulaShiftLight {
   0%, 100% {
@@ -789,7 +811,11 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   .live-dot { animation: none; }
   .nebula-star::before {
     animation: none;
-    background: radial-gradient(circle, #C9A96E 0%, #8B6EC7 40%, transparent 70%);
+    background: #C9A96E;
+    clip-path: polygon(
+      50% 0%, 61% 35%, 100% 50%, 61% 65%,
+      50% 100%, 39% 65%, 0% 50%, 39% 35%
+    );
     box-shadow: 0 0 4px rgba(201, 169, 110, 0.5);
   }
   .nebula-star::after { animation: none; opacity: 0; }

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 /**
  * Injects premium styles into the GHL Voice AI widget's shadow DOM.
@@ -22,6 +22,21 @@ const PREMIUM_STYLES = `
   @keyframes livePulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.4); }
     50% { box-shadow: 0 0 0 6px rgba(201, 169, 110, 0); }
+  }
+
+  /* Playful wiggle — attracts attention on load, stops on click */
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(-3deg) scale(1.02); }
+    20% { transform: rotate(3deg) scale(1.02); }
+    30% { transform: rotate(-2deg); }
+    40% { transform: rotate(2deg); }
+    50% { transform: rotate(0deg); }
+  }
+
+  /* Wiggle applies to the floating trigger bubble, not the in-popup call button */
+  .lc_text-widget--bubble.ft-wiggle {
+    animation: wiggle 1.8s ease-in-out 0.5s 3, galaxyGlow 6s ease-in-out infinite !important;
   }
 
   /* ── Widget Container ── */
@@ -98,6 +113,7 @@ const PREMIUM_STYLES = `
     padding: 14px 32px !important;
     font-size: 14px !important;
     letter-spacing: 0.02em !important;
+    outline: none !important;
     box-shadow:
       0 4px 20px rgba(201, 169, 110, 0.3),
       0 1px 3px rgba(0, 0, 0, 0.2),
@@ -114,15 +130,33 @@ const PREMIUM_STYLES = `
     transform: translateY(-1px) !important;
   }
 
+  .lc_text-widget--voice-start-call:focus,
+  .lc_text-widget--voice-start-call:focus-visible {
+    outline: none !important;
+  }
+
   /* Force dark text on ALL call button children (fixes gold-on-gold) */
   .lc_text-widget--voice-start-call,
   .lc_text-widget--voice-start-call * {
     color: #0a0a0a !important;
   }
+
+  /* Kill any yellow/gold rectangular outline the widget adds around text */
+  .lc_text-widget--voice-start-call span,
+  .lc_text-widget--voice-start-call div,
+  .lc_text-widget--voice-start-call p {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  /* Phone icon: bold weight for legibility */
   .lc_text-widget--voice-start-call svg,
   .lc_text-widget--voice-start-call svg * {
     stroke: #0a0a0a !important;
     fill: #0a0a0a !important;
+    stroke-width: 2.5px !important;
   }
 
   /* ── Agency Branding Footer ── */
@@ -230,7 +264,8 @@ const PREMIUM_STYLES = `
       background: linear-gradient(135deg, #B8965A, #C9A96E) !important;
       background-size: 100% 100% !important;
     }
-    .lc_text-widget--bubble {
+    .lc_text-widget--bubble,
+    .lc_text-widget--bubble.ft-wiggle {
       animation: none !important;
     }
     .lc_text-widget--voice-initial-screen::before,
@@ -251,12 +286,58 @@ function injectStyles(shadow) {
   shadow.appendChild(style)
 }
 
+/** Strip the yellow rectangular border from ion-button's inner shadow DOM.
+ *  The ion-button renders its own shadow root async, so we poll until it appears. */
+function stripIonButtonBorder(shadow) {
+  const FIX_ID = 'ft-ion-fix'
+  const CSS = `
+    .button-native {
+      border: none !important;
+      outline: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+    }
+  `
+  function tryInject() {
+    const ionBtn = shadow.querySelector('ion-button.lc_text-widget--voice-talk-button')
+    if (!ionBtn?.shadowRoot) return false
+    if (ionBtn.shadowRoot.querySelector(`#${FIX_ID}`)) return true
+    const style = document.createElement('style')
+    style.id = FIX_ID
+    style.textContent = CSS
+    ionBtn.shadowRoot.appendChild(style)
+    return true
+  }
+  if (tryInject()) return
+  // Poll — ion-button shadow root may not exist yet
+  const attempts = [100, 300, 600, 1000, 1500, 2000, 3000, 5000]
+  attempts.forEach(ms => setTimeout(() => tryInject(), ms))
+}
+
+/** Add wiggle class to floating trigger bubble; remove on first click */
+function attachWiggle(shadow, clickedRef) {
+  if (clickedRef.current) return
+  const bubble = shadow.querySelector('.lc_text-widget--bubble')
+  if (!bubble || bubble.classList.contains('ft-wiggle')) return
+  bubble.classList.add('ft-wiggle')
+  bubble.addEventListener('click', () => {
+    clickedRef.current = true
+    bubble.classList.remove('ft-wiggle')
+  }, { once: true })
+}
+
 export function GHLWidgetStyles() {
+  const wiggleClicked = useRef(false)
+
   useEffect(() => {
     // Try to inject immediately if widget already loaded
     const widget = document.querySelector('chat-widget')
     if (widget?.shadowRoot) {
       injectStyles(widget.shadowRoot)
+      stripIonButtonBorder(widget.shadowRoot)
+      attachWiggle(widget.shadowRoot, wiggleClicked)
     }
 
     // Watch for the widget to appear (it may load async)
@@ -264,8 +345,13 @@ export function GHLWidgetStyles() {
       const w = document.querySelector('chat-widget')
       if (w?.shadowRoot) {
         injectStyles(w.shadowRoot)
+        stripIonButtonBorder(w.shadowRoot)
+        attachWiggle(w.shadowRoot, wiggleClicked)
         // Also watch for shadow DOM mutations (widget rebuilds internal DOM)
-        const shadowObserver = new MutationObserver(() => injectStyles(w.shadowRoot))
+        const shadowObserver = new MutationObserver(() => {
+          injectStyles(w.shadowRoot)
+          attachWiggle(w.shadowRoot, wiggleClicked)
+        })
         shadowObserver.observe(w.shadowRoot, { childList: true, subtree: true })
       }
     })
@@ -277,7 +363,10 @@ export function GHLWidgetStyles() {
     const timers = checks.map(ms =>
       setTimeout(() => {
         const w = document.querySelector('chat-widget')
-        if (w?.shadowRoot) injectStyles(w.shadowRoot)
+        if (w?.shadowRoot) {
+          injectStyles(w.shadowRoot)
+          attachWiggle(w.shadowRoot, wiggleClicked)
+        }
       }, ms)
     )
 

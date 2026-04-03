@@ -222,10 +222,10 @@ function AlexLivePrompt() {
 
   return (
     <div className="max-w-lg mx-auto mt-14 p-8 md:p-10 rounded-2xl liquid-glass-strong liquid-shimmer text-center">
-      {/* Live badge */}
-      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A96E]/10 mb-6">
+      {/* Live badge — minimal floating text, no frame */}
+      <div className="inline-flex items-center gap-2 mb-6">
         <span className="nebula-star" />
-        <span className="text-[11px] font-medium text-[#C9A96E]/70 tracking-wider uppercase">Live right now</span>
+        <span className="text-[11px] font-medium text-[#C9A96E]/60 tracking-wider uppercase">Live right now</span>
       </div>
 
       <h3 className="text-xl md:text-2xl font-bold tracking-[-0.02em] leading-tight mb-3">
