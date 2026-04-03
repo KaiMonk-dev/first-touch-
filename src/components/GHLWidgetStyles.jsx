@@ -19,9 +19,9 @@ const PREMIUM_STYLES = `
     100% { background-position: 0% 50%; }
   }
 
-  @keyframes livePulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.4); }
-    50% { box-shadow: 0 0 0 6px rgba(201, 169, 110, 0); }
+  @keyframes avatarPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.3), 0 0 20px rgba(201, 169, 110, 0.15); }
+    50%       { box-shadow: 0 0 0 6px rgba(201, 169, 110, 0), 0 0 28px rgba(201, 169, 110, 0.25); }
   }
 
   /* Playful wiggle — attracts attention on load, stops on click */
@@ -34,7 +34,7 @@ const PREMIUM_STYLES = `
     50% { transform: rotate(0deg); }
   }
 
-  /* Wiggle applies to the floating trigger bubble, not the in-popup call button */
+  /* Wiggle applies to the floating trigger bubble only */
   .lc_text-widget--bubble.ft-wiggle {
     animation: wiggle 1.8s ease-in-out 0.5s 3, galaxyGlow 6s ease-in-out infinite !important;
   }
@@ -71,8 +71,8 @@ const PREMIUM_STYLES = `
     color: #fff !important;
   }
 
-  /* Ensure all inner text in every screen is white */
-  .lc_text-widget--voice-call-ended-screen *,
+  /* Ensure all inner text in every screen is white (except gold buttons) */
+  .lc_text-widget--voice-call-ended-screen *:not(ion-button):not(ion-button *),
   .lc_text-widget--voice-call-ended-status {
     color: #fff !important;
   }
@@ -88,7 +88,10 @@ const PREMIUM_STYLES = `
   }
 
   .lc_text-widget--voice-agent-title {
-    color: rgba(201, 169, 110, 0.7) !important;
+    color: rgba(201, 169, 110, 0.65) !important;
+    font-size: 12px !important;
+    font-weight: 300 !important;
+    letter-spacing: 0.04em !important;
   }
 
   /* Hide AI badge — Alex is a team member, not a bot */
@@ -96,15 +99,16 @@ const PREMIUM_STYLES = `
     display: none !important;
   }
 
-  /* Avatar — gold ring glow */
+  /* Avatar — subtle gold pulse ring */
   .lc_text-widget--voice-agent-avatar {
-    border: 2px solid rgba(201, 169, 110, 0.3) !important;
+    border: 2px solid rgba(201, 169, 110, 0.35) !important;
     border-radius: 50% !important;
-    box-shadow: 0 0 20px rgba(201, 169, 110, 0.15) !important;
+    animation: avatarPulse 3s ease-in-out infinite !important;
   }
 
-  /* ── Call Button — Liquid Gold Pour ── */
-  .lc_text-widget--voice-start-call {
+  /* ── Call Button — Liquid Gold Pour (initial + call-ended screens) ── */
+  .lc_text-widget--voice-start-call,
+  .lc_text-widget--voice-talk-button {
     background: linear-gradient(
       135deg,
       #8B6D3F 0%,
@@ -131,7 +135,8 @@ const PREMIUM_STYLES = `
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
-  .lc_text-widget--voice-start-call:hover {
+  .lc_text-widget--voice-start-call:hover,
+  .lc_text-widget--voice-talk-button:hover {
     box-shadow:
       0 8px 32px rgba(201, 169, 110, 0.45),
       0 2px 6px rgba(0, 0, 0, 0.25),
@@ -140,36 +145,45 @@ const PREMIUM_STYLES = `
   }
 
   .lc_text-widget--voice-start-call:focus,
-  .lc_text-widget--voice-start-call:focus-visible {
+  .lc_text-widget--voice-start-call:focus-visible,
+  .lc_text-widget--voice-talk-button:focus,
+  .lc_text-widget--voice-talk-button:focus-visible {
     outline: none !important;
   }
 
-  /* Force dark text on ALL call button children (fixes gold-on-gold) */
+  /* Force dark text on ALL call button children */
   .lc_text-widget--voice-start-call,
-  .lc_text-widget--voice-start-call * {
+  .lc_text-widget--voice-start-call *,
+  .lc_text-widget--voice-talk-button,
+  .lc_text-widget--voice-talk-button * {
     color: #0a0a0a !important;
   }
 
-  /* Kill any yellow/gold rectangular outline the widget adds around text */
+  /* Kill any rectangular outlines on button child elements */
   .lc_text-widget--voice-start-call span,
   .lc_text-widget--voice-start-call div,
-  .lc_text-widget--voice-start-call p {
+  .lc_text-widget--voice-start-call p,
+  .lc_text-widget--voice-talk-button span,
+  .lc_text-widget--voice-talk-button div,
+  .lc_text-widget--voice-talk-button p {
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
     background: transparent !important;
   }
 
-  /* Phone icon: bold weight for legibility */
+  /* Phone icon */
   .lc_text-widget--voice-start-call svg,
-  .lc_text-widget--voice-start-call svg * {
+  .lc_text-widget--voice-start-call svg *,
+  .lc_text-widget--voice-talk-button svg,
+  .lc_text-widget--voice-talk-button svg * {
     stroke: #0a0a0a !important;
     fill: #0a0a0a !important;
     stroke-width: 2.5px !important;
   }
 
-  /* ── Catch-all: force dark on any voice screen variant ── */
-  [class*="lc_text-widget--voice"] {
+  /* ── Catch-all: force dark on screen containers — NOT ion-button elements ── */
+  [class*="lc_text-widget--voice"]:not(ion-button) {
     background-color: #0a0908 !important;
     color: #fff !important;
   }
@@ -262,7 +276,6 @@ const PREMIUM_STYLES = `
   }
 
   /* ── In-call / Active State ── */
-  /* Active screen must fully cover the initial screen and keep controls accessible */
   .lc_text-widget--voice-active-screen {
     background: linear-gradient(180deg, #080706 0%, #0c0a08 50%, #0a0908 100%) !important;
     position: absolute !important;
@@ -281,42 +294,93 @@ const PREMIUM_STYLES = `
     display: none !important;
   }
 
-  .lc_text-widget--voice-active-screen * {
+  .lc_text-widget--voice-active-screen *:not(ion-button):not(ion-button *) {
     color: #fff !important;
   }
 
-  /* ── Voice Controls (mute / end call) — always visible & accessible ── */
+  /* ── Call status / timer — gold tint ── */
+  .lc_text-widget--voice-call-timer,
+  [class*="lc_text-widget--voice-call-status"],
+  [class*="lc_text-widget--voice-call-timer"] {
+    color: rgba(201, 169, 110, 0.7) !important;
+    font-size: 12px !important;
+    font-weight: 300 !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  /* ── Voice Controls — premium, sleek ── */
   .lc_text-widget--voice-controls {
     position: relative !important;
     z-index: 20 !important;
     display: flex !important;
-    gap: 16px !important;
+    gap: 20px !important;
+    align-items: center !important;
+    justify-content: center !important;
     margin-top: auto !important;
-    padding: 20px 0 !important;
+    padding: 28px 0 !important;
   }
 
-  .lc_text-widget--voice-mute-btn,
-  .lc_text-widget--voice-end-call-btn {
-    min-width: 60px !important;
-    min-height: 60px !important;
+  /* Mute — frosted glass circle */
+  .lc_text-widget--voice-mute-btn {
+    width: 52px !important;
+    min-width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
     border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35) !important;
     cursor: pointer !important;
     z-index: 25 !important;
+    transition: all 0.3s ease !important;
   }
 
+  .lc_text-widget--voice-mute-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  /* End Call — deep crimson, refined */
   .lc_text-widget--voice-end-call-btn {
-    background: #e53e3e !important;
+    width: 52px !important;
+    min-width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    border-radius: 50% !important;
+    background: #9f1239 !important;
     border: none !important;
+    box-shadow:
+      0 4px 20px rgba(159, 18, 57, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    cursor: pointer !important;
+    z-index: 25 !important;
+    transition: all 0.3s ease !important;
   }
 
-  .lc_text-widget--voice-mute-btn {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  .lc_text-widget--voice-end-call-btn:hover {
+    background: #881337 !important;
+    box-shadow:
+      0 6px 28px rgba(159, 18, 57, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  }
+
+  /* Control button labels — subtle, refined */
+  .lc_text-widget--voice-mute-btn + span,
+  .lc_text-widget--voice-end-call-btn + span,
+  [class*="lc_text-widget--voice-control"] span {
+    font-size: 10px !important;
+    font-weight: 300 !important;
+    letter-spacing: 0.07em !important;
+    color: rgba(255, 255, 255, 0.4) !important;
   }
 
   /* ── Reduced Motion ── */
   @media (prefers-reduced-motion: reduce) {
-    .lc_text-widget--voice-start-call {
+    .lc_text-widget--voice-start-call,
+    .lc_text-widget--voice-talk-button {
       animation: none !important;
       background: linear-gradient(135deg, #B8965A, #C9A96E) !important;
       background-size: 100% 100% !important;
@@ -329,13 +393,16 @@ const PREMIUM_STYLES = `
       animation: none !important;
       opacity: 0.8 !important;
     }
+    .lc_text-widget--voice-agent-avatar {
+      animation: none !important;
+    }
   }
 `
 
 const STYLE_ID = 'ft-premium-theme'
 
 function injectStyles(shadow) {
-  if (shadow.querySelector(`#${STYLE_ID}`)) return // Already injected
+  if (shadow.querySelector(`#${STYLE_ID}`)) return
   const style = document.createElement('style')
   style.id = STYLE_ID
   style.textContent = PREMIUM_STYLES
@@ -343,12 +410,12 @@ function injectStyles(shadow) {
 }
 
 /** Strip yellow rectangular borders from all ion-buttons' inner shadow DOMs.
- *  Ion-buttons render their own shadow roots async, so we poll until they appear. */
+ *  State-aware: removes and re-injects if the screen state has changed
+ *  (same ion-button DOM element is reused across initial/call-ended screens). */
 function stripIonButtonBorders(shadow) {
-  const FIX_ID = 'ft-ion-fix'
-  // For the initial-screen talk button: make .button-native transparent so the
-  // parent gold gradient shows through
-  const INITIAL_TALK_CSS = `
+  // All talk buttons get transparent .button-native so the gold HOST shows through.
+  // The host element is now explicitly gold for both .voice-start-call and .voice-talk-button.
+  const TALK_CSS = `
     .button-native {
       border: none !important;
       outline: none !important;
@@ -356,16 +423,6 @@ function stripIonButtonBorders(shadow) {
       box-shadow: none !important;
       border-radius: 0 !important;
       padding: 0 !important;
-    }
-  `
-  // For the call-ended-screen "Talk Again" button: keep the gold gradient visible
-  // but strip the rectangular ion-button border. Don't kill background.
-  const ENDED_TALK_CSS = `
-    .button-native {
-      border: none !important;
-      outline: none !important;
-      box-shadow: none !important;
-      border-radius: 9999px !important;
       color: #0a0a0a !important;
     }
     .button-native * {
@@ -379,28 +436,32 @@ function stripIonButtonBorders(shadow) {
       box-shadow: none !important;
     }
   `
+
+  function getStateFor(btn) {
+    const isTalk = btn.classList.contains('lc_text-widget--voice-talk-button')
+    if (!isTalk) return { id: 'ft-ion-ctrl', css: CONTROL_CSS }
+    const onEnded = !!btn.closest('.lc_text-widget--voice-call-ended-screen')
+    return { id: onEnded ? 'ft-ion-talk-ended' : 'ft-ion-talk-init', css: TALK_CSS }
+  }
+
   function tryInject() {
     const allBtns = shadow.querySelectorAll('ion-button')
-    let allDone = true
     allBtns.forEach(btn => {
-      if (!btn.shadowRoot) { allDone = false; return }
-      if (btn.shadowRoot.querySelector(`#${FIX_ID}`)) return
-      const isTalkBtn = btn.classList.contains('lc_text-widget--voice-talk-button')
-      // Determine if this talk button is on the call-ended screen
-      const isOnEndedScreen = isTalkBtn && btn.closest('.lc_text-widget--voice-call-ended-screen')
-      const style = document.createElement('style')
-      style.id = FIX_ID
-      if (isTalkBtn && isOnEndedScreen) {
-        style.textContent = ENDED_TALK_CSS
-      } else if (isTalkBtn) {
-        style.textContent = INITIAL_TALK_CSS
-      } else {
-        style.textContent = CONTROL_CSS
+      if (!btn.shadowRoot) return
+      const { id, css } = getStateFor(btn)
+      const existing = btn.shadowRoot.querySelector('[id^="ft-ion-"]')
+      if (existing) {
+        if (existing.id === id) return // Already correct state
+        existing.remove()              // State changed — remove stale style
       }
+      const style = document.createElement('style')
+      style.id = id
+      style.textContent = css
       btn.shadowRoot.appendChild(style)
     })
-    return allDone && allBtns.length > 0
+    return allBtns.length > 0
   }
+
   if (tryInject()) return
   const attempts = [100, 300, 600, 1000, 1500, 2000, 3000, 5000, 8000]
   attempts.forEach(ms => setTimeout(() => tryInject(), ms))
@@ -422,7 +483,6 @@ export function GHLWidgetStyles() {
   const wiggleClicked = useRef(false)
 
   useEffect(() => {
-    // Try to inject immediately if widget already loaded
     const widget = document.querySelector('chat-widget')
     if (widget?.shadowRoot) {
       injectStyles(widget.shadowRoot)
@@ -430,14 +490,12 @@ export function GHLWidgetStyles() {
       attachWiggle(widget.shadowRoot, wiggleClicked)
     }
 
-    // Watch for the widget to appear (it may load async)
     const observer = new MutationObserver(() => {
       const w = document.querySelector('chat-widget')
       if (w?.shadowRoot) {
         injectStyles(w.shadowRoot)
         stripIonButtonBorders(w.shadowRoot)
         attachWiggle(w.shadowRoot, wiggleClicked)
-        // Also watch for shadow DOM mutations (widget rebuilds internal DOM)
         const shadowObserver = new MutationObserver(() => {
           injectStyles(w.shadowRoot)
           stripIonButtonBorders(w.shadowRoot)
@@ -449,7 +507,6 @@ export function GHLWidgetStyles() {
 
     observer.observe(document.body, { childList: true, subtree: true })
 
-    // Re-check periodically for first 10s (widget may take time to init shadow DOM)
     const checks = [500, 1000, 2000, 3000, 5000, 8000, 10000]
     const timers = checks.map(ms =>
       setTimeout(() => {
@@ -468,5 +525,5 @@ export function GHLWidgetStyles() {
     }
   }, [])
 
-  return null // This component renders nothing — it only injects styles
+  return null
 }
