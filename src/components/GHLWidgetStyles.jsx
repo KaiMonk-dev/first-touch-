@@ -64,8 +64,17 @@ const PREMIUM_STYLES = `
   }
 
   /* ── Voice Screen Body ── */
-  .lc_text-widget--voice-initial-screen {
+  .lc_text-widget--voice-initial-screen,
+  .lc_text-widget--voice-active-screen,
+  .lc_text-widget--voice-call-ended-screen {
     background: linear-gradient(180deg, #080706 0%, #0c0a08 50%, #0a0908 100%) !important;
+    color: #fff !important;
+  }
+
+  /* Ensure all inner text in every screen is white */
+  .lc_text-widget--voice-call-ended-screen *,
+  .lc_text-widget--voice-call-ended-status {
+    color: #fff !important;
   }
 
   .lc_text-widget--voice-chat-container {
@@ -159,6 +168,12 @@ const PREMIUM_STYLES = `
     stroke-width: 2.5px !important;
   }
 
+  /* ── Catch-all: force dark on any voice screen variant ── */
+  [class*="lc_text-widget--voice"] {
+    background-color: #0a0908 !important;
+    color: #fff !important;
+  }
+
   /* ── Agency Branding Footer ── */
   .lc_text-widget--agency-branding {
     background: #0a0908 !important;
@@ -219,19 +234,17 @@ const PREMIUM_STYLES = `
       inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
   }
 
-  /* ── Starfield background for voice screens ── */
+  /* ── Starfield background — initial screen only ── */
   @keyframes starfieldTwinkle {
     0% { opacity: 0.5; }
     100% { opacity: 1; }
   }
 
-  .lc_text-widget--voice-initial-screen,
-  .lc_text-widget--voice-active-screen {
+  .lc_text-widget--voice-initial-screen {
     position: relative !important;
   }
 
-  .lc_text-widget--voice-initial-screen::before,
-  .lc_text-widget--voice-active-screen::before {
+  .lc_text-widget--voice-initial-screen::before {
     content: '' !important;
     position: absolute !important;
     inset: 0 !important;
@@ -249,12 +262,56 @@ const PREMIUM_STYLES = `
   }
 
   /* ── In-call / Active State ── */
+  /* Active screen must fully cover the initial screen and keep controls accessible */
   .lc_text-widget--voice-active-screen {
     background: linear-gradient(180deg, #080706 0%, #0c0a08 50%, #0a0908 100%) !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 10 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+  }
+
+  /* When GHL hides the active screen, respect its display:none */
+  .lc_text-widget--voice-active-screen[style*="display: none"],
+  .lc_text-widget--voice-active-screen[style*="display:none"] {
+    display: none !important;
   }
 
   .lc_text-widget--voice-active-screen * {
     color: #fff !important;
+  }
+
+  /* ── Voice Controls (mute / end call) — always visible & accessible ── */
+  .lc_text-widget--voice-controls {
+    position: relative !important;
+    z-index: 20 !important;
+    display: flex !important;
+    gap: 16px !important;
+    margin-top: auto !important;
+    padding: 20px 0 !important;
+  }
+
+  .lc_text-widget--voice-mute-btn,
+  .lc_text-widget--voice-end-call-btn {
+    min-width: 60px !important;
+    min-height: 60px !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    z-index: 25 !important;
+  }
+
+  .lc_text-widget--voice-end-call-btn {
+    background: #e53e3e !important;
+    border: none !important;
+  }
+
+  .lc_text-widget--voice-mute-btn {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
   }
 
   /* ── Reduced Motion ── */
@@ -268,8 +325,7 @@ const PREMIUM_STYLES = `
     .lc_text-widget--bubble.ft-wiggle {
       animation: none !important;
     }
-    .lc_text-widget--voice-initial-screen::before,
-    .lc_text-widget--voice-active-screen::before {
+    .lc_text-widget--voice-initial-screen::before {
       animation: none !important;
       opacity: 0.8 !important;
     }
@@ -286,11 +342,11 @@ function injectStyles(shadow) {
   shadow.appendChild(style)
 }
 
-/** Strip the yellow rectangular border from ion-button's inner shadow DOM.
- *  The ion-button renders its own shadow root async, so we poll until it appears. */
-function stripIonButtonBorder(shadow) {
+/** Strip yellow rectangular borders from all ion-buttons' inner shadow DOMs.
+ *  Ion-buttons render their own shadow roots async, so we poll until they appear. */
+function stripIonButtonBorders(shadow) {
   const FIX_ID = 'ft-ion-fix'
-  const CSS = `
+  const TALK_CSS = `
     .button-native {
       border: none !important;
       outline: none !important;
@@ -300,19 +356,29 @@ function stripIonButtonBorder(shadow) {
       padding: 0 !important;
     }
   `
+  const CONTROL_CSS = `
+    .button-native {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  `
   function tryInject() {
-    const ionBtn = shadow.querySelector('ion-button.lc_text-widget--voice-talk-button')
-    if (!ionBtn?.shadowRoot) return false
-    if (ionBtn.shadowRoot.querySelector(`#${FIX_ID}`)) return true
-    const style = document.createElement('style')
-    style.id = FIX_ID
-    style.textContent = CSS
-    ionBtn.shadowRoot.appendChild(style)
-    return true
+    const allBtns = shadow.querySelectorAll('ion-button')
+    let allDone = true
+    allBtns.forEach(btn => {
+      if (!btn.shadowRoot) { allDone = false; return }
+      if (btn.shadowRoot.querySelector(`#${FIX_ID}`)) return
+      const style = document.createElement('style')
+      style.id = FIX_ID
+      const isTalkBtn = btn.classList.contains('lc_text-widget--voice-talk-button')
+      style.textContent = isTalkBtn ? TALK_CSS : CONTROL_CSS
+      btn.shadowRoot.appendChild(style)
+    })
+    return allDone && allBtns.length > 0
   }
   if (tryInject()) return
-  // Poll — ion-button shadow root may not exist yet
-  const attempts = [100, 300, 600, 1000, 1500, 2000, 3000, 5000]
+  const attempts = [100, 300, 600, 1000, 1500, 2000, 3000, 5000, 8000]
   attempts.forEach(ms => setTimeout(() => tryInject(), ms))
 }
 
@@ -336,7 +402,7 @@ export function GHLWidgetStyles() {
     const widget = document.querySelector('chat-widget')
     if (widget?.shadowRoot) {
       injectStyles(widget.shadowRoot)
-      stripIonButtonBorder(widget.shadowRoot)
+      stripIonButtonBorders(widget.shadowRoot)
       attachWiggle(widget.shadowRoot, wiggleClicked)
     }
 
@@ -345,11 +411,12 @@ export function GHLWidgetStyles() {
       const w = document.querySelector('chat-widget')
       if (w?.shadowRoot) {
         injectStyles(w.shadowRoot)
-        stripIonButtonBorder(w.shadowRoot)
+        stripIonButtonBorders(w.shadowRoot)
         attachWiggle(w.shadowRoot, wiggleClicked)
         // Also watch for shadow DOM mutations (widget rebuilds internal DOM)
         const shadowObserver = new MutationObserver(() => {
           injectStyles(w.shadowRoot)
+          stripIonButtonBorders(w.shadowRoot)
           attachWiggle(w.shadowRoot, wiggleClicked)
         })
         shadowObserver.observe(w.shadowRoot, { childList: true, subtree: true })
@@ -365,6 +432,7 @@ export function GHLWidgetStyles() {
         const w = document.querySelector('chat-widget')
         if (w?.shadowRoot) {
           injectStyles(w.shadowRoot)
+          stripIonButtonBorders(w.shadowRoot)
           attachWiggle(w.shadowRoot, wiggleClicked)
         }
       }, ms)

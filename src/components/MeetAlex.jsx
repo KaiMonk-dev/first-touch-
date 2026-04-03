@@ -240,7 +240,7 @@ function AlexLivePrompt() {
         <button
           ref={btn.ref}
           onClick={() => { playCtaChime(); triggerStarBirth(); triggerGHLWidget() }}
-          className="px-7 py-3.5 rounded-2xl liquid-glass text-white/80 font-medium text-[14px] hover:text-white hover:bg-white/[0.08] transition-colors flex items-center gap-2.5 cta-breathe-gold"
+          className="px-8 py-4 rounded-2xl liquid-glass-strong liquid-shimmer text-white/90 font-semibold text-[15px] hover:text-white hover:bg-white/[0.08] transition-all flex items-center gap-3 cta-breathe-gold"
           style={btn.style}
         >
           <span className="nebula-star" />
