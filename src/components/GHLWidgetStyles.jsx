@@ -346,7 +346,9 @@ function injectStyles(shadow) {
  *  Ion-buttons render their own shadow roots async, so we poll until they appear. */
 function stripIonButtonBorders(shadow) {
   const FIX_ID = 'ft-ion-fix'
-  const TALK_CSS = `
+  // For the initial-screen talk button: make .button-native transparent so the
+  // parent gold gradient shows through
+  const INITIAL_TALK_CSS = `
     .button-native {
       border: none !important;
       outline: none !important;
@@ -354,6 +356,20 @@ function stripIonButtonBorders(shadow) {
       box-shadow: none !important;
       border-radius: 0 !important;
       padding: 0 !important;
+    }
+  `
+  // For the call-ended-screen "Talk Again" button: keep the gold gradient visible
+  // but strip the rectangular ion-button border. Don't kill background.
+  const ENDED_TALK_CSS = `
+    .button-native {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      border-radius: 9999px !important;
+      color: #0a0a0a !important;
+    }
+    .button-native * {
+      color: #0a0a0a !important;
     }
   `
   const CONTROL_CSS = `
@@ -369,10 +385,18 @@ function stripIonButtonBorders(shadow) {
     allBtns.forEach(btn => {
       if (!btn.shadowRoot) { allDone = false; return }
       if (btn.shadowRoot.querySelector(`#${FIX_ID}`)) return
+      const isTalkBtn = btn.classList.contains('lc_text-widget--voice-talk-button')
+      // Determine if this talk button is on the call-ended screen
+      const isOnEndedScreen = isTalkBtn && btn.closest('.lc_text-widget--voice-call-ended-screen')
       const style = document.createElement('style')
       style.id = FIX_ID
-      const isTalkBtn = btn.classList.contains('lc_text-widget--voice-talk-button')
-      style.textContent = isTalkBtn ? TALK_CSS : CONTROL_CSS
+      if (isTalkBtn && isOnEndedScreen) {
+        style.textContent = ENDED_TALK_CSS
+      } else if (isTalkBtn) {
+        style.textContent = INITIAL_TALK_CSS
+      } else {
+        style.textContent = CONTROL_CSS
+      }
       btn.shadowRoot.appendChild(style)
     })
     return allDone && allBtns.length > 0

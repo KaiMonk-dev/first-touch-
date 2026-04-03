@@ -218,10 +218,17 @@ function VimeoPlayer() {
 }
 
 function AlexLivePrompt() {
-  const btn = useMagnetic(0.25, 80)
+  const card = useMagnetic(0.18, 140)
+  const btn = useMagnetic(0.3, 80)
 
   return (
-    <div className="max-w-lg mx-auto mt-14 p-8 md:p-10 rounded-2xl liquid-glass-strong liquid-shimmer text-center">
+    <div
+      onMouseMove={card.onMouseMove}
+      onMouseLeave={card.onMouseLeave}
+      style={card.style}
+      ref={card.ref}
+      className="max-w-lg mx-auto mt-14 p-8 md:p-10 rounded-2xl liquid-glass-strong liquid-shimmer text-center"
+    >
       {/* Live badge — minimal floating text, no frame */}
       <div className="inline-flex items-center gap-2 mb-6">
         <span className="nebula-star" />
