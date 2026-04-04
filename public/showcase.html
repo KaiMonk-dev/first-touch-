@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Touch — Speed Proof</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #C9A96E;
+    --gold-dim: rgba(201, 169, 110, 0.15);
+    --bg: #030303;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.06);
+  }
+
+  body {
+    background: var(--bg);
+    color: #fff;
+    font-family: 'Inter', -apple-system, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid rgba(201, 169, 110, 0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1000;
+    transition: transform 0.15s ease, border-color 0.3s, width 0.3s, height 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor.hovering {
+    width: 40px;
+    height: 40px;
+    border-color: rgba(201, 169, 110, 0.8);
+  }
+  .cursor-dot {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1001;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-trail {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: rgba(201, 169, 110, 0.2);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.5s;
+  }
+
+  /* Ambient grid */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201, 169, 110, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201, 169, 110, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+  }
+
+  /* Scene */
+  .scene {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+  }
+
+  /* Speed counter */
+  .speed-hero {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+    opacity: 0;
+    animation: heroReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+  }
+
+  .speed-label {
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.6;
+    margin-bottom: 16px;
+  }
+
+  .speed-number {
+    font-size: clamp(80px, 15vw, 200px);
+    font-weight: 900;
+    letter-spacing: -4px;
+    line-height: 0.85;
+    background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.4) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-variant-numeric: tabular-nums;
+    filter: blur(0px);
+    transition: filter 0.1s;
+  }
+  .speed-number.blur {
+    filter: blur(8px);
+  }
+
+  .speed-unit {
+    font-size: clamp(20px, 3vw, 40px);
+    font-weight: 200;
+    color: rgba(255,255,255,0.25);
+    margin-left: 8px;
+    letter-spacing: 2px;
+  }
+
+  .speed-sub {
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+  }
+  .speed-sub span {
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* Glow ring behind number */
+  .glow-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201, 169, 110, 0.06) 0%, transparent 60%);
+    animation: pulseGlow 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Glass blocks */
+  .glass-block {
+    position: absolute;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 20px 60px rgba(0, 0, 0, 0.3);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+    overflow: hidden;
+  }
+
+  .glass-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%, rgba(201,169,110,0.02) 100%);
+    pointer-events: none;
+  }
+
+  .glass-block::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 60%;
+    height: 200%;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.03) 48%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.03) 52%, transparent 60%);
+    animation: shimmer 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Block positions */
+  .block-1 { width: 220px; height: 160px; top: 8%; left: 5%; animation: floatBlock 8s ease-in-out infinite; }
+  .block-2 { width: 280px; height: 200px; top: 12%; right: 8%; animation: floatBlock 10s ease-in-out infinite 1s; }
+  .block-3 { width: 200px; height: 140px; bottom: 15%; left: 10%; animation: floatBlock 9s ease-in-out infinite 2s; }
+  .block-4 { width: 260px; height: 180px; bottom: 10%; right: 5%; animation: floatBlock 7s ease-in-out infinite 0.5s; }
+  .block-5 { width: 180px; height: 120px; top: 45%; left: 3%; animation: floatBlock 11s ease-in-out infinite 3s; }
+  .block-6 { width: 240px; height: 160px; top: 40%; right: 3%; animation: floatBlock 9s ease-in-out infinite 1.5s; }
+
+  /* Glass block content */
+  .block-stat {
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .block-stat-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+  }
+  .block-stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .block-stat-value.gold { color: var(--gold); }
+  .block-stat-value.white { color: rgba(255,255,255,0.8); }
+  .block-stat-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.2);
+    font-weight: 300;
+  }
+
+  /* Progress bar inside glass */
+  .glass-progress {
+    height: 3px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .glass-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold), rgba(201,169,110,0.3));
+    transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Refraction edge highlights */
+  .refraction {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0; left: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+    background: conic-gradient(from 135deg at var(--rx, 50%) var(--ry, 50%),
+      rgba(201, 169, 110, 0.08),
+      transparent 30%,
+      rgba(100, 150, 255, 0.04) 50%,
+      transparent 70%,
+      rgba(201, 169, 110, 0.06)
+    );
+    border-radius: 16px;
+  }
+  .glass-block:hover .refraction { opacity: 1; }
+
+  /* Bottom bar */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.6));
+    z-index: 50;
+  }
+  .brand {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+  }
+  .brand span { color: var(--gold); opacity: 0.5; }
+  .tagline {
+    font-size: 11px;
+    color: rgba(255,255,255,0.15);
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+
+  /* Keyframes */
+  @keyframes heroReveal {
+    from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+  @keyframes floatBlock {
+    0%, 100% { transform: translateY(0px) rotate3d(0, 0, 0, 0deg); }
+    33% { transform: translateY(-8px) rotate3d(0.5, 1, 0, 1deg); }
+    66% { transform: translateY(4px) rotate3d(-0.5, 0.5, 0, -0.5deg); }
+  }
+  @keyframes shimmer {
+    0% { left: -100%; }
+    50% { left: 150%; }
+    100% { left: 150%; }
+  }
+  @keyframes countUp {
+    0% { --count: 0; }
+    100% { --count: 8; }
+  }
+
+  /* Scan line */
+  .scan-line {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.15), transparent);
+    z-index: 5;
+    animation: scanDown 8s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes scanDown {
+    0% { top: -1px; }
+    100% { top: 100vh; }
+  }
+
+  /* Corner markers */
+  .corner-mark {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    z-index: 50;
+    pointer-events: none;
+  }
+  .corner-mark::before, .corner-mark::after {
+    content: '';
+    position: absolute;
+    background: rgba(201, 169, 110, 0.15);
+  }
+  .corner-mark.tl { top: 20px; left: 20px; }
+  .corner-mark.tl::before { width: 1px; height: 20px; top: 0; left: 0; }
+  .corner-mark.tl::after { width: 20px; height: 1px; top: 0; left: 0; }
+  .corner-mark.tr { top: 20px; right: 20px; }
+  .corner-mark.tr::before { width: 1px; height: 20px; top: 0; right: 0; }
+  .corner-mark.tr::after { width: 20px; height: 1px; top: 0; right: 0; }
+  .corner-mark.bl { bottom: 20px; left: 20px; }
+  .corner-mark.bl::before { width: 1px; height: 20px; bottom: 0; left: 0; }
+  .corner-mark.bl::after { width: 20px; height: 1px; bottom: 0; left: 0; }
+  .corner-mark.br { bottom: 20px; right: 20px; }
+  .corner-mark.br::before { width: 1px; height: 20px; bottom: 0; right: 0; }
+  .corner-mark.br::after { width: 20px; height: 1px; bottom: 0; right: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="grid-bg"></div>
+  <div class="scan-line"></div>
+
+  <div class="corner-mark tl"></div>
+  <div class="corner-mark tr"></div>
+  <div class="corner-mark bl"></div>
+  <div class="corner-mark br"></div>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <div class="scene">
+    <div class="glow-ring"></div>
+
+    <div class="speed-hero" id="speedHero">
+      <div class="speed-label">Response Time</div>
+      <div>
+        <span class="speed-number" id="speedNum">0.0</span>
+        <span class="speed-unit">sec</span>
+      </div>
+      <div class="speed-sub">
+        <span>Alex</span> answers before the second ring
+      </div>
+    </div>
+
+    <!-- Glass blocks with live stats -->
+    <div class="glass-block block-1" data-tilt>
+      <div class="refraction"></div>
+      <div class="block-stat">
+        <div class="block-stat-label">Calls Today</div>
+        <div class="block-stat-value gold" id="callsToday">0</div>
+        <div class="glass-progress"><div class="glass-progress-fill" id="callsBar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="glass-block block-2" data-tilt>
+      <div class="refraction"></div>
+      <div class="block-stat">
+        <div class="block-stat-label">Appointments Booked</div>
+        <div class="block-stat-value white" id="appts">0</div>
+        <div class="block-stat-sub">This week</div>
+        <div class="glass-progress"><div class="glass-progress-fill" id="apptsBar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="glass-block block-3" data-tilt>
+      <div class="refraction"></div>
+      <div class="block-stat">
+        <div class="block-stat-label">Follow-Ups Sent</div>
+        <div class="block-stat-value gold" id="followups">0</div>
+        <div class="glass-progress"><div class="glass-progress-fill" id="followupsBar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="glass-block block-4" data-tilt>
+      <div class="refraction"></div>
+      <div class="block-stat">
+        <div class="block-stat-label">Revenue Recovered</div>
+        <div class="block-stat-value gold" id="revenue">$0</div>
+        <div class="block-stat-sub">This month</div>
+      </div>
+    </div>
+
+    <div class="glass-block block-5" data-tilt>
+      <div class="refraction"></div>
+      <div class="block-stat">
+        <div class="block-stat-label">Satisfaction</div>
+        <div class="block-stat-value white" id="satisfaction">0%</div>
+        <div class="block-stat-sub">Caller sentiment</div>
+      </div>
+    </div>
+
+    <div class="glass-block block-6" data-tilt>
+      <div class="refraction"></div>
+      <div class="block-stat">
+        <div class="block-stat-label">Avg Response</div>
+        <div class="block-stat-value gold" id="avgResponse">0.0s</div>
+        <div class="block-stat-sub">Across all clients</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="brand">Ascension <span>First</span></div>
+    <div class="tagline">Every call answered. Every lead booked.</div>
+  </div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const dot = document.getElementById('cursorDot');
+  let mx = 0, my = 0, cx = 0, cy = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    mx = e.clientX;
+    my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top = my + 'px';
+  });
+
+  function animateCursor() {
+    cx += (mx - cx) * 0.12;
+    cy += (my - cy) * 0.12;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // Glass block tilt + refraction
+  document.querySelectorAll('[data-tilt]').forEach(block => {
+    block.addEventListener('mousemove', (e) => {
+      const rect = block.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      const tiltX = (y - 0.5) * 15;
+      const tiltY = (x - 0.5) * -15;
+
+      block.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+      block.style.boxShadow = `
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 30px 80px rgba(0,0,0,0.4),
+        0 0 40px rgba(201,169,110,0.06)
+      `;
+
+      const refraction = block.querySelector('.refraction');
+      if (refraction) {
+        refraction.style.setProperty('--rx', (x * 100) + '%');
+        refraction.style.setProperty('--ry', (y * 100) + '%');
+      }
+
+      cursor.classList.add('hovering');
+    });
+
+    block.addEventListener('mouseleave', () => {
+      block.style.transform = '';
+      block.style.boxShadow = '';
+      cursor.classList.remove('hovering');
+    });
+  });
+
+  // Speed counter animation
+  function animateSpeed() {
+    const el = document.getElementById('speedNum');
+    const duration = 2000;
+    const target = 0.8;
+    const start = performance.now();
+
+    // Start with blur
+    el.classList.add('blur');
+
+    // Fast count up to ~4-5 then slam down to 0.8
+    const step = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+
+      if (t < 0.3) {
+        // Phase 1: rapid cycling through numbers (speed blur)
+        const fake = (Math.random() * 9).toFixed(1);
+        el.textContent = fake;
+      } else if (t < 0.6) {
+        // Phase 2: slowing down, converging
+        el.classList.remove('blur');
+        const progress = (t - 0.3) / 0.3;
+        const val = 5.0 - (5.0 - target) * (1 - Math.pow(1 - progress, 3));
+        el.textContent = val.toFixed(1);
+      } else {
+        // Phase 3: locked at 0.8
+        el.textContent = '0.8';
+        return;
+      }
+      requestAnimationFrame(step);
+    };
+
+    setTimeout(() => requestAnimationFrame(step), 1000);
+  }
+
+  // Stat counters
+  function countTo(id, target, duration, prefix = '', suffix = '') {
+    const el = document.getElementById(id);
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const val = Math.round(eased * target);
+      el.textContent = prefix + val.toLocaleString() + suffix;
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  function animateProgress(id, target) {
+    setTimeout(() => {
+      document.getElementById(id).style.width = target + '%';
+    }, 500);
+  }
+
+  // Trigger animations
+  setTimeout(() => {
+    animateSpeed();
+    setTimeout(() => {
+      countTo('callsToday', 47, 2000);
+      animateProgress('callsBar', 78);
+    }, 1500);
+    setTimeout(() => {
+      countTo('appts', 12, 1800);
+      animateProgress('apptsBar', 60);
+    }, 2000);
+    setTimeout(() => {
+      countTo('followups', 891, 2500);
+      animateProgress('followupsBar', 92);
+    }, 2500);
+    setTimeout(() => {
+      countTo('revenue', 14280, 3000, '$');
+    }, 3000);
+    setTimeout(() => {
+      countTo('satisfaction', 98, 2000, '', '%');
+    }, 3500);
+    setTimeout(() => {
+      document.getElementById('avgResponse').textContent = '0.8s';
+    }, 2800);
+  }, 500);
+</script>
+
+</body>
+</html>
