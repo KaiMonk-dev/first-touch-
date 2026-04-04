@@ -923,14 +923,25 @@ section > div > div > div:nth-child(6) { --stagger: 0.2s; }
   border-color: rgba(201, 169, 110, 0.35) !important;
 }
 
-/* Light mode GHL trigger */
+/* Light mode GHL trigger — warm gold glass, not washed-out gray */
 [data-theme="light"] [class*="chat-widget-trigger"],
-[data-theme="light"] .lc_text-widget--trigger {
-  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.2), rgba(255, 255, 255, 0.95)) !important;
-  border-color: rgba(201, 169, 110, 0.25) !important;
+[data-theme="light"] .lc_text-widget--trigger,
+[data-theme="light"] .lc_text-widget--bubble {
+  background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.35), rgba(245, 238, 225, 0.95)) !important;
+  border: 1px solid rgba(201, 169, 110, 0.35) !important;
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.08),
-    0 0 40px rgba(201, 169, 110, 0.1) !important;
+    0 8px 32px rgba(140, 110, 50, 0.12),
+    0 0 20px rgba(201, 169, 110, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+[data-theme="light"] [class*="chat-widget-trigger"]:hover,
+[data-theme="light"] .lc_text-widget--bubble:hover {
+  box-shadow:
+    0 12px 40px rgba(140, 110, 50, 0.18),
+    0 0 30px rgba(201, 169, 110, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(201, 169, 110, 0.5) !important;
 }
 
 /* Hide GHL default greeting/bubble text */

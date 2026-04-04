@@ -194,6 +194,24 @@ const PREMIUM_STYLES = `
     border-color: rgba(201, 169, 110, 0.35) !important;
   }
 
+  /* ── Light Mode Trigger Bubble ── */
+  :host-context([data-theme="light"]) .lc_text-widget--bubble {
+    background: radial-gradient(circle at 35% 35%, rgba(201, 169, 110, 0.35), rgba(245, 238, 225, 0.95)) !important;
+    border: 1px solid rgba(201, 169, 110, 0.35) !important;
+    box-shadow:
+      0 8px 32px rgba(140, 110, 50, 0.12),
+      0 0 20px rgba(201, 169, 110, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  }
+
+  :host-context([data-theme="light"]) .lc_text-widget--bubble:hover {
+    box-shadow:
+      0 12px 40px rgba(140, 110, 50, 0.18),
+      0 0 30px rgba(201, 169, 110, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+    border-color: rgba(201, 169, 110, 0.5) !important;
+  }
+
   /* ── In-call / Active State ── */
   .lc_text-widget--voice-active-screen {
     background: linear-gradient(180deg, #080706 0%, #0c0a08 50%, #0a0908 100%) !important;
