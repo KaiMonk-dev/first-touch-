@@ -101,6 +101,17 @@ export function RevenueCalculator() {
     }
   }
 
+  // Delayed color shift — annual number fades to red after calculation
+  const [annualAlarm, setAnnualAlarm] = useState(false)
+  const alarmTimer = useRef(null)
+
+  useEffect(() => {
+    setAnnualAlarm(false)
+    if (alarmTimer.current) clearTimeout(alarmTimer.current)
+    alarmTimer.current = setTimeout(() => setAnnualAlarm(true), 900)
+    return () => clearTimeout(alarmTimer.current)
+  }, [annualLost])
+
   const missedFill = ((missedCalls - 1) / (30 - 1)) * 100
   const jobFill = ((avgJobValue - 50) / (2000 - 50)) * 100
 
@@ -207,7 +218,10 @@ export function RevenueCalculator() {
               </div>
               <div className="text-center sm:text-right">
                 <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Annual Revenue Lost</p>
-                <p className="text-3xl md:text-4xl font-bold tabular-nums text-white">
+                <p
+                  className="text-3xl md:text-4xl font-bold tabular-nums transition-colors duration-1000 ease-out"
+                  style={{ color: annualAlarm ? '#D4645C' : 'rgba(255,255,255,0.9)' }}
+                >
                   ${formatCurrency(animatedAnnual)}
                 </p>
               </div>
