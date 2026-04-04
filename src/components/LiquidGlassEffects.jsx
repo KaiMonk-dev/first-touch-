@@ -84,8 +84,8 @@ export function LiquidGlassEffects() {
           }
         }
 
-        // Apply refraction to nearest 3
-        for (const { el, dist, cx, cy } of nearest) {
+        // Apply refraction + tilt to nearest 3
+        for (const { el, rect, dist, cx, cy } of nearest) {
           if (dist < 400) {
             const proximity = 1 - dist / 400
             const angle = Math.atan2(my - cy, mx - cx)
@@ -94,10 +94,38 @@ export function LiquidGlassEffects() {
             el.style.setProperty('--refract-hue', `${hueShift}deg`)
             el.style.setProperty('--refract-brightness', `${brightness}`)
             el._hasRefract = true
-          } else if (el._hasRefract) {
-            el.style.removeProperty('--refract-hue')
-            el.style.removeProperty('--refract-brightness')
-            el._hasRefract = false
+
+            // 3D tilt — only when cursor is over or very near the element
+            if (mx >= rect.left - 20 && mx <= rect.right + 20 &&
+                my >= rect.top - 20 && my <= rect.bottom + 20) {
+              const rx = (mx - rect.left) / rect.width   // 0-1 horizontal
+              const ry = (my - rect.top) / rect.height    // 0-1 vertical
+              const tiltX = (ry - 0.5) * 6                // max 3deg
+              const tiltY = (rx - 0.5) * -6               // max 3deg
+              el.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`
+              el._hasTilt = true
+            } else if (el._hasTilt) {
+              el.style.transform = ''
+              el._hasTilt = false
+            }
+          } else {
+            if (el._hasRefract) {
+              el.style.removeProperty('--refract-hue')
+              el.style.removeProperty('--refract-brightness')
+              el._hasRefract = false
+            }
+            if (el._hasTilt) {
+              el.style.transform = ''
+              el._hasTilt = false
+            }
+          }
+        }
+
+        // Reset tilt on elements that left the nearest set
+        for (const item of closest) {
+          if (!nearestSet.has(item.el) && item.el._hasTilt) {
+            item.el.style.transform = ''
+            item.el._hasTilt = false
           }
         }
 
