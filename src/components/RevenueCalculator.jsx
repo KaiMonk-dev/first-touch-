@@ -101,16 +101,22 @@ export function RevenueCalculator() {
     }
   }
 
-  // Delayed color shift — annual number fades to red after calculation
+  // Color shift — annual number turns red only after first slider interaction
   const [annualAlarm, setAnnualAlarm] = useState(false)
+  const hasInteracted = useRef(false)
   const alarmTimer = useRef(null)
 
   useEffect(() => {
-    setAnnualAlarm(false)
+    if (!hasInteracted.current) return // Stay white until they touch a slider
     if (alarmTimer.current) clearTimeout(alarmTimer.current)
     alarmTimer.current = setTimeout(() => setAnnualAlarm(true), 900)
     return () => clearTimeout(alarmTimer.current)
   }, [annualLost])
+
+  const onSliderChange = (setter) => (e) => {
+    hasInteracted.current = true
+    setter(Number(e.target.value))
+  }
 
   const missedFill = ((missedCalls - 1) / (30 - 1)) * 100
   const jobFill = ((avgJobValue - 50) / (2000 - 50)) * 100
@@ -169,7 +175,7 @@ export function RevenueCalculator() {
                 max={30}
                 step={1}
                 value={missedCalls}
-                onChange={(e) => setMissedCalls(Number(e.target.value))}
+                onChange={onSliderChange(setMissedCalls)}
                 className="revenue-slider w-full"
                 style={{ '--fill': `${missedFill}%` }}
               />
@@ -195,7 +201,7 @@ export function RevenueCalculator() {
                 max={2000}
                 step={25}
                 value={avgJobValue}
-                onChange={(e) => setAvgJobValue(Number(e.target.value))}
+                onChange={onSliderChange(setAvgJobValue)}
                 className="revenue-slider w-full"
                 style={{ '--fill': `${jobFill}%` }}
               />
