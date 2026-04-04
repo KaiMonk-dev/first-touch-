@@ -48,7 +48,7 @@ export function SpeedProof() {
               <div className="relative z-10">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/5 border border-green-500/15 text-[10px] font-medium tracking-wider uppercase text-green-400/80 mb-8">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                  First Touch
+                  Alex
                 </div>
                 <div className="mb-4">
                   <span className="text-6xl md:text-7xl font-extrabold tracking-tight tabular-nums text-white">
@@ -111,7 +111,7 @@ export function SpeedProof() {
 
         <AnimatedSection delay={800}>
           <p className="text-center text-sm text-white/40 font-light mt-10 max-w-md mx-auto leading-relaxed">
-            The business that responds first wins the customer. First Touch makes sure that's you — every time.
+            The business that responds first wins the customer. Alex makes sure that's you — every time.
           </p>
         </AnimatedSection>
       </div>

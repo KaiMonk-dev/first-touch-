@@ -236,11 +236,11 @@ export function RevenueCalculator() {
             {/* ROI comparison */}
             <div className="bg-white/[0.04] border border-white/[0.06] rounded-xl p-5 mb-8">
               <p className="text-white/60 text-sm leading-relaxed text-center">
-                First Touch costs{' '}
+                Alex costs{' '}
                 <span className="text-white font-semibold">$597/mo</span>
                 {' '}&mdash; you're losing{' '}
                 <span className="text-[#C9A96E] font-semibold">${formatCurrency(animatedMonthly)}</span>
-                {' '}without it.
+                {' '}without her.
                 {roi >= 1 && (
                   <>
                     {' '}That's a{' '}

@@ -13,9 +13,9 @@ const variants = {
   },
   b: {
     heroHeadline: ['Your Customers Deserve', 'A Better First Impression.'],
-    heroSubtext: 'First Touch answers every call instantly, books appointments live, and follows up in under 60 seconds — 24/7, 365 days a year.',
+    heroSubtext: 'Alex answers every call instantly, books appointments live, and follows up in under 60 seconds — 24/7, 365 days a year.',
     heroCTA: 'See How It Works',
-    heroSecondaryCTA: 'Experience Alex Now',
+    heroSecondaryCTA: 'Talk to Alex Live',
   },
   c: {
     heroHeadline: ['Your Phone Rings.', 'Alex Answers.'],

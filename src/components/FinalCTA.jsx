@@ -23,8 +23,8 @@ export function FinalCTA() {
             </span>
           </h2>
           <p className="text-base text-white/50 mb-14 max-w-md mx-auto font-light leading-relaxed">
-            Let's make sure someone's there to answer. We'll walk you through
-            exactly what First Touch looks like for your business.
+            Let's make sure Alex is there to answer. We'll show you exactly
+            what she looks like for your business.
           </p>
 
           <div onMouseMove={btn.onMouseMove} onMouseLeave={btn.onMouseLeave}>
