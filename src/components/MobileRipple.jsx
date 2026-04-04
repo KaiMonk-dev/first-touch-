@@ -22,23 +22,27 @@ export function MobileRipple() {
         radius: 0, life: 1,
       })
       if (ripples.current.length > 5) ripples.current.shift()
+      startLoop()
     }
     window.addEventListener('touchstart', onTouch, { passive: true })
 
     let animId
+    let running = false
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ripples.current = ripples.current.filter(r => r.life > 0)
+      if (ripples.current.length === 0) {
+        running = false
+        return // Stop loop when no active ripples
+      }
       ripples.current.forEach((r) => {
         r.radius += 2.5
         r.life -= 0.02
-        // Outer ring
         ctx.beginPath()
         ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2)
         ctx.strokeStyle = `rgba(201, 169, 110, ${r.life * 0.12})`
         ctx.lineWidth = 1 * r.life
         ctx.stroke()
-        // Inner glow
         if (r.life > 0.5) {
           const grad = ctx.createRadialGradient(r.x, r.y, 0, r.x, r.y, Math.max(1, r.radius * 0.5))
           grad.addColorStop(0, `rgba(201, 169, 110, ${(r.life - 0.5) * 0.1})`)
@@ -49,7 +53,8 @@ export function MobileRipple() {
       })
       animId = requestAnimationFrame(draw)
     }
-    draw()
+    // Start loop only on touch, not on mount
+    const startLoop = () => { if (!running) { running = true; draw() } }
 
     return () => {
       cancelAnimationFrame(animId)

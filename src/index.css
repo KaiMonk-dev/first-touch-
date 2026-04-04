@@ -28,6 +28,33 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════
+   PERFORMANCE — GPU hints and containment
+   ═══════════════════════════════════════════════════ */
+
+/* Promote fixed canvas layers to GPU */
+canvas.fixed, canvas[class*="fixed"] {
+  will-change: auto;
+  contain: strict;
+}
+
+/* Contain animated sections to prevent layout thrashing */
+section { contain: layout style; }
+
+/* Pause all CSS animations when tab is hidden */
+.tab-hidden *, .tab-hidden *::before, .tab-hidden *::after {
+  animation-play-state: paused !important;
+}
+
+/* Reduced motion — kill all continuous animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
    LIQUID GLASS SYSTEM — Apple-inspired glassmorphism
    ═══════════════════════════════════════════════════ */
 

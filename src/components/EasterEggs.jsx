@@ -7,6 +7,9 @@ export function EasterEggs() {
   const achievementsHit = useRef(new Set())
 
   useEffect(() => {
+    // Skip particle effects for reduced motion preference
+    const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
     // --- TAB TITLE CHANGE ---
     const onVisibility = () => {
       if (document.hidden) {
@@ -24,7 +27,7 @@ export function EasterEggs() {
       milestones.forEach((m) => {
         if (pct >= m && !achievementsHit.current.has(m)) {
           achievementsHit.current.add(m)
-          spawnAchievementStar(m)
+          if (!prefersReduced) spawnAchievementStar(m)
         }
       })
     }

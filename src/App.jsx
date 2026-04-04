@@ -33,8 +33,20 @@ import { LiquidGlassEffects } from './components/LiquidGlassEffects'
 import { LiquidDripDivider } from './components/LiquidDripDivider'
 import { AmbientSound } from './components/AmbientSound'
 import { ViewportEffects } from './components/ViewportEffects'
+import { useEffect } from 'react'
+
+function useTabVisibility() {
+  useEffect(() => {
+    const onVisibility = () => {
+      document.documentElement.classList.toggle('tab-hidden', document.hidden)
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
+  }, [])
+}
 
 function App() {
+  useTabVisibility()
   return (
     <ErrorBoundary>
       <ThemeProvider>

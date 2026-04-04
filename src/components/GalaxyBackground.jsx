@@ -13,6 +13,11 @@ export function GalaxyBackground() {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     let animId
+    let paused = false
+
+    // Pause when tab is hidden — no need to render what nobody sees
+    const onVisibility = () => { paused = document.hidden }
+    document.addEventListener('visibilitychange', onVisibility)
 
     // Canvas is FIXED viewport size — never changes except on resize
     // Respect reduced motion preference
@@ -221,6 +226,10 @@ export function GalaxyBackground() {
       try { // Protect animation loop — never let a crash kill it
 
       const time = timestamp || 0
+
+      // Skip rendering when tab is hidden
+      if (paused) { animId = requestAnimationFrame(draw); return }
+
       const W = canvas.width, H = canvas.height
       frameCount++
 
@@ -746,6 +755,7 @@ export function GalaxyBackground() {
       } // end reduced-motion skip for ephemeral effects
 
       } catch (e) { /* Silently recover — never let draw loop die */ }
+
       animId = requestAnimationFrame(draw)
     }
 
@@ -753,6 +763,7 @@ export function GalaxyBackground() {
 
     return () => {
       cancelAnimationFrame(animId)
+      document.removeEventListener('visibilitychange', onVisibility)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('click', onClick)

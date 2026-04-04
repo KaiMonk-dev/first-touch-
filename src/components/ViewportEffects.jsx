@@ -24,26 +24,40 @@ export function ViewportEffects() {
   useEffect(() => {
     const root = document.documentElement
 
-    // --- Edge glow scroll handler ---
+    // Cache section elements once — no DOM queries per scroll frame
+    let sections = []
+    const cacheSections = () => {
+      sections = Array.from(document.querySelectorAll('section[id], footer'))
+    }
+    // Cache after DOM settles, re-cache on resize
+    setTimeout(cacheSections, 500)
+    window.addEventListener('resize', cacheSections)
+
+    // --- Edge glow scroll handler (throttled to ~60fps) ---
+    let scrollTick = false
     const onScroll = () => {
-      const vpMid = window.innerHeight / 2
-      let currentSection = 'hero'
-      document.querySelectorAll('section[id], footer').forEach((el) => {
-        const rect = el.getBoundingClientRect()
-        if (rect.top < vpMid && rect.bottom > vpMid) {
-          currentSection = el.id || (el.tagName === 'FOOTER' ? 'footer' : 'hero')
+      if (scrollTick) return
+      scrollTick = true
+      requestAnimationFrame(() => {
+        scrollTick = false
+        const vpMid = window.innerHeight / 2
+        let currentSection = 'hero'
+        for (let i = 0; i < sections.length; i++) {
+          const rect = sections[i].getBoundingClientRect()
+          if (rect.top < vpMid && rect.bottom > vpMid) {
+            currentSection = sections[i].id || (sections[i].tagName === 'FOOTER' ? 'footer' : 'hero')
+          }
         }
+
+        const color = EDGE_COLORS[currentSection] || EDGE_COLORS.hero
+        root.style.setProperty('--edge-r', color.r)
+        root.style.setProperty('--edge-g', color.g)
+        root.style.setProperty('--edge-b', color.b)
+
+        const scrollPct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)
+        const opacity = 0.04 + Math.sin(scrollPct * Math.PI * 6) * 0.02
+        root.style.setProperty('--edge-opacity', opacity.toFixed(3))
       })
-
-      const color = EDGE_COLORS[currentSection] || EDGE_COLORS.hero
-      root.style.setProperty('--edge-r', color.r)
-      root.style.setProperty('--edge-g', color.g)
-      root.style.setProperty('--edge-b', color.b)
-
-      // Pulse edge glow stronger near section transitions
-      const scrollPct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)
-      const opacity = 0.04 + Math.sin(scrollPct * Math.PI * 6) * 0.02
-      root.style.setProperty('--edge-opacity', opacity.toFixed(3))
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     onScroll() // initial
@@ -64,6 +78,7 @@ export function ViewportEffects() {
 
     return () => {
       window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', cacheSections)
       clearInterval(discoveryInterval)
     }
   }, [])
