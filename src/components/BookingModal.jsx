@@ -186,10 +186,10 @@ function PreScreen({ businessName, setBusinessName, goals, setGoals, errors, onC
       <div className="w-12 h-0.5 bg-[#c9a84c] mb-6" />
 
       <h2 className="text-xl sm:text-2xl font-medium tracking-tight text-[#f5f0e8] mb-2">
-        Strategy & Demo Call
+        Meet Alex for Your Business
       </h2>
       <p className="text-sm font-light text-white/40 mb-8 leading-relaxed">
-        Tell us about your business so we can prepare a personalized strategy for your call.
+        Tell us about your business so Alex can be custom-trained and ready for your call with Kai.
       </p>
 
       <form onSubmit={onContinue} className="space-y-5">
@@ -242,8 +242,8 @@ function PreScreen({ businessName, setBusinessName, goals, setGoals, errors, onC
           <p className="text-[11px] uppercase tracking-[0.1em] text-white/30 mb-2.5">What to expect</p>
           <ul className="space-y-2">
             {[
+              'Hear exactly what Alex sounds like for your business',
               'Personalized revenue recovery analysis',
-              'Live demo tailored to your business',
               'Clear action plan — zero obligation',
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-2.5 text-sm text-white/50">

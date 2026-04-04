@@ -5,8 +5,8 @@ import { useTilt } from '../hooks/useTilt'
 
 const plans = [
   {
-    name: 'Core',
-    tagline: 'Never Miss a Call Again',
+    name: 'Alex',
+    tagline: 'Your New Team Member',
     price: 597,
     period: '/mo',
     features: [
@@ -19,16 +19,16 @@ const plans = [
       { text: 'Lead Connector app — manage leads in real-time', tip: 'See every call, text, and booking from your phone' },
       { text: 'Live in 72 hours', tip: 'Strategy call to go-live in 3 days' },
     ],
-    cta: 'Get Started',
+    cta: 'Hire Alex',
     tier: 'standard',
   },
   {
-    name: 'Pro',
-    tagline: 'Fill Your Calendar on Autopilot',
+    name: 'Alex Pro',
+    tagline: 'Your Team Member, Fully Loaded',
     price: 997,
     period: '/mo',
     features: [
-      { text: 'Everything in Core, plus:' },
+      { text: 'Everything Alex does, plus:' },
       { text: 'First Touch Live — talk to Alex on your website', tip: 'Your website\'s personal welcome desk — visitors speak directly with Alex the moment they arrive' },
       { text: 'Custom-designed premium website — built and maintained', tip: 'Fully managed, conversion-optimized, mobile-first design' },
       { text: '60-second speed-to-lead callbacks', tip: 'Form fills trigger an immediate call from Alex' },
@@ -37,18 +37,18 @@ const plans = [
       { text: 'Intelligent review generation — sentiment-filtered', tip: 'Only asks happy customers, routes unhappy ones to you privately' },
       { text: 'Priority support — 2hr response', tip: 'Direct line to your account team' },
     ],
-    cta: 'Go Pro',
+    cta: 'Hire Alex Pro',
     tier: 'featured',
   },
   {
-    name: 'Enterprise',
+    name: 'Alex Enterprise',
     tagline: 'Your Entire Front Office, Handled',
     price: null,
     period: '',
     features: [
-      { text: 'Everything in Pro, plus:' },
+      { text: 'Everything in Alex Pro, plus:' },
       { text: 'Multi-location deployment — one Alex per location', tip: 'Each location gets a uniquely trained team member' },
-      { text: 'Custom persona — your voice, your tone, your brand', tip: 'Tailored scripts, personality, and conversation style' },
+      { text: 'Alex\'s custom persona — your voice, your tone, your brand', tip: 'Alex is trained to sound like part of your team — tailored scripts, personality, and conversation style' },
       { text: 'Full reputation engine — Google, Yelp, and Facebook', tip: 'Review requests sent across all major platforms — on your behalf' },
       { text: 'Negative review intercept — bad feedback stays private', tip: 'Unhappy customers routed to you before they post publicly' },
       { text: 'Referral engine', tip: 'Happy customers are asked for referrals post-service — seamlessly' },
