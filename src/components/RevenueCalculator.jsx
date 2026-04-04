@@ -59,6 +59,8 @@ function formatCurrency(num) {
 export function RevenueCalculator() {
   const [missedCalls, setMissedCalls] = useState(5)
   const [avgJobValue, setAvgJobValue] = useState(300)
+  const [email, setEmail] = useState('')
+  const [emailState, setEmailState] = useState('idle') // idle | sending | sent | error
   const booking = useBooking()
   const tilt = useTilt(4)
 
@@ -74,6 +76,30 @@ export function RevenueCalculator() {
   const animatedMonthly = useAnimatedValue(monthlyLost)
   const animatedAnnual = useAnimatedValue(annualLost)
   const animatedRoi = useAnimatedValue(Math.round(roi * 10)) // animate 10x, display /10
+
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault()
+    if (!email || emailState === 'sending') return
+    setEmailState('sending')
+    try {
+      const res = await fetch('/api/calculator-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          missedCalls,
+          avgJobValue,
+          monthlyLost,
+          annualLost,
+          roi,
+        }),
+      })
+      if (res.ok) setEmailState('sent')
+      else setEmailState('error')
+    } catch {
+      setEmailState('error')
+    }
+  }
 
   const missedFill = ((missedCalls - 1) / (30 - 1)) * 100
   const jobFill = ((avgJobValue - 50) / (2000 - 50)) * 100
@@ -216,6 +242,48 @@ export function RevenueCalculator() {
             >
               Stop Losing Revenue &mdash; Book a Call
             </button>
+
+            {/* Email capture — soft alternative */}
+            <div className="mt-6 pt-6 border-t border-white/[0.06]">
+              {emailState === 'sent' ? (
+                <div className="text-center py-2">
+                  <p className="text-[#C9A96E] text-sm font-medium">
+                    Sent — check your inbox.
+                  </p>
+                  <p className="text-white/30 text-xs mt-1">
+                    Your personalized analysis is on its way.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-white/35 text-xs text-center mb-3">
+                    Not ready to talk? Get this analysis emailed to you.
+                  </p>
+                  <form onSubmit={handleEmailSubmit} className="flex gap-2">
+                    <input
+                      type="email"
+                      required
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="flex-1 px-4 py-3 rounded-full text-sm bg-white/[0.04] border border-white/[0.08] text-white placeholder-white/25 outline-none focus:border-[#C9A96E]/40 focus:bg-white/[0.06] transition-all"
+                    />
+                    <button
+                      type="submit"
+                      disabled={emailState === 'sending'}
+                      className="px-6 py-3 rounded-full text-sm font-medium border border-white/[0.1] text-white/70 hover:text-white hover:border-[#C9A96E]/30 hover:bg-white/[0.04] transition-all cursor-pointer disabled:opacity-50"
+                    >
+                      {emailState === 'sending' ? 'Sending...' : 'Send'}
+                    </button>
+                  </form>
+                  {emailState === 'error' && (
+                    <p className="text-red-400/60 text-xs text-center mt-2">
+                      Something went wrong. Try again.
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </AnimatedSection>
 
