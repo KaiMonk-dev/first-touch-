@@ -217,7 +217,8 @@ export function AmbientCursor() {
         const inkDist = Math.sqrt((ix - lastInkX) ** 2 + (iy - lastInkY) ** 2)
         const spawnThreshold = brushSpeed > 15 ? 4 : brushSpeed > 5 ? 6 : 10
 
-        if (inkDist > spawnThreshold && inkDrops.length < 60) {
+        const maxInk = getTierConfig().maxStars > 400 ? 40 : 20
+        if (inkDist > spawnThreshold && inkDrops.length < maxInk) {
           // Calligraphy: stroke width varies with speed
           const pressure = Math.min(1, brushSpeed / 20)
           const baseR = 1 + pressure * 3
@@ -267,17 +268,11 @@ export function AmbientCursor() {
             ctx.fillStyle = gGrad
             ctx.fillRect(d.x - dr * 3, d.y - dr * 3, dr * 6, dr * 6)
           } else {
-            // Watercolor edge — slightly irregular
+            // Ink dot — simple circle, no gradient (performance)
             ctx.beginPath()
             ctx.arc(d.x, d.y, dr, 0, Math.PI * 2)
             ctx.fillStyle = `rgba(30, 25, 20, ${alpha})`
             ctx.fill()
-            // Bleed ring
-            const bGrad = ctx.createRadialGradient(d.x, d.y, dr * 0.6, d.x, d.y, dr * 2.5)
-            bGrad.addColorStop(0, `rgba(30, 25, 20, ${alpha * 0.1})`)
-            bGrad.addColorStop(1, 'transparent')
-            ctx.fillStyle = bGrad
-            ctx.fillRect(d.x - dr * 2.5, d.y - dr * 2.5, dr * 5, dr * 5)
           }
         }
 
@@ -288,7 +283,7 @@ export function AmbientCursor() {
           b.radius += 2 * b.life
           if (b.life <= 0) { inkBlooms.splice(i, 1); continue }
           // Organic bloom — overlapping circles with ink bleed
-          for (let j = 0; j < 6; j++) {
+          for (let j = 0; j < 3; j++) {
             const ox = b.x + Math.cos(j * 1.05 + b.seed) * b.radius * 0.35
             const oy = b.y + Math.sin(j * 1.05 + b.seed) * b.radius * 0.35
             const br = b.radius * (0.3 + j * 0.1)

@@ -263,8 +263,9 @@ export function GalaxyBackground() {
         }
 
         const tierCfg = getTierConfig()
-        const lightMoteCount = tierCfg.maxStars ? Math.min(100, Math.round(tierCfg.maxStars * 0.3)) : 100
-        const lightWashCount = tierCfg.maxStars ? Math.min(7, Math.max(3, Math.round(7 * (tierCfg.maxStars / 800)))) : 7
+        const tierScale = tierCfg.maxStars ? tierCfg.maxStars / 800 : 1
+        const lightMoteCount = Math.min(60, Math.round(60 * tierScale))
+        const lightWashCount = Math.min(5, Math.max(2, Math.round(5 * tierScale)))
         const inkT = time * 0.0001
 
         // ── 1. Watercolor wash clouds — large, slow, organic ink washes ──
@@ -355,9 +356,10 @@ export function GalaxyBackground() {
         }
 
         // ── 5. Gold thread tethers — thin gold lines between nearby gold motes ──
-        if (stars && stars.length > 0) {
+        // Skip on lower tiers — expensive O(n^2) operation
+        if (tierScale > 0.4 && stars && stars.length > 0) {
           const goldMotes = []
-          const moteCount = Math.min(100, stars.length)
+          const moteCount = Math.min(lightMoteCount, stars.length)
           for (let i = 0; i < moteCount; i++) {
             if (i % 8 !== 0) continue // only gold motes
             const s = stars[i]
@@ -388,12 +390,12 @@ export function GalaxyBackground() {
           }
         }
 
-        // ── 4. Subtle paper grain — faint noise texture (cached, redrawn periodically) ──
-        const grainInterval = tierCfg.maxStars && tierCfg.maxStars < 400 ? 60 : 30
+        // ── 4. Subtle paper grain — faint noise texture (cached, regenerated rarely) ──
+        const grainInterval = tierScale < 0.5 ? 180 : 90
         if (frameCount % grainInterval === 0 || !lightGrainData) {
           lightGrainData = ctx.createImageData(W, H)
           const d = lightGrainData.data
-          for (let p = 0; p < d.length; p += 16) { // skip pixels for performance
+          for (let p = 0; p < d.length; p += 32) { // skip more pixels — grain is subtle
             const v = Math.random() * 8
             d[p] = 30; d[p + 1] = 25; d[p + 2] = 20
             d[p + 3] = v
