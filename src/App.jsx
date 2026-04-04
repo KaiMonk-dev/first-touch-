@@ -61,10 +61,10 @@ function App() {
             <Hero />
             <SpeedProof />
             <LiquidDripDivider />
+            <RevenueCalculator />
+            <LiquidDripDivider />
             <SectionBurst />
             <MeetAlex />
-            <LiquidDripDivider />
-            <RevenueCalculator />
             <LiquidDripDivider />
             <HowItWorks />
             <LiquidDripDivider />
