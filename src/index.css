@@ -420,10 +420,9 @@ nav {
   --nav-warmth: 1;
 }
 
-/* 3D perspective + smooth tilt transition for global glass interactivity */
+/* 3D perspective for liquid glass tilt effect */
 .liquid-glass, .liquid-glass-strong {
   transform-style: preserve-3d;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease, background 0.5s ease;
 }
 
 /* Section focus fade — content brightens as it enters viewport center */
