@@ -100,8 +100,8 @@ export function LiquidGlassEffects() {
                 my >= rect.top - 20 && my <= rect.bottom + 20) {
               const rx = (mx - rect.left) / rect.width   // 0-1 horizontal
               const ry = (my - rect.top) / rect.height    // 0-1 vertical
-              const tiltX = (ry - 0.5) * 6                // max 3deg
-              const tiltY = (rx - 0.5) * -6               // max 3deg
+              const tiltX = (ry - 0.5) * 16               // max 8deg
+              const tiltY = (rx - 0.5) * -16              // max 8deg
               el.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`
               el._hasTilt = true
             } else if (el._hasTilt) {
