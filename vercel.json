@@ -1,0 +1,34 @@
+{
+  "redirects": [
+    {
+      "source": "/onboard",
+      "destination": "https://docs.google.com/forms/d/e/1FAIpQLSemPVa6Dlz6JC5pMU1hp0MdWqtItu967JS2B9N5BdeLvjnWFA/viewform",
+      "permanent": false
+    },
+    {
+      "source": "/onboarding",
+      "destination": "https://docs.google.com/forms/d/e/1FAIpQLSemPVa6Dlz6JC5pMU1hp0MdWqtItu967JS2B9N5BdeLvjnWFA/viewform",
+      "permanent": false
+    },
+    {
+      "source": "/brand",
+      "destination": "https://docs.google.com/forms/d/e/1FAIpQLSdfGT998lLaBsDHPJ_fNFSl3GmtE5G9meY-70wS2irJAKtTfw/viewform",
+      "permanent": false
+    },
+    {
+      "source": "/website-intake",
+      "destination": "https://docs.google.com/forms/d/e/1FAIpQLSdfGT998lLaBsDHPJ_fNFSl3GmtE5G9meY-70wS2irJAKtTfw/viewform",
+      "permanent": false
+    },
+    {
+      "source": "/pay",
+      "destination": "https://buy.stripe.com/28EaEZ0OU8cVaJX8XQ7kc00",
+      "permanent": false
+    },
+    {
+      "source": "/hire",
+      "destination": "https://buy.stripe.com/28EaEZ0OU8cVaJX8XQ7kc00",
+      "permanent": false
+    }
+  ]
+}

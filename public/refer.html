@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Referred by a client — Ascension First</title>
+<meta name="description" content="You were referred by someone who uses Alex. Here's how to book your strategy call." />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<meta name="robots" content="noindex" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#e8e4df;min-height:100vh;padding:24px;line-height:1.6}
+  body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+  .page{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:64px 0}
+  .accent{width:48px;height:2px;background:#c9a84c;margin-bottom:24px}
+  .eyebrow{font-size:11px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:16px}
+  h1{font-size:44px;font-weight:600;letter-spacing:-0.03em;line-height:1.05;margin-bottom:20px;background:linear-gradient(to bottom,#fff,rgba(255,255,255,0.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  h1 .you{color:#c9a84c;-webkit-text-fill-color:#c9a84c;font-weight:500;background:none}
+  .tagline{font-size:17px;color:rgba(232,228,223,0.6);font-weight:300;margin-bottom:48px}
+  .referrer-card{background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.3);border-radius:14px;padding:28px 32px;margin-bottom:48px}
+  .referrer-label{font-size:11px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:rgba(201,168,76,0.7);margin-bottom:8px}
+  .referrer-name{font-size:20px;font-weight:500;color:#f5f0e8;margin-bottom:8px;letter-spacing:-0.01em}
+  .referrer-quote{font-size:14px;font-style:italic;color:rgba(232,228,223,0.6);font-weight:300;line-height:1.6}
+  h2{font-size:20px;font-weight:500;color:#f5f0e8;margin-bottom:16px;margin-top:48px;letter-spacing:-0.01em}
+  p{font-size:15px;font-weight:300;color:rgba(232,228,223,0.75);margin-bottom:16px}
+  .perks{list-style:none;padding:0;margin-top:16px}
+  .perks li{padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;gap:14px;align-items:flex-start;font-size:15px;font-weight:300;color:rgba(232,228,223,0.75)}
+  .perks li:last-child{border-bottom:none}
+  .perks .dot{color:#c9a84c;flex-shrink:0;font-size:18px;line-height:1;margin-top:2px}
+  .perks strong{color:#f5f0e8;font-weight:500}
+  .cta-section{margin-top:56px;padding:40px 32px;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:14px;text-align:center}
+  .cta-section h2{margin-top:0;margin-bottom:12px;font-size:22px}
+  .cta-section p{color:rgba(232,228,223,0.55);margin-bottom:28px}
+  .cta-btn{display:inline-block;padding:16px 40px;background:linear-gradient(135deg,#c9a84c,#a8893e);color:#0a0a0a;text-decoration:none;border-radius:10px;font-weight:500;font-size:16px;letter-spacing:-0.01em;transition:all 0.25s}
+  .cta-btn:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(201,168,76,0.3)}
+  .meta{margin-top:20px;font-size:12px;color:rgba(232,228,223,0.4);font-weight:300}
+  .alt-contact{margin-top:40px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;font-size:14px;color:rgba(232,228,223,0.5);font-weight:300}
+  .alt-contact a{color:#c9a84c;text-decoration:none}
+  .alt-contact a:hover{color:#f5f0e8}
+  .footer{text-align:center;margin-top:72px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(201,168,76,0.35)}
+  @media (max-width:600px){
+    body{padding:16px}
+    .page{padding:40px 0}
+    h1{font-size:34px}
+    .tagline{font-size:15px}
+    .referrer-card,.cta-section{padding:24px}
+  }
+  @media print{
+    body{background:#fff;color:#222;padding:0}
+    body::before{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="accent"></div>
+  <div class="eyebrow">You've been referred</div>
+  <h1>Someone vouched for <span class="you">you</span>.</h1>
+  <p class="tagline">A client of ours thought Ascension First could actually help your business. That's why you're here.</p>
+
+  <div class="referrer-card">
+    <div class="referrer-label">Referred by</div>
+    <div class="referrer-name" id="referrer-name">a current Ascension First client</div>
+    <div class="referrer-quote">They've experienced what Alex does for their business every day. Now they're making a case for you to see it too.</div>
+  </div>
+
+  <h2>What happens next</h2>
+  <p>Same as any of our clients — but with one difference. Because you came through a referral, you get two things that aren't available on the cold-call path:</p>
+
+  <ul class="perks">
+    <li><span class="dot">●</span><span><strong>$100 off your first month.</strong> Applied automatically at signup. No code to enter.</span></li>
+    <li><span class="dot">●</span><span><strong>Priority scheduling.</strong> Your Preview Call and go-live happen ahead of the standard queue when possible.</span></li>
+    <li><span class="dot">●</span><span><strong>A direct line to Kai.</strong> No forms, no queues. Your referral means you're already part of the inner circle.</span></li>
+  </ul>
+
+  <h2>How the rest works</h2>
+  <p>A 20-minute strategy call. I'll diagnose what your phones are actually costing you, and show you what Alex would handle for your business. If it's a fit, we build her out inside 5 business days.</p>
+  <p>If it's not a fit, no chase. You walk away with the diagnosis. Either way, you're covered — every client gets a 30-day money-back guarantee from the day Alex goes live.</p>
+
+  <div class="cta-section">
+    <h2>Ready to see what Alex could do for your business?</h2>
+    <p>Grab a 20-minute slot. No obligation. Your referrer already did the vouching.</p>
+    <a href="https://api.leadconnectorhq.com/widget/bookings/strategy-and-demo?source=referral" class="cta-btn" id="cta-btn">Book my strategy call</a>
+    <div class="meta">Strategy call · 20 minutes · No pitch until it fits</div>
+  </div>
+
+  <div class="alt-contact">
+    Prefer to text first? <a href="sms:+18584347041">(858) 434-7041</a> &nbsp;·&nbsp; Or email <a href="mailto:kai@ascensionfirst.com">kai@ascensionfirst.com</a>
+  </div>
+
+  <div class="footer">Ascension First · Referral Program</div>
+
+</div>
+
+<script>
+  // Personalize by ?from=FirstName or ?slug=client-slug (for future referral tracking)
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get('from');
+  const slug = params.get('slug');
+
+  if (from) {
+    document.getElementById('referrer-name').textContent = decodeURIComponent(from);
+  }
+
+  // Propagate referral context to booking CTA (GHL sees the source)
+  const cta = document.getElementById('cta-btn');
+  const url = new URL(cta.href);
+  if (from) url.searchParams.set('ref_from', from);
+  if (slug) url.searchParams.set('ref_slug', slug);
+  cta.href = url.toString();
+</script>
+
+</body>
+</html>
