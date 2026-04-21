@@ -29,6 +29,21 @@
       "source": "/hire",
       "destination": "https://buy.stripe.com/28EaEZ0OU8cVaJX8XQ7kc00",
       "permanent": false
+    },
+    {
+      "source": "/pay-pro",
+      "destination": "https://buy.stripe.com/8x28wRgNS1Oxf0dgqi7kc03",
+      "permanent": false
+    },
+    {
+      "source": "/hire-pro",
+      "destination": "https://buy.stripe.com/8x28wRgNS1Oxf0dgqi7kc03",
+      "permanent": false
+    },
+    {
+      "source": "/pro",
+      "destination": "https://buy.stripe.com/8x28wRgNS1Oxf0dgqi7kc03",
+      "permanent": false
     }
   ]
 }
