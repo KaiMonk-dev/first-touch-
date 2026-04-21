@@ -17,7 +17,7 @@ const plans = [
       { text: 'Appointment reminders via SMS', tip: 'Reduces no-shows by up to 60%' },
       { text: 'Google review requests — sent for you', tip: 'Sent after completed jobs to build your reputation' },
       { text: 'Lead Connector app — manage leads in real-time', tip: 'See every call, text, and booking from your phone' },
-      { text: 'Live in 72 hours', tip: 'Strategy call to go-live in 3 days' },
+      { text: 'Live inside 5 business days', tip: 'Preview Call → your approval → go-live that same week. 30-day money-back guarantee from day one.' },
     ],
     cta: 'Hire Alex',
     tier: 'standard',
@@ -29,7 +29,7 @@ const plans = [
     period: '/mo',
     features: [
       { text: 'Everything Alex does, plus:' },
-      { text: 'First Touch Live — talk to Alex on your website', tip: 'Your website\'s personal welcome desk — visitors speak directly with Alex the moment they arrive' },
+      { text: 'Alex lives on your website — visitors speak with her live', tip: 'Your website\'s personal welcome desk — visitors talk to Alex the moment they arrive' },
       { text: 'Custom-designed premium website — built and maintained', tip: 'Fully managed, conversion-optimized, mobile-first design' },
       { text: '60-second speed-to-lead callbacks', tip: 'Form fills trigger an immediate call from Alex' },
       { text: 'No-show prevention — reminders + follow-up call', tip: 'Calls and texts sent before every appointment — handled for you' },
@@ -138,7 +138,7 @@ export function Pricing() {
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             <p className="text-[13px] text-white/40 font-light">
-              30-day satisfaction guarantee. No contracts. Cancel anytime.
+              30-day money-back guarantee. No contracts. Cancel anytime.
             </p>
           </div>
         </AnimatedSection>

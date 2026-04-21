@@ -12,7 +12,7 @@ const faqs = [
   },
   {
     q: 'How long does setup take?',
-    a: 'Most businesses are live within 72 hours of the strategy call. We handle everything — training, configuration, calendar integration, and testing.',
+    a: 'Alex is live inside 5 business days of your intake form. On Day 3–5 you hop on a Preview Call — you hear Alex live for your business and approve go-live. Alex Pro clients also get a custom website with Alex embedded, live within 7–10 business days. Everything is covered by a 30-day money-back guarantee from day one.',
   },
   {
     q: 'What if Alex can\'t handle a call?',
@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: 'How much does it cost?',
-    a: 'Core starts at $597/mo, Pro at $997/mo, and Enterprise is custom-priced based on your operation. No contracts, no setup fees, and a 30-day satisfaction guarantee. You can see the full breakdown in our pricing section above.',
+    a: 'Core starts at $597/mo, Pro at $997/mo, and Enterprise is custom-priced based on your operation. No contracts, no setup fees, and a 30-day money-back guarantee. You can see the full breakdown in our pricing section above.',
   },
   {
     q: 'Can Alex handle multiple languages?',

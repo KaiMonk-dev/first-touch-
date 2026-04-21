@@ -3,11 +3,12 @@ import { AnimatedSection } from './AnimatedSection'
 import { useTilt } from '../hooks/useTilt'
 
 const timeline = [
-  { day: 'Day 1', title: 'Strategy Call', desc: 'We learn your business, your customers, and exactly how you want calls handled.' },
-  { day: 'Day 2', title: 'We Train Alex', desc: 'Custom scripts, calendar integration, brand voice training, and conversation flows — all tailored to your business.' },
-  { day: 'Day 3', title: 'Testing & Refinement', desc: 'Live test calls, edge case handling, and fine-tuning until Alex feels like a natural extension of your team.' },
-  { day: 'Day 4', title: 'Go Live', desc: 'Alex starts answering calls. You start booking more jobs. Every call recorded and logged.' },
-  { day: 'Week 2', title: 'First Performance Report', desc: 'Calls answered, leads booked, response times — real data showing real results.' },
+  { day: 'Day 0', title: 'Strategy Call & Welcome', desc: 'We diagnose what your phones are costing you. You say yes, we send the payment link and a 10-minute onboarding form.' },
+  { day: 'Day 1–3', title: 'We Build Alex', desc: 'Custom-trained on your services, pricing, calendar, and tone. She\'ll sound like part of your team — because she is.' },
+  { day: 'Day 3–5', title: 'Preview Call', desc: 'You hop on a 15-minute call and hear Alex handling live scenarios for YOUR business. You approve what you hear or tell us to adjust.' },
+  { day: 'Day 5–7', title: 'Go Live', desc: 'Alex starts answering every call. You start booking more jobs. Every call recorded and logged.' },
+  { day: 'Day 21', title: 'First Review Call', desc: 'We walk through the numbers together — calls handled, appointments booked, revenue recovered.' },
+  { day: 'Day 30', title: 'Guarantee Milestone', desc: 'Not satisfied? Full refund — no awkward conversation. Still with us? Welcome to the long haul.' },
 ]
 
 export function HowItWorks() {
@@ -37,7 +38,7 @@ export function HowItWorks() {
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9]">
               <span className="bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
-                Live in 72 Hours.
+                Live Inside 5 Business Days.
               </span>
             </h2>
           </div>
