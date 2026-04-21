@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: 'How much does it cost?',
-    a: 'Core starts at $597/mo, Pro at $997/mo, and Enterprise is custom-priced based on your operation. No contracts, no setup fees, and a 30-day money-back guarantee. You can see the full breakdown in our pricing section above.',
+    a: 'Core starts at $597/mo, Pro at $997/mo, and Enterprise is custom-priced based on your operation. Setup and training are included in your subscription. Month-to-month. 30-day money-back guarantee. You can see the full breakdown in our pricing section above.',
   },
   {
     q: 'Can Alex handle multiple languages?',
